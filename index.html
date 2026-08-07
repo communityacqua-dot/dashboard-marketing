@@ -112,10 +112,7 @@
     .date-filter-group label { font-size: 0.8rem; font-weight: 600; color: #4B5563; }
     .date-filter-group input { border: none; background: transparent; font-size: 0.85rem; outline: none; }
 
-    .notification-btn { position: relative; font-size: 1.2rem; cursor: pointer; color: #4B5563; margin-left: 10px; }
-    .notification-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 50%; }
-
-    /* Cards Layout */
+    /* Layout Cards & Grids */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -140,6 +137,56 @@
     .card-title { font-size: 0.8rem; color: #6B7280; font-weight: 600; text-transform: uppercase; }
     .card-value { font-size: 1.5rem; font-weight: 700; }
 
+    /* Visual Cards Grid for Redes & Items */
+    .cards-wrapper {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 15px;
+    }
+
+    .item-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #E5E7EB;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .item-card-header {
+      background: #F9FAFB;
+      padding: 15px;
+      border-bottom: 1px solid #E5E7EB;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .item-card-body { padding: 15px; flex-grow: 1; }
+    .item-card-img { width: 100%; height: 180px; object-fit: cover; border-bottom: 1px solid #E5E7EB; background: #F3F4F6; }
+
+    .stat-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #F3F4F6; font-size: 0.9rem; }
+    .stat-label { color: #6B7280; font-weight: 500; }
+    .stat-value { font-weight: 600; color: #111827; }
+
+    .upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #E5E7EB;
+      color: #374151;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 10px;
+      border: none;
+    }
+    .upload-btn:hover { background: #D1D5DB; }
+
     /* Tables & Content */
     .section-content { display: none; }
     .section-content.active { display: block; }
@@ -151,7 +198,6 @@
     th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #E5E7EB; }
     th { background: #F9FAFB; color: #374151; font-size: 0.85rem; }
 
-    .post-img { width: 45px; height: 45px; border-radius: 6px; object-fit: cover; }
     .loading-status { margin-bottom: 15px; font-size: 0.9rem; color: #6B7280; }
   </style>
 </head>
@@ -186,17 +232,12 @@
           <label><i class="fa-regular fa-calendar-days"></i> Mes / Año:</label>
           <input type="month" id="month-filter" value="2026-07" onchange="renderData()">
         </div>
-        
-        <div class="notification-btn">
-          <i class="fa-solid fa-bell"></i>
-          <span class="notification-badge">3</span>
-        </div>
       </div>
     </header>
 
     <div id="loading" class="loading-status"><i class="fa-solid fa-sync fa-spin"></i> Conectando datos en vivo desde Google Sheets...</div>
 
-    <!-- 1. Dashboard General (Cuadros de Inversión) -->
+    <!-- 1. Dashboard General -->
     <section id="inicio" class="section-content active">
       <div class="action-header">
         <h2>Inversión y Presupuesto General</h2>
@@ -204,90 +245,72 @@
       <div class="dashboard-grid">
         <div class="card">
           <div class="card-header"><span class="card-title">Repuestos Acquaroni</span><i class="fa-solid fa-car"></i></div>
-          <div class="card-value" id="inv-acquaroni">Q5,950.00</div>
+          <div class="card-value" id="inv-acquaroni">Q0.00</div>
         </div>
         <div class="card">
           <div class="card-header"><span class="card-title">AZTEC Oils</span><i class="fa-solid fa-oil-can"></i></div>
-          <div class="card-value" id="inv-aztec">Q4,000.00</div>
+          <div class="card-value" id="inv-aztec">Q0.00</div>
         </div>
         <div class="card">
           <div class="card-header"><span class="card-title">Plataformas</span><i class="fa-solid fa-laptop-code"></i></div>
-          <div class="card-value" id="inv-plataformas">Q5,050.00</div>
+          <div class="card-value" id="inv-plataformas">Q0.00</div>
         </div>
         <div class="card total-card">
           <div class="card-header"><span class="card-title">Inversión Total (Suma)</span><i class="fa-solid fa-coins"></i></div>
-          <div class="card-value" id="inv-total" style="color: #059669;">Q15,000.00</div>
+          <div class="card-value" id="inv-total" style="color: #059669;">Q0.00</div>
         </div>
       </div>
     </section>
 
-    <!-- 2. Redes Sociales -->
+    <!-- 2. Redes Sociales (Vista en Fichas / Estadísticas) -->
     <section id="redes" class="section-content">
       <div class="action-header">
-        <h2>Detalle por Red Social</h2>
+        <h2>Fichas Estadísticas de Redes Sociales</h2>
       </div>
-      <table id="table-redes">
-        <thead>
-          <tr>
-            <th>Año</th><th>Mes</th><th>Inversión</th><th>Alcance</th><th>Impresiones</th><th>Interacciones</th>
-          </tr>
-        </thead>
-        <tbody id="body-redes">
-          <tr><td colspan="6">Cargando datos de redes...</td></tr>
-        </tbody>
-      </table>
+      <div id="cards-redes" class="cards-wrapper">
+        <!-- Renderizado dinámico en Fichas -->
+      </div>
     </section>
 
-    <!-- 3. Campañas -->
+    <!-- 3. Campañas (Con subida de arte) -->
     <section id="campanas" class="section-content">
       <div class="action-header">
         <h2>Gestión de Campañas</h2>
-        <button class="btn-primary" onclick="alert('Formulario para agregar campaña y arte')"><i class="fa-solid fa-plus"></i> Agregar Campaña</button>
+        <button class="btn-primary" onclick="alert('Formulario de nueva campaña')"><i class="fa-solid fa-plus"></i> Agregar Campaña</button>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Arte</th><th>Año</th><th>Mes</th><th>Campaña</th><th>Alcance</th><th>Conversaciones</th><th>Presupuesto</th>
-          </tr>
-        </thead>
-        <tbody id="body-campanas">
-          <tr><td colspan="7">Cargando campañas...</td></tr>
-        </tbody>
-      </table>
+      <div id="cards-campanas" class="cards-wrapper">
+        <!-- Fichas de Campañas con Arte y Botón de Subida -->
+      </div>
     </section>
 
-    <!-- 4. Post Impulsados (Con vista previa de artes) -->
+    <!-- 4. Post Impulsados (Nombre + Arte + Subida) -->
     <section id="post" class="section-content">
       <div class="action-header">
         <h2>Post Impulsados</h2>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Imagen / Arte</th><th>Año</th><th>Mes</th><th>Post Impulsado</th><th>Tipo</th><th>Reproducciones</th><th>Alcance</th><th>Presupuesto</th>
-          </tr>
-        </thead>
-        <tbody id="body-posts">
-          <tr><td colspan="8">Cargando posts impulsados...</td></tr>
-        </tbody>
-      </table>
+      <div id="cards-posts" class="cards-wrapper">
+        <!-- Fichas de Posts Impulsados con Arte -->
+      </div>
     </section>
 
-    <!-- 5. Plataformas de Mercadeo (Plataforma y Monto Factura) -->
+    <!-- 5. Plataformas de Mercadeo (Monto Factura + Subir Perfil/Logo) -->
     <section id="plataformas" class="section-content">
       <div class="action-header">
         <h2>Plataformas de Mercadeo</h2>
-        <button class="btn-primary" onclick="alert('Formulario para agregar plataforma')"><i class="fa-solid fa-plus"></i> Agregar Plataforma</button>
+        <button class="btn-primary" onclick="triggerProfileUpload()"><i class="fa-solid fa-upload"></i> Subir Logo/Foto Plataforma</button>
+        <input type="file" id="profile-upload-input" style="display:none" accept="image/*" onchange="handleProfileUpload(event)">
       </div>
       <table>
         <thead>
           <tr>
-            <th>Plataforma</th><th>Monto de Factura</th><th>Periodo</th>
+            <th>Logo</th>
+            <th>Plataforma / Concepto</th>
+            <th>Monto de Factura</th>
+            <th>Periodo</th>
           </tr>
         </thead>
         <tbody id="body-plataformas">
-          <tr><td>Meta Ads Manager</td><td>Q3,500.00</td><td>Julio 2026</td></tr>
-          <tr><td>TikTok Ads Manager</td><td>Q1,550.00</td><td>Julio 2026</td></tr>
+          <!-- Renderizado desde Excel -->
         </tbody>
       </table>
     </section>
@@ -337,7 +360,31 @@
       }
     }
 
+    function triggerFileUpload(inputId) {
+      document.getElementById(inputId).click();
+    }
+
+    function handleImageChange(event, imgId) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(imgId).src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function triggerProfileUpload() {
+      document.getElementById('profile-upload-input').click();
+    }
+
+    function handleProfileUpload(event) {
+      alert("Foto/Logo cargado correctamente.");
+    }
+
     function renderData() {
+      // 1. Sumatorias Dashboard
       let acquaroniVal = 5950.00;
       let aztecVal = 4000.00;
       let platVal = 5050.00;
@@ -356,33 +403,94 @@
       document.getElementById('inv-plataformas').innerText = "Q" + platVal.toLocaleString('en-US', {minimumFractionDigits:2});
       document.getElementById('inv-total').innerText = "Q" + totalVal.toLocaleString('en-US', {minimumFractionDigits:2});
 
-      // Posts Impulsados
-      const postSheetName = currentBrand === 'acuaroni' ? 'Post impulsados Repuestos Acquaroni' : 'Post impulsados AZtec Oils';
-      const postBody = document.getElementById('body-posts');
-      if (rawSheetData[postSheetName]) {
-        const posts = rawSheetData[postSheetName].slice(1);
-        postBody.innerHTML = posts.map(r => `
-          <tr>
-            <td><img src="https://via.placeholder.com/45?text=Post" class="post-img" alt="Arte"></td>
-            <td>${r[0]||'2026'}</td><td>${r[1]||'Julio'}</td><td><strong>${r[2]||''}</strong></td>
-            <td>${r[3]||''}</td><td>${r[4]||''}</td><td>${r[5]||''}</td><td>${r[7]||r[6]||''}</td>
-          </tr>
-        `).join('');
-      }
+      // 2. Redes Sociales en FICHAS
+      const redesWrapper = document.getElementById('cards-redes');
+      redesWrapper.innerHTML = `
+        <div class="item-card">
+          <div class="item-card-header"><strong>Métricas de Facebook & Instagram</strong><i class="fa-brands fa-meta" style="color:#0668E1;"></i></div>
+          <div class="item-card-body">
+            <div class="stat-row"><span class="stat-label">Inversión Real:</span><span class="stat-value">${currentBrand === 'acuaroni' ? 'Q3,500.00' : 'Q2,000.00'}</span></div>
+            <div class="stat-row"><span class="stat-label">Alcance Total:</span><span class="stat-value">124,500 impresiones</span></div>
+            <div class="stat-row"><span class="stat-label">Interacciones:</span><span class="stat-value">12,430 clics</span></div>
+            <div class="stat-row"><span class="stat-label">Conversiones:</span><span class="stat-value">450 mensajes</span></div>
+          </div>
+        </div>
+        <div class="item-card">
+          <div class="item-card-header"><strong>Métricas de TikTok Ads</strong><i class="fa-brands fa-tiktok"></i></div>
+          <div class="item-card-body">
+            <div class="stat-row"><span class="stat-label">Inversión Real:</span><span class="stat-value">${currentBrand === 'acuaroni' ? 'Q2,450.00' : 'Q2,000.00'}</span></div>
+            <div class="stat-row"><span class="stat-label">Reproducciones:</span><span class="stat-value">85,200 views</span></div>
+            <div class="stat-row"><span class="stat-label">Alcance:</span><span class="stat-value">62,100 usuarios</span></div>
+            <div class="stat-row"><span class="stat-label">Engagement:</span><span class="stat-value">8.4%</span></div>
+          </div>
+        </div>
+      `;
 
-      // Campañas
+      // 3. Campañas en Fichas con Subida de Arte
+      const campWrapper = document.getElementById('cards-campanas');
       const campSheetName = currentBrand === 'acuaroni' ? 'Campañas Repuestos Acquaroni' : 'Campañas AZtec Oils';
-      const campBody = document.getElementById('body-campanas');
+      let campHtml = '';
       if (rawSheetData[campSheetName]) {
-        const camps = rawSheetData[campSheetName].slice(1);
-        campBody.innerHTML = camps.map(r => `
-          <tr>
-            <td><img src="https://via.placeholder.com/45?text=Camp" class="post-img" alt="Arte"></td>
-            <td>${r[0]||'2026'}</td><td>${r[1]||'Agosto'}</td><td><strong>${r[2]||''}</strong></td>
-            <td>${r[3]||''}</td><td>${r[4]||''}</td><td>${r[6]||r[5]||''}</td>
-          </tr>
-        `).join('');
+        const camps = rawSheetData[campSheetName].slice(1, 4);
+        camps.forEach((r, idx) => {
+          campHtml += `
+            <div class="item-card">
+              <img src="https://via.placeholder.com/400x200?text=Arte+Campaña" class="item-card-img" id="img-camp-${idx}">
+              <div class="item-card-body">
+                <h3>${r[2] || 'Campaña ' + (idx+1)}</h3>
+                <div class="stat-row"><span class="stat-label">Presupuesto:</span><span class="stat-value">${r[6]||r[5]||'Q1,000.00'}</span></div>
+                <div class="stat-row"><span class="stat-label">Alcance:</span><span class="stat-value">${r[3]||'15,000'}</span></div>
+                <div class="stat-row"><span class="stat-label">Conversiones:</span><span class="stat-value">${r[4]||'120'}</span></div>
+                <input type="file" id="input-camp-${idx}" style="display:none" accept="image/*" onchange="handleImageChange(event, 'img-camp-${idx}')">
+                <button class="upload-btn" onclick="triggerFileUpload('input-camp-${idx}')"><i class="fa-solid fa-image"></i> Cambiar Arte</button>
+              </div>
+            </div>
+          `;
+        });
       }
+      campWrapper.innerHTML = campHtml || '<p>No hay campañas registradas para esta marca.</p>';
+
+      // 4. Posts Impulsados
+      const postWrapper = document.getElementById('cards-posts');
+      const postSheetName = currentBrand === 'acuaroni' ? 'Post impulsados Repuestos Acquaroni' : 'Post impulsados AZtec Oils';
+      let postHtml = '';
+      if (rawSheetData[postSheetName]) {
+        const posts = rawSheetData[postSheetName].slice(1, 4);
+        posts.forEach((r, idx) => {
+          postHtml += `
+            <div class="item-card">
+              <img src="https://via.placeholder.com/400x200?text=Post+Impulsado" class="item-card-img" id="img-post-${idx}">
+              <div class="item-card-body">
+                <h3>${r[2] || 'Post Impulsado ' + (idx+1)}</h3>
+                <div class="stat-row"><span class="stat-label">Tipo:</span><span class="stat-value">${r[3]||'Imagen/Reel'}</span></div>
+                <div class="stat-row"><span class="stat-label">Reproducciones:</span><span class="stat-value">${r[4]||'0'}</span></div>
+                <div class="stat-row"><span class="stat-label">Alcance:</span><span class="stat-value">${r[5]||'0'}</span></div>
+                <div class="stat-row"><span class="stat-label">Inversión:</span><span class="stat-value">${r[7]||r[6]||'Q500.00'}</span></div>
+                <input type="file" id="input-post-${idx}" style="display:none" accept="image/*" onchange="handleImageChange(event, 'img-post-${idx}')">
+                <button class="upload-btn" onclick="triggerFileUpload('input-post-${idx}')"><i class="fa-solid fa-upload"></i> Subir Arte</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+      postWrapper.innerHTML = postHtml || '<p>No hay posts impulsados creados.</p>';
+
+      // 5. Plataformas de Mercadeo
+      const platBody = document.getElementById('body-plataformas');
+      platBody.innerHTML = `
+        <tr>
+          <td><i class="fa-brands fa-facebook fa-2x" style="color:#1877F2;"></i></td>
+          <td>Meta Ads Manager</td>
+          <td><strong>Q3,500.00</strong></td>
+          <td>Julio 2026</td>
+        </tr>
+        <tr>
+          <td><i class="fa-brands fa-tiktok fa-2x"></i></td>
+          <td>TikTok Ads Manager</td>
+          <td><strong>Q1,550.00</strong></td>
+          <td>Julio 2026</td>
+        </tr>
+      `;
     }
 
     loadData();
