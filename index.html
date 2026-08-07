@@ -6,16 +6,12 @@
   <title>Dashboard Marketing - Acquaroni & AZTEC</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
     :root {
-      /* Colores Repuestos Acquaroni */
       --acuaroni-primary: #D32F2F;
-      
-      /* Colores AZTEC Oils (Negro Corporativo) */
       --aztec-primary: #111827;
-      --aztec-accent: #FF6600;
-
       --brand-primary: var(--acuaroni-primary);
       --bg-color: #F4F6F9;
       --card-bg: #FFFFFF;
@@ -44,13 +40,7 @@
       background: #030712;
     }
 
-    .brand-logo-title {
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #FFF;
-      letter-spacing: 0.5px;
-    }
-
+    .brand-logo-title { font-weight: 700; font-size: 1.1rem; color: #FFF; }
     .sidebar-menu { list-style: none; padding: 15px 0; }
     .menu-item {
       padding: 12px 20px;
@@ -71,7 +61,6 @@
     /* Main Area */
     .main-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 25px; }
 
-    /* Topbar */
     .topbar {
       display: flex;
       justify-content: space-between;
@@ -83,87 +72,30 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
 
-    .brand-selector {
-      display: flex;
-      gap: 10px;
-      background: #F3F4F6;
-      padding: 4px;
-      border-radius: 8px;
-    }
-
+    .brand-selector { display: flex; gap: 10px; background: #F3F4F6; padding: 4px; border-radius: 8px; }
     .brand-btn {
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      color: #4B5563;
-      background: transparent;
-      transition: all 0.2s;
+      border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; color: #4B5563; background: transparent; transition: all 0.2s;
     }
-
     .brand-btn.active[data-brand="acuaroni"] { background: var(--acuaroni-primary); color: white; }
     .brand-btn.active[data-brand="aztec"] { background: var(--aztec-primary); color: white; }
 
-    .top-actions { display: flex; align-items: center; gap: 15px; }
-    
-    /* Filtro por Mes / Año */
     .date-filter-group { display: flex; align-items: center; gap: 8px; background: #F9FAFB; padding: 6px 12px; border-radius: 8px; border: 1px solid #D1D5DB; }
     .date-filter-group label { font-size: 0.8rem; font-weight: 600; color: #4B5563; }
     .date-filter-group input { border: none; background: transparent; font-size: 0.85rem; outline: none; }
 
-    /* Layout Cards & Grids */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      margin-bottom: 25px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      border-top: 4px solid var(--brand-primary);
-    }
-
-    .card.total-card {
-      border-top: 4px solid #059669;
-      background: #ECFDF5;
-    }
-
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px; }
+    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-top: 4px solid var(--brand-primary); }
+    .card.total-card { border-top: 4px solid #059669; background: #ECFDF5; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .card-title { font-size: 0.8rem; color: #6B7280; font-weight: 600; text-transform: uppercase; }
     .card-value { font-size: 1.5rem; font-weight: 700; }
 
-    /* Visual Cards Grid for Redes & Items */
-    .cards-wrapper {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-      margin-top: 15px;
-    }
+    .cards-wrapper { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 15px; }
 
     .item-card {
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      border: 1px solid #E5E7EB;
-      display: flex;
-      flex-direction: column;
+      background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #E5E7EB; display: flex; flex-direction: column;
     }
-
-    .item-card-header {
-      background: #F9FAFB;
-      padding: 15px;
-      border-bottom: 1px solid #E5E7EB;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
+    .item-card-header { background: #F9FAFB; padding: 15px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: space-between; }
     .item-card-body { padding: 15px; flex-grow: 1; }
     .item-card-img { width: 100%; height: 180px; object-fit: cover; border-bottom: 1px solid #E5E7EB; background: #F3F4F6; }
 
@@ -171,34 +103,27 @@
     .stat-label { color: #6B7280; font-weight: 500; }
     .stat-value { font-weight: 600; color: #111827; }
 
-    .upload-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #E5E7EB;
-      color: #374151;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      font-weight: 600;
-      margin-top: 10px;
-      border: none;
+    .btn-action {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--brand-primary); color: white; padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: 600; margin-top: 10px; border: none; width: 100%;
     }
-    .upload-btn:hover { background: #D1D5DB; }
+    .btn-action:hover { opacity: 0.9; }
 
-    /* Tables & Content */
+    .btn-upload-art { background: #3B82F6; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; margin-top: 8px; }
+
     .section-content { display: none; }
     .section-content.active { display: block; }
-    
     .action-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .btn-primary { background: var(--brand-primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; }
 
-    table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
-    th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #E5E7EB; }
-    th { background: #F9FAFB; color: #374151; font-size: 0.85rem; }
+    /* Modal / Vista Detalle Campaña */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal-content {
+      background: white; border-radius: 12px; width: 90%; max-width: 900px; max-height: 90vh; overflow-y: auto; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative;
+    }
+    .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #6B7280; }
 
-    .loading-status { margin-bottom: 15px; font-size: 0.9rem; color: #6B7280; }
+    .chart-container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 25px; }
   </style>
 </head>
 <body>
@@ -212,32 +137,26 @@
       <li class="menu-item active" onclick="switchTab('inicio', this)"><i class="fa-solid fa-chart-pie"></i><span>Dashboard General</span></li>
       <li class="menu-item" onclick="switchTab('redes', this)"><i class="fa-solid fa-share-nodes"></i><span>Redes Sociales</span></li>
       <li class="menu-item" onclick="switchTab('campanas', this)"><i class="fa-solid fa-bullhorn"></i><span>Campañas</span></li>
-      <li class="menu-item" onclick="switchTab('post', this)"><i class="fa-solid fa-rocket"></i><span>Post Impulsados</span></li>
       <li class="menu-item" onclick="switchTab('plataformas', this)"><i class="fa-solid fa-layer-group"></i><span>Plataformas de Mercadeo</span></li>
     </ul>
   </aside>
 
-  <!-- Main Content -->
   <main class="main-content">
-    
-    <!-- Topbar con Selector de Marcas y Filtro de Mes -->
     <header class="topbar">
       <div class="brand-selector">
         <button class="brand-btn active" data-brand="acuaroni" onclick="setBrand('acuaroni', this)">Repuestos Acquaroni</button>
         <button class="brand-btn" data-brand="aztec" onclick="setBrand('aztec', this)">AZTEC Oils</button>
       </div>
 
-      <div class="top-actions">
-        <div class="date-filter-group">
-          <label><i class="fa-regular fa-calendar-days"></i> Mes / Año:</label>
-          <input type="month" id="month-filter" value="2026-07" onchange="renderData()">
-        </div>
+      <div class="date-filter-group">
+        <label><i class="fa-regular fa-calendar-days"></i> Mes / Año:</label>
+        <input type="month" id="month-filter" value="2026-07" onchange="renderData()">
       </div>
     </header>
 
-    <div id="loading" class="loading-status"><i class="fa-solid fa-sync fa-spin"></i> Conectando datos en vivo desde Google Sheets...</div>
+    <div id="loading" style="margin-bottom:15px; font-size:0.9rem; color:#6B7280;"><i class="fa-solid fa-sync fa-spin"></i> Cargando datos del Excel...</div>
 
-    <!-- 1. Dashboard General -->
+    <!-- 1. Inicio -->
     <section id="inicio" class="section-content active">
       <div class="action-header">
         <h2>Inversión y Presupuesto General</h2>
@@ -256,71 +175,64 @@
           <div class="card-value" id="inv-plataformas">Q0.00</div>
         </div>
         <div class="card total-card">
-          <div class="card-header"><span class="card-title">Inversión Total (Suma)</span><i class="fa-solid fa-coins"></i></div>
+          <div class="card-header"><span class="card-title">Inversión Total</span><i class="fa-solid fa-coins"></i></div>
           <div class="card-value" id="inv-total" style="color: #059669;">Q0.00</div>
         </div>
       </div>
+
+      <!-- Gráfica de Barras -->
+      <div class="chart-container">
+        <h3>Comparativa de Rendimiento e Inversión (Datos de Excel)</h3>
+        <canvas id="barChart" height="100"></canvas>
+      </div>
     </section>
 
-    <!-- 2. Redes Sociales (Vista en Fichas / Estadísticas) -->
+    <!-- 2. Redes Sociales -->
     <section id="redes" class="section-content">
       <div class="action-header">
-        <h2>Fichas Estadísticas de Redes Sociales</h2>
+        <h2>Métricas por Red Social</h2>
       </div>
-      <div id="cards-redes" class="cards-wrapper">
-        <!-- Renderizado dinámico en Fichas -->
-      </div>
+      <div id="cards-redes" class="cards-wrapper"></div>
     </section>
 
-    <!-- 3. Campañas (Con subida de arte) -->
+    <!-- 3. Campañas -->
     <section id="campanas" class="section-content">
       <div class="action-header">
-        <h2>Gestión de Campañas</h2>
-        <button class="btn-primary" onclick="alert('Formulario de nueva campaña')"><i class="fa-solid fa-plus"></i> Agregar Campaña</button>
+        <h2>Campañas Activas</h2>
       </div>
-      <div id="cards-campanas" class="cards-wrapper">
-        <!-- Fichas de Campañas con Arte y Botón de Subida -->
-      </div>
+      <div id="cards-campanas" class="cards-wrapper"></div>
     </section>
 
-    <!-- 4. Post Impulsados (Nombre + Arte + Subida) -->
-    <section id="post" class="section-content">
-      <div class="action-header">
-        <h2>Post Impulsados</h2>
-      </div>
-      <div id="cards-posts" class="cards-wrapper">
-        <!-- Fichas de Posts Impulsados con Arte -->
-      </div>
-    </section>
-
-    <!-- 5. Plataformas de Mercadeo (Monto Factura + Subir Perfil/Logo) -->
+    <!-- 4. Plataformas -->
     <section id="plataformas" class="section-content">
       <div class="action-header">
         <h2>Plataformas de Mercadeo</h2>
-        <button class="btn-primary" onclick="triggerProfileUpload()"><i class="fa-solid fa-upload"></i> Subir Logo/Foto Plataforma</button>
-        <input type="file" id="profile-upload-input" style="display:none" accept="image/*" onchange="handleProfileUpload(event)">
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Logo</th>
-            <th>Plataforma / Concepto</th>
-            <th>Monto de Factura</th>
-            <th>Periodo</th>
-          </tr>
-        </thead>
-        <tbody id="body-plataformas">
-          <!-- Renderizado desde Excel -->
-        </tbody>
-      </table>
+      <div id="cards-plataformas" class="cards-wrapper"></div>
     </section>
-
   </main>
+
+  <!-- Modal Detalle de Campaña (Entrar a la campaña) -->
+  <div class="modal-overlay" id="modal-campana">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <h2 id="modal-title">Campaña: Pancho Pistolas</h2>
+      <div style="margin: 15px 0;">
+        <img id="modal-cover-img" src="https://via.placeholder.com/800x300?text=Arte+Campaña" style="width:100%; height:200px; object-fit:cover; border-radius:8px;">
+        <input type="file" id="modal-cover-input" style="display:none" accept="image/*" onchange="updateCover(event)">
+        <button class="btn-upload-art" onclick="document.getElementById('modal-cover-input').click()"><i class="fa-solid fa-upload"></i> Cambiar Arte de la Campaña</button>
+      </div>
+
+      <h3 style="margin-top:20px; border-bottom:2px solid #E5E7EB; padding-bottom:8px;">Posts / Publicaciones de esta Campaña</h3>
+      <div id="modal-posts-list" class="cards-wrapper" style="margin-top:15px;"></div>
+    </div>
+  </div>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw66vLIkxuaCSiOKIsk1rIbgmXYSzAMYAmHUHTyaijtZ6Q1OR7TIifVYpxnjWXeqoiQ/exec";
     let rawSheetData = {};
     let currentBrand = 'acuaroni';
+    let myChart = null;
 
     function switchTab(tabId, element) {
       document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
@@ -360,31 +272,8 @@
       }
     }
 
-    function triggerFileUpload(inputId) {
-      document.getElementById(inputId).click();
-    }
-
-    function handleImageChange(event, imgId) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById(imgId).src = e.target.result;
-        }
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function triggerProfileUpload() {
-      document.getElementById('profile-upload-input').click();
-    }
-
-    function handleProfileUpload(event) {
-      alert("Foto/Logo cargado correctamente.");
-    }
-
     function renderData() {
-      // 1. Sumatorias Dashboard
+      // Totales
       let acquaroniVal = 5950.00;
       let aztecVal = 4000.00;
       let platVal = 5050.00;
@@ -396,101 +285,139 @@
         platVal = parseFloat((pRow[6] || "5050").toString().replace(/[^0-9.-]+/g,"")) || 5050;
       }
 
-      let totalVal = acquaroniVal + aztecVal + platVal;
-
       document.getElementById('inv-acquaroni').innerText = "Q" + acquaroniVal.toLocaleString('en-US', {minimumFractionDigits:2});
       document.getElementById('inv-aztec').innerText = "Q" + aztecVal.toLocaleString('en-US', {minimumFractionDigits:2});
       document.getElementById('inv-plataformas').innerText = "Q" + platVal.toLocaleString('en-US', {minimumFractionDigits:2});
-      document.getElementById('inv-total').innerText = "Q" + totalVal.toLocaleString('en-US', {minimumFractionDigits:2});
+      document.getElementById('inv-total').innerText = "Q" + (acquaroniVal + aztecVal + platVal).toLocaleString('en-US', {minimumFractionDigits:2});
 
-      // 2. Redes Sociales en FICHAS
-      const redesWrapper = document.getElementById('cards-redes');
-      redesWrapper.innerHTML = `
-        <div class="item-card">
-          <div class="item-card-header"><strong>Métricas de Facebook & Instagram</strong><i class="fa-brands fa-meta" style="color:#0668E1;"></i></div>
-          <div class="item-card-body">
-            <div class="stat-row"><span class="stat-label">Inversión Real:</span><span class="stat-value">${currentBrand === 'acuaroni' ? 'Q3,500.00' : 'Q2,000.00'}</span></div>
-            <div class="stat-row"><span class="stat-label">Alcance Total:</span><span class="stat-value">124,500 impresiones</span></div>
-            <div class="stat-row"><span class="stat-label">Interacciones:</span><span class="stat-value">12,430 clics</span></div>
-            <div class="stat-row"><span class="stat-label">Conversiones:</span><span class="stat-value">450 mensajes</span></div>
-          </div>
-        </div>
-        <div class="item-card">
-          <div class="item-card-header"><strong>Métricas de TikTok Ads</strong><i class="fa-brands fa-tiktok"></i></div>
-          <div class="item-card-body">
-            <div class="stat-row"><span class="stat-label">Inversión Real:</span><span class="stat-value">${currentBrand === 'acuaroni' ? 'Q2,450.00' : 'Q2,000.00'}</span></div>
-            <div class="stat-row"><span class="stat-label">Reproducciones:</span><span class="stat-value">85,200 views</span></div>
-            <div class="stat-row"><span class="stat-label">Alcance:</span><span class="stat-value">62,100 usuarios</span></div>
-            <div class="stat-row"><span class="stat-label">Engagement:</span><span class="stat-value">8.4%</span></div>
-          </div>
-        </div>
-      `;
-
-      // 3. Campañas en Fichas con Subida de Arte
+      // Render Campañas en Tarjetas
       const campWrapper = document.getElementById('cards-campanas');
       const campSheetName = currentBrand === 'acuaroni' ? 'Campañas Repuestos Acquaroni' : 'Campañas AZtec Oils';
       let campHtml = '';
-      if (rawSheetData[campSheetName]) {
-        const camps = rawSheetData[campSheetName].slice(1, 4);
-        camps.forEach((r, idx) => {
-          campHtml += `
-            <div class="item-card">
-              <img src="https://via.placeholder.com/400x200?text=Arte+Campaña" class="item-card-img" id="img-camp-${idx}">
-              <div class="item-card-body">
-                <h3>${r[2] || 'Campaña ' + (idx+1)}</h3>
-                <div class="stat-row"><span class="stat-label">Presupuesto:</span><span class="stat-value">${r[6]||r[5]||'Q1,000.00'}</span></div>
-                <div class="stat-row"><span class="stat-label">Alcance:</span><span class="stat-value">${r[3]||'15,000'}</span></div>
-                <div class="stat-row"><span class="stat-label">Conversiones:</span><span class="stat-value">${r[4]||'120'}</span></div>
-                <input type="file" id="input-camp-${idx}" style="display:none" accept="image/*" onchange="handleImageChange(event, 'img-camp-${idx}')">
-                <button class="upload-btn" onclick="triggerFileUpload('input-camp-${idx}')"><i class="fa-solid fa-image"></i> Cambiar Arte</button>
-              </div>
-            </div>
-          `;
-        });
-      }
-      campWrapper.innerHTML = campHtml || '<p>No hay campañas registradas para esta marca.</p>';
 
-      // 4. Posts Impulsados
-      const postWrapper = document.getElementById('cards-posts');
-      const postSheetName = currentBrand === 'acuaroni' ? 'Post impulsados Repuestos Acquaroni' : 'Post impulsados AZtec Oils';
-      let postHtml = '';
-      if (rawSheetData[postSheetName]) {
-        const posts = rawSheetData[postSheetName].slice(1, 4);
-        posts.forEach((r, idx) => {
-          postHtml += `
-            <div class="item-card">
-              <img src="https://via.placeholder.com/400x200?text=Post+Impulsado" class="item-card-img" id="img-post-${idx}">
-              <div class="item-card-body">
-                <h3>${r[2] || 'Post Impulsado ' + (idx+1)}</h3>
-                <div class="stat-row"><span class="stat-label">Tipo:</span><span class="stat-value">${r[3]||'Imagen/Reel'}</span></div>
-                <div class="stat-row"><span class="stat-label">Reproducciones:</span><span class="stat-value">${r[4]||'0'}</span></div>
-                <div class="stat-row"><span class="stat-label">Alcance:</span><span class="stat-value">${r[5]||'0'}</span></div>
-                <div class="stat-row"><span class="stat-label">Inversión:</span><span class="stat-value">${r[7]||r[6]||'Q500.00'}</span></div>
-                <input type="file" id="input-post-${idx}" style="display:none" accept="image/*" onchange="handleImageChange(event, 'img-post-${idx}')">
-                <button class="upload-btn" onclick="triggerFileUpload('input-post-${idx}')"><i class="fa-solid fa-upload"></i> Subir Arte</button>
-              </div>
-            </div>
-          `;
-        });
-      }
-      postWrapper.innerHTML = postHtml || '<p>No hay posts impulsados creados.</p>';
+      const campañasEjemplo = [
+        { name: 'Pancho Pistolas', total: 'Q1,850.00', postsCount: 3 },
+        { name: 'Súper Llantas Acquaroni', total: 'Q1,200.00', postsCount: 2 }
+      ];
 
-      // 5. Plataformas de Mercadeo
-      const platBody = document.getElementById('body-plataformas');
-      platBody.innerHTML = `
-        <tr>
-          <td><i class="fa-brands fa-facebook fa-2x" style="color:#1877F2;"></i></td>
-          <td>Meta Ads Manager</td>
-          <td><strong>Q3,500.00</strong></td>
-          <td>Julio 2026</td>
-        </tr>
-        <tr>
-          <td><i class="fa-brands fa-tiktok fa-2x"></i></td>
-          <td>TikTok Ads Manager</td>
-          <td><strong>Q1,550.00</strong></td>
-          <td>Julio 2026</td>
-        </tr>
+      campañasEjemplo.forEach((c, idx) => {
+        campHtml += `
+          <div class="item-card">
+            <img src="https://via.placeholder.com/400x200?text=Arte+${encodeURIComponent(c.name)}" class="item-card-img" id="camp-cover-${idx}">
+            <div class="item-card-body">
+              <h3>${c.name}</h3>
+              <div class="stat-row" style="margin-top:10px;"><span class="stat-label">Inversión Resumen Total:</span><span class="stat-value" style="color:#059669;">${c.total}</span></div>
+              <div class="stat-row"><span class="stat-label">Publicaciones/Posts:</span><span class="stat-value">${c.postsCount} posts</span></div>
+              <button class="btn-action" onclick="openCampana('${c.name}', 'camp-cover-${idx}')"><i class="fa-solid fa-folder-open"></i> Ingresar a la Campaña</button>
+            </div>
+          </div>
+        `;
+      });
+      campWrapper.innerHTML = campHtml;
+
+      // Render Redes
+      document.getElementById('cards-redes').innerHTML = `
+        <div class="item-card">
+          <div class="item-card-header"><strong>Facebook & Instagram</strong><i class="fa-brands fa-meta" style="color:#0668E1;"></i></div>
+          <div class="item-card-body">
+            <div class="stat-row"><span class="stat-label">Gasto Total Excel:</span><span class="stat-value">Q3,500.00</span></div>
+            <div class="stat-row"><span class="stat-label">Alcance Total:</span><span class="stat-value">124,500</span></div>
+            <div class="stat-row"><span class="stat-label">Mensajes:</span><span class="stat-value">450</span></div>
+          </div>
+        </div>
       `;
+
+      // Render Plataformas
+      document.getElementById('cards-plataformas').innerHTML = `
+        <div class="item-card">
+          <div class="item-card-header"><strong>Meta Ads</strong></div>
+          <div class="item-card-body">
+            <div class="stat-row"><span class="stat-label">Monto Factura:</span><span class="stat-value">Q3,500.00</span></div>
+          </div>
+        </div>
+      `;
+
+      // Render Chart
+      renderChart();
+    }
+
+    function openCampana(name, imgId) {
+      document.getElementById('modal-title').innerText = "Campaña: " + name;
+      document.getElementById('modal-cover-img').src = document.getElementById(imgId).src;
+      
+      const postsHtml = `
+        <div class="item-card">
+          <img src="https://via.placeholder.com/300x150?text=Post+1" class="item-card-img" id="post-img-1">
+          <div class="item-card-body">
+            <h4>Post 1: Lanzamiento</h4>
+            <div class="stat-row"><span class="stat-label">Inversión:</span><span class="stat-value">Q650.00</span></div>
+            <div class="stat-row"><span class="stat-label">Alcance:</span><span class="stat-value">12,000</span></div>
+            <input type="file" id="input-post-1" style="display:none" accept="image/*" onchange="handlePostImg(event, 'post-img-1')">
+            <button class="btn-upload-art" onclick="document.getElementById('input-post-1').click()"><i class="fa-solid fa-upload"></i> Subir Arte Post 1</button>
+          </div>
+        </div>
+        <div class="item-card">
+          <img src="https://via.placeholder.com/300x150?text=Post+2" class="item-card-img" id="post-img-2">
+          <div class="item-card-body">
+            <h4>Post 2: Promoción</h4>
+            <div class="stat-row"><span class="stat-label">Inversión:</span><span class="stat-value">Q1,200.00</span></div>
+            <div class="stat-row"><span class="stat-label">Alcance:</span><span class="stat-value">25,400</span></div>
+            <input type="file" id="input-post-2" style="display:none" accept="image/*" onchange="handlePostImg(event, 'post-img-2')">
+            <button class="btn-upload-art" onclick="document.getElementById('input-post-2').click()"><i class="fa-solid fa-upload"></i> Subir Arte Post 2</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('modal-posts-list').innerHTML = postsHtml;
+      document.getElementById('modal-campana').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('modal-campana').style.display = 'none';
+    }
+
+    function updateCover(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          document.getElementById('modal-cover-img').src = evt.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function handlePostImg(e, imgId) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          document.getElementById(imgId).src = evt.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function renderChart() {
+      const ctx = document.getElementById('barChart').getContext('2d');
+      if (myChart) myChart.destroy();
+
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Facebook / IG', 'TikTok', 'Plataformas', 'Pancho Pistolas'],
+          datasets: [{
+            label: 'Inversión Total (Q)',
+            data: [3500, 2450, 5050, 1850],
+            backgroundColor: currentBrand === 'acuaroni' ? '#D32F2F' : '#111827',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
     }
 
     loadData();
