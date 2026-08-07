@@ -3,119 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard de Marketing</title>
-  <!-- Google Fonts & FontAwesome Icons -->
+  <title>Dashboard Marketing - Acuaroni & AZTEC</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
     :root {
-      /* Estilos para Repuestos Acuaroni */
+      /* Colores Repuestos Acquaroni */
       --acuaroni-primary: #D32F2F;
       --acuaroni-secondary: #1976D2;
-      --acuaroni-accent: #FFC107;
       
-      /* Estilos para AZTEC */
-      --aztec-primary: #2E7D32;
-      --aztec-secondary: #00838F;
-      --aztec-accent: #FF9800;
+      /* Colores AZTEC Oils (Ajustados a Marca) */
+      --aztec-primary: #005A36; /* Verde AZTEC */
+      --aztec-secondary: #FF6600; /* Naranja/Dorado AZTEC */
 
-      /* Variables Dinámicas por Defecto */
       --brand-primary: var(--acuaroni-primary);
       --brand-secondary: var(--acuaroni-secondary);
-      --bg-color: #f8f9fa;
-      --card-bg: #ffffff;
-      --text-main: #333333;
-      --sidebar-width: 250px;
+      --bg-color: #F4F6F9;
+      --card-bg: #FFFFFF;
+      --text-main: #2C3E50;
+      --sidebar-width: 260px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      display: flex;
-      min-height: 100vh;
-    }
-
-    /* Menú Lateral (Sidebar) */
+    /* Sidebar */
     .sidebar {
       width: var(--sidebar-width);
-      background-color: #1e293b;
+      background-color: #111827;
       color: #ffffff;
       display: flex;
       flex-direction: column;
       position: fixed;
       height: 100vh;
-      transition: all 0.3s ease;
     }
 
-    .sidebar-header {
-      padding: 24px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      border-bottom: 1px solid #334155;
+    .brand-logo-container {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #1F2937;
+      background: #0B0F19;
+    }
+
+    .brand-logo {
+      max-width: 140px;
+      height: 50px;
+      object-fit: contain;
+    }
+
+    .sidebar-menu { list-style: none; padding: 15px 0; }
+    .menu-item {
+      padding: 12px 20px;
       display: flex;
       align-items: center;
       gap: 12px;
-    }
-
-    .sidebar-menu {
-      list-style: none;
-      padding: 20px 0;
-      flex-grow: 1;
-    }
-
-    .menu-item {
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
       cursor: pointer;
-      color: #94a3b8;
-      transition: all 0.2s ease;
+      color: #9CA3AF;
       font-weight: 500;
+      transition: 0.2s;
     }
-
     .menu-item:hover, .menu-item.active {
-      color: #ffffff;
-      background-color: #334155;
+      color: #FFFFFF;
+      background-color: #1F2937;
       border-left: 4px solid var(--brand-primary);
     }
 
-    .menu-item i {
-      width: 20px;
-      font-size: 1.1rem;
-    }
+    /* Main Area */
+    .main-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 25px; }
 
-    /* Contenido Principal */
-    .main-content {
-      margin-left: var(--sidebar-width);
-      flex-grow: 1;
-      padding: 32px;
-    }
-
-    /* Encabezado y Filtro de Marcas */
-    .header-bar {
+    /* Topbar */
+    .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 32px;
       background: var(--card-bg);
-      padding: 20px 28px;
+      padding: 15px 25px;
       border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 25px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
 
     .brand-selector {
       display: flex;
-      gap: 12px;
-      background-color: #f1f5f9;
+      gap: 10px;
+      background: #F3F4F6;
       padding: 4px;
       border-radius: 8px;
     }
@@ -126,280 +98,237 @@
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
-      color: #64748b;
+      color: #4B5563;
       background: transparent;
     }
 
-    .brand-btn.active[data-brand="acuaroni"] {
-      background-color: var(--acuaroni-primary);
-      color: white;
-    }
+    .brand-btn.active[data-brand="acuaroni"] { background: var(--acuaroni-primary); color: white; }
+    .brand-btn.active[data-brand="aztec"] { background: var(--aztec-primary); color: white; }
 
-    .brand-btn.active[data-brand="aztec"] {
-      background-color: var(--aztec-primary);
-      color: white;
-    }
+    .top-actions { display: flex; align-items: center; gap: 20px; }
+    .date-filter { padding: 8px 12px; border-radius: 6px; border: 1px solid #D1D5DB; }
+    .notification-btn { position: relative; font-size: 1.2rem; cursor: pointer; color: #4B5563; }
+    .notification-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 50%; }
 
-    /* Secciones de Contenido */
-    .section-content {
-      display: none;
-    }
-
-    .section-content.active {
-      display: block;
-    }
-
-    /* Tarjetas de Métricas (Dashboard) */
-    .metrics-grid {
+    /* Cards Layout (Estilo Pinterest / Dashboard) */
+    .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
-      margin-bottom: 32px;
+      margin-bottom: 25px;
     }
 
     .card {
       background: var(--card-bg);
-      padding: 24px;
+      padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       border-top: 4px solid var(--brand-primary);
     }
 
-    .card h3 {
-      font-size: 0.875rem;
-      color: #64748b;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .card-title { font-size: 0.85rem; color: #6B7280; font-weight: 600; text-transform: uppercase; }
+    .card-value { font-size: 1.6rem; font-weight: 700; }
 
-    .card .value {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #0f172a;
-    }
+    /* Tables & Forms */
+    .section-content { display: none; }
+    .section-content.active { display: block; }
+    
+    .action-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .btn-primary { background: var(--brand-primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; }
 
-    /* Tablas de Datos */
-    .data-table-container {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      overflow-x: auto;
-    }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #E5E7EB; }
+    th { background: #F9FAFB; color: #374151; font-size: 0.85rem; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-
-    th, td {
-      padding: 14px 16px;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    th {
-      background-color: #f8fafc;
-      color: #475569;
-      font-weight: 600;
-      font-size: 0.875rem;
-    }
+    .platform-logo { width: 24px; height: 24px; vertical-align: middle; margin-right: 8px; }
   </style>
 </head>
 <body>
 
-  <!-- Navegación Lateral de 5 Botones -->
+  <!-- Sidebar -->
   <aside class="sidebar">
-    <div class="sidebar-header">
-      <i class="fa-solid fa-chart-line"></i>
-      <span>Marketing App</span>
+    <div class="brand-logo-container">
+      <!-- Espacio para Logo de la Marca Seleccionada -->
+      <img id="current-brand-logo" class="brand-logo" src="https://via.placeholder.com/140x50?text=Acuaroni+Logo" alt="Logo Marca">
     </div>
     <ul class="sidebar-menu">
-      <li class="menu-item active" onclick="switchTab('inicio', this)">
-        <i class="fa-solid fa-house"></i>
-        <span>Inicio</span>
-      </li>
-      <li class="menu-item" onclick="switchTab('redes', this)">
-        <i class="fa-solid fa-share-nodes"></i>
-        <span>Redes Sociales</span>
-      </li>
-      <li class="menu-item" onclick="switchTab('campanas', this)">
-        <i class="fa-solid fa-bullhorn"></i>
-        <span>Campañas</span>
-      </li>
-      <li class="menu-item" onclick="switchTab('post', this)">
-        <i class="fa-solid fa-rocket"></i>
-        <span>Post Impulsados</span>
-      </li>
-      <li class="menu-item" onclick="switchTab('plataformas', this)">
-        <i class="fa-solid fa-layer-group"></i>
-        <span>Plataformas</span>
-      </li>
+      <li class="menu-item active" onclick="switchTab('inicio', this)"><i class="fa-solid fa-chart-pie"></i><span>Dashboard General</span></li>
+      <li class="menu-item" onclick="switchTab('redes', this)"><i class="fa-solid fa-share-nodes"></i><span>Redes Sociales</span></li>
+      <li class="menu-item" onclick="switchTab('campanas', this)"><i class="fa-solid fa-bullhorn"></i><span>Campañas</span></li>
+      <li class="menu-item" onclick="switchTab('post', this)"><i class="fa-solid fa-rocket"></i><span>Post Impulsados</span></li>
+      <li class="menu-item" onclick="switchTab('plataformas', this)"><i class="fa-solid fa-layer-group"></i><span>Plataformas de Mercadeo</span></li>
     </ul>
   </aside>
 
-  <!-- Área de Contenido Principal -->
+  <!-- Main Content -->
   <main class="main-content">
     
-    <!-- Barra Superior / Selector de Marca -->
-    <header class="header-bar">
-      <h1 id="page-title">Dashboard General</h1>
+    <!-- Topbar con Filtro de Fechas y Notificación -->
+    <header class="topbar">
       <div class="brand-selector">
-        <button class="brand-btn active" data-brand="acuaroni" onclick="setBrand('acuaroni', this)">Repuestos Acuaroni</button>
-        <button class="brand-btn" data-brand="aztec" onclick="setBrand('aztec', this)">AZTEC</button>
+        <button class="brand-btn active" data-brand="acuaroni" onclick="setBrand('acuaroni', this)">Repuestos Acquaroni</button>
+        <button class="brand-btn" data-brand="aztec" onclick="setBrand('aztec', this)">AZTEC Oils</button>
+      </div>
+
+      <div class="top-actions">
+        <!-- Filtro de fechas -->
+        <input type="date" class="date-filter">
+        
+        <!-- Campanita de Notificación -->
+        <div class="notification-btn">
+          <i class="fa-solid fa-bell"></i>
+          <span class="notification-badge">3</span>
+        </div>
       </div>
     </header>
 
-    <!-- 1. Inicio -->
+    <!-- 1. Dashboard General (Basado en Presupuesto) -->
     <section id="inicio" class="section-content active">
-      <div class="metrics-grid">
+      <div class="action-header">
+        <h2>Presupuesto y Balance General</h2>
+      </div>
+      <div class="dashboard-grid">
         <div class="card">
-          <h3>Alcance Total</h3>
-          <div class="value" id="metric-alcance">0</div>
+          <div class="card-header"><span class="card-title">Presupuesto Asignado</span><i class="fa-solid fa-wallet"></i></div>
+          <div class="card-value" id="presupuesto-total">Q0.00</div>
         </div>
         <div class="card">
-          <h3>Interacciones</h3>
-          <div class="value" id="metric-interacciones">0</div>
+          <div class="card-header"><span class="card-title">Inversión Ejecutada</span><i class="fa-solid fa-chart-line"></i></div>
+          <div class="card-value" id="inversion-ejecutada">Q0.00</div>
         </div>
         <div class="card">
-          <h3>Inversión Total</h3>
-          <div class="value" id="metric-inversion">$0.00</div>
-        </div>
-        <div class="card">
-          <h3>Clics en Enlaces</h3>
-          <div class="value" id="metric-clics">0</div>
+          <div class="card-header"><span class="card-title">Resultado Total</span><i class="fa-solid fa-bullseye"></i></div>
+          <div class="card-value" id="resultado-total">0</div>
         </div>
       </div>
     </section>
 
-    <!-- 2. Redes Sociales -->
+    <!-- 2. Redes Sociales (Específico por Red) -->
     <section id="redes" class="section-content">
-      <h2>Métricas por Red Social</h2>
-      <p style="margin-bottom: 16px; color: #64748b;">Información extraída de Google Sheets</p>
-      <div class="data-table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Plataforma</th>
-              <th>Seguidores</th>
-              <th>Publicaciones</th>
-              <th>Engagement Rate</th>
-            </tr>
-          </thead>
-          <tbody id="table-redes">
-            <tr><td colspan="4">Cargando datos...</td></tr>
-          </tbody>
-        </table>
+      <div class="action-header">
+        <h2>Detalle por Red Social</h2>
       </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Red Social</th>
+            <th>Seguidores</th>
+            <th>Publicaciones</th>
+            <th>Interacciones</th>
+          </tr>
+        </thead>
+        <tbody id="table-redes-body">
+          <tr>
+            <td><i class="fa-brands fa-facebook" style="color:#1877F2;"></i> Facebook</td>
+            <td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr>
+            <td><i class="fa-brands fa-instagram" style="color:#E4405F;"></i> Instagram</td>
+            <td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr>
+            <td><i class="fa-brands fa-tiktok"></i> TikTok</td>
+            <td>--</td><td>--</td><td>--</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
 
-    <!-- 3. Campañas -->
+    <!-- 3. Campañas (Con opción de agregar foto e inversión detallada) -->
     <section id="campanas" class="section-content">
-      <h2>Rendimiento de Campañas</h2>
-      <p style="margin-bottom: 16px; color: #64748b;">Campañas activas e históricas</p>
-      <div class="data-table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre de Campaña</th>
-              <th>Estado</th>
-              <th>Presupuesto</th>
-              <th>Resultados</th>
-            </tr>
-          </thead>
-          <tbody id="table-campanas">
-            <tr><td colspan="4">Cargando datos...</td></tr>
-          </tbody>
-        </table>
+      <div class="action-header">
+        <h2>Gestión de Campañas</h2>
+        <button class="btn-primary" onclick="alert('Formulario para agregar campaña y subir foto')"><i class="fa-solid fa-plus"></i> Agregar Campaña</button>
       </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Arte / Imagen</th>
+            <th>Nombre Campaña</th>
+            <th>Estado</th>
+            <th>Presupuesto Invertido</th>
+            <th>Resultados</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><img src="https://via.placeholder.com/40" style="border-radius: 4px;" alt="Camp"></td>
+            <td>Volcatec</td>
+            <td><span style="color:red; font-weight:600;">Inactivo</span></td>
+            <td>Q50.00 (Total)</td>
+            <td>Detalle Resultados</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
 
     <!-- 4. Post Impulsados -->
     <section id="post" class="section-content">
-      <h2>Publicaciones Impulsadas</h2>
-      <p style="margin-bottom: 16px; color: #64748b;">Métricas de anuncios y publicaciones pautadas</p>
-      <div class="data-table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Post</th>
-              <th>Inversión</th>
-              <th>Impulsado En</th>
-              <th>Impresiones</th>
-            </tr>
-          </thead>
-          <tbody id="table-post">
-            <tr><td colspan="4">Cargando datos...</td></tr>
-          </tbody>
-        </table>
+      <div class="action-header">
+        <h2>Post Impulsados</h2>
       </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Post / Publicación</th>
+            <th>Plataforma</th>
+            <th>Inversión</th>
+            <th>Impresiones / Clics</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4">Selecciona una fecha o marca para cargar los datos...</td></tr>
+        </tbody>
+      </table>
     </section>
 
-    <!-- 5. Plataformas -->
+    <!-- 5. Plataformas de Mercadeo -->
     <section id="plataformas" class="section-content">
-      <h2>Integración de Plataformas</h2>
-      <p style="margin-bottom: 16px; color: #64748b;">Meta Ads, Google Ads y TikTok Ads</p>
-      <div class="data-table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Plataforma</th>
-              <th>Cuenta Vinculada</th>
-              <th>Estado de Conexión</th>
-            </tr>
-          </thead>
-          <tbody id="table-plataformas">
-            <tr><td colspan="3">Cargando datos...</td></tr>
-          </tbody>
-        </table>
+      <div class="action-header">
+        <h2>Plataformas de Mercadeo</h2>
+        <button class="btn-primary" onclick="alert('Formulario para agregar nueva plataforma')"><i class="fa-solid fa-plus"></i> Agregar Plataforma</button>
       </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Plataforma</th>
+            <th>Estado Conexión</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Meta Ads Manager</td>
+            <td><span style="color:green; font-weight:600;">Conectado</span></td>
+          </tr>
+        </tbody>
+      </table>
     </section>
 
   </main>
 
   <script>
-    // Cambio de Pestañas
     function switchTab(tabId, element) {
-      document.querySelectorAll('.section-content').forEach(sec => sec.classList.remove('active'));
-      document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-      
+      document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
       element.classList.add('active');
-
-      const titles = {
-        'inicio': 'Dashboard General',
-        'redes': 'Redes Sociales',
-        'campanas': 'Campañas de Marketing',
-        'post': 'Post Impulsados',
-        'plataformas': 'Plataformas Conectadas'
-      };
-      document.getElementById('page-title').innerText = titles[tabId];
     }
 
-    // Selector de Marca
     function setBrand(brand, element) {
-      document.querySelectorAll('.brand-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.brand-btn').forEach(b => b.classList.remove('active'));
       element.classList.add('active');
 
       const root = document.documentElement;
+      const logoImg = document.getElementById('current-brand-logo');
+
       if (brand === 'acuaroni') {
         root.style.setProperty('--brand-primary', 'var(--acuaroni-primary)');
-        root.style.setProperty('--brand-secondary', 'var(--acuaroni-secondary)');
+        logoImg.src = "https://via.placeholder.com/140x50?text=Repuestos+Acuaroni";
       } else {
         root.style.setProperty('--brand-primary', 'var(--aztec-primary)');
-        root.style.setProperty('--brand-secondary', 'var(--aztec-secondary)');
+        logoImg.src = "https://via.placeholder.com/140x50?text=AZTEC+Oils";
       }
-      
-      // Aquí conectaremos la actualización dinámica desde Google Sheets
-      loadSheetData(brand);
-    }
-
-    // Función base para conectar con Google Sheets
-    function loadSheetData(brand) {
-      console.log("Cargando datos para marca:", brand);
-      // Próximo paso: Agregar la lógica del Apps Script / API de Google Sheets
     }
   </script>
 </body>
