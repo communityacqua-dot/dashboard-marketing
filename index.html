@@ -6,7 +6,6 @@
   <title>Dashboard Marketing - Acquaroni & AZTEC</title>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
@@ -15,391 +14,197 @@
       --card-glass: rgba(15, 23, 42, 0.7);
       --border-glass: rgba(0, 242, 254, 0.25);
       --cyan-glow: #00F2FE;
-      --violet-glow: #7928CA;
       --text-main: #F8FAFC;
-      --sidebar-width: 280px;
+      --sidebar-width: 260px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg-dark); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-main); display: flex; min-height: 100vh; }
 
     /* SIDEBAR */
-    .sidebar {
-      width: var(--sidebar-width);
-      background: #020617;
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      height: 100vh;
-      z-index: 100;
-      padding-bottom: 20px;
-    }
-
-    .brand-header {
-      padding: 20px;
-      text-align: center;
-      background: #000;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand-logo-img { height: 42px; width: auto; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
-    .brand-logo-title { font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; color: #FFF; }
-
-    .sidebar-menu { list-style: none; padding: 15px 0; flex-grow: 1; }
-    .menu-item {
-      padding: 12px 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      color: #94A3B8;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.25s ease;
-    }
-    .menu-item:hover, .menu-item.active {
-      color: #FFF;
-      background: rgba(0, 242, 254, 0.08);
-      border-left: 4px solid var(--cyan-glow);
-    }
-
-    .sidebar-preview-box {
-      margin: 10px 15px;
-      padding: 12px;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px dashed rgba(0, 242, 254, 0.4);
-      border-radius: 12px;
-      text-align: center;
-    }
-    .sidebar-preview-box h5 { font-size: 0.75rem; color: #94A3B8; margin-bottom: 8px; text-transform: uppercase; }
-    .sidebar-preview-img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; display: none; }
-    .sidebar-preview-placeholder { font-size: 0.75rem; color: #64748B; padding: 20px 0; }
+    .sidebar { width: var(--sidebar-width); background: #020617; border-right: 1px solid rgba(255,255,255,0.1); padding: 20px; }
+    .sidebar h2 { color: #FFF; font-size: 1.2rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+    .menu-item { padding: 12px; margin-bottom: 8px; color: #94A3B8; cursor: pointer; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .menu-item:hover, .menu-item.active { background: rgba(0, 242, 254, 0.1); color: #FFF; border-left: 3px solid var(--cyan-glow); }
 
     /* MAIN CONTENT */
-    .main-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 25px; width: calc(100% - var(--sidebar-width)); }
+    .main-content { flex-grow: 1; padding: 25px; width: calc(100% - var(--sidebar-width)); }
 
-    /* TOPBAR & FILTROS DE FECHA (PUNTO 7) */
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #000000;
-      padding: 14px 24px;
-      border-radius: 16px;
-      margin-bottom: 25px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    }
+    /* TOPBAR */
+    .topbar { display: flex; justify-content: space-between; align-items: center; background: #000; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; }
+    .status-badge { color: var(--cyan-glow); font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .select-date { background: #0F172A; color: #FFF; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; }
 
-    .brand-selector { display: flex; gap: 8px; background: #0F172A; padding: 4px; border-radius: 10px; }
-    .brand-btn {
-      border: none; padding: 8px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; color: #94A3B8; background: transparent; transition: 0.3s;
-    }
-    .brand-btn.active[data-brand="acuaroni"] { background: #D32F2F; color: white; box-shadow: 0 0 12px rgba(211, 47, 47, 0.5); }
-    .brand-btn.active[data-brand="aztec"] { background: #1E293B; color: var(--cyan-glow); border: 1px solid var(--cyan-glow); }
+    /* TABS Y TABLAS */
+    .subtabs-bar { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+    .subtab-btn { background: #0F172A; border: 1px solid rgba(255,255,255,0.1); color: #94A3B8; padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
+    .subtab-btn.active { background: var(--cyan-glow); color: #000; font-weight: 700; }
 
-    .calendar-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #090D16;
-      padding: 6px 16px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .calendar-title { color: #FFFFFF; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
-    
-    .select-date {
-      background: #0F172A;
-      color: #FFF;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .excel-upload-btn {
-      background: #2563eb; color: #FFF; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 6px;
-    }
-
-    /* PANELS & TABLES */
-    .glass-panel {
-      background: var(--card-glass);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--border-glass);
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 20px;
-    }
-
-    .section-content { display: none; }
-    .section-content.active { display: block; }
-
-    .subtabs-bar { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-    .subtab-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94A3B8; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
-    .subtab-btn.active { background: linear-gradient(135deg, var(--cyan-glow), #00A8FF); color: #000; border-color: var(--cyan-glow); }
-
-    .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
-    .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .data-table th { color: #94A3B8; text-transform: uppercase; font-size: 0.75rem; }
-
-    /* POSTS IMPULSADOS (PUNTO 4) */
-    .iso-carousel { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 20px; }
-    .iso-card { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--violet-glow); border-radius: 16px; padding: 18px; }
-
-    /* MODAL */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 1000; }
-    .modal-content { background: #0F172A; border: 1px solid var(--cyan-glow); border-radius: 20px; width: 90%; max-width: 800px; padding: 25px; color: white; max-height: 85vh; overflow-y: auto; }
+    .table-container { overflow-x: auto; background: var(--card-glass); border: 1px solid var(--border-glass); border-radius: 12px; padding: 15px; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+    .data-table th, .data-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .data-table th { color: var(--cyan-glow); text-transform: uppercase; white-space: nowrap; }
   </style>
 </head>
 <body>
 
-  <!-- SIDEBAR (PUNTO 6) -->
   <aside class="sidebar">
-    <div class="brand-header">
-      <img id="brand-logo" src="https://communityacqua-dot.github.io/dashboard-marketing/WhatsApp%20Image%202026-08-07%20at%209.17.18%20AM.jpeg" class="brand-logo-img" alt="Logo">
-      <div id="brand-title" class="brand-logo-title">REPUESTOS ACQUARONI</div>
-    </div>
-
-    <ul class="sidebar-menu">
-      <li class="menu-item active" onclick="switchTab('inicio', this)"><i class="fa-solid fa-chart-line"></i><span>Dashboard General</span></li>
-      <li class="menu-item" onclick="switchTab('redes', this)"><i class="fa-solid fa-share-nodes"></i><span>Redes Sociales</span></li>
-      <li class="menu-item" onclick="switchTab('campanas', this)"><i class="fa-solid fa-bullhorn"></i><span>Campañas</span></li>
-      <li class="menu-item" onclick="switchTab('posts', this)"><i class="fa-solid fa-rocket"></i><span>Posts Impulsados</span></li>
-      <li class="menu-item" onclick="switchTab('plataformas', this)"><i class="fa-solid fa-layer-group"></i><span>Plataformas</span></li>
-    </ul>
-
-    <div class="sidebar-preview-box">
-      <h5><i class="fa-regular fa-image"></i> Vista Previa Archivo</h5>
-      <img id="sidebar-preview-img" class="sidebar-preview-img" alt="Preview">
-      <div id="sidebar-preview-placeholder" class="sidebar-preview-placeholder">Sin imagen seleccionada</div>
+    <h2><i class="fa-solid fa-chart-line" style="color:var(--cyan-glow);"></i> Dashboard</h2>
+    <div class="menu-item active">
+      <i class="fa-solid fa-table"></i> Datos Google Sheets
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <main class="main-content">
-    
-    <!-- TOPBAR (PUNTO 7: FILTRO POR MES Y AÑO DINÁMICO SEGÚN LA PESTAÑA Y CUENTA) -->
     <header class="topbar">
-      <div class="brand-selector">
-        <button class="brand-btn active" data-brand="acuaroni" onclick="setBrand('acuaroni', this)">Repuestos Acquaroni</button>
-        <button class="brand-btn" data-brand="aztec" onclick="setBrand('aztec', this)">AZtec Oils</button>
+      <div id="status-label" class="status-badge">
+        <i class="fa-solid fa-spinner fa-spin"></i> Conectando a Google Sheets...
       </div>
+      
+      <!-- Controles de Período / Fecha -->
+      <div style="display:flex; gap:10px;">
+        <select id="selectMonth" class="select-date" onchange="renderActiveSheet()">
+          <option value="ALL">Todos los Meses</option>
+          <option value="0">Enero</option>
+          <option value="1">Febrero</option>
+          <option value="2">Marzo</option>
+          <option value="3">Abril</option>
+          <option value="4">Mayo</option>
+          <option value="5">Junio</option>
+          <option value="6">Julio</option>
+          <option value="7">Agosto</option>
+          <option value="8">Septiembre</option>
+          <option value="9">Octubre</option>
+          <option value="10">Noviembre</option>
+          <option value="11">Diciembre</option>
+        </select>
 
-      <div style="display:flex; gap:10px; align-items:center;">
-        <label class="excel-upload-btn">
-          <i class="fa-solid fa-file-excel"></i> Cargar Excel
-          <input type="file" id="excelFileInput" accept=".xlsx, .xls" style="display: none;">
-        </label>
-
-        <div class="calendar-container">
-          <div class="calendar-title"><i class="fa-regular fa-calendar-check" style="color:var(--cyan-glow);"></i> PERÍODO:</div>
-          
-          <select id="selectMonth" class="select-date" onchange="renderAll()">
-            <option value="ALL">Todos los Meses</option>
-            <option value="0">Enero</option>
-            <option value="1">Febrero</option>
-            <option value="2">Marzo</option>
-            <option value="3">Abril</option>
-            <option value="4">Mayo</option>
-            <option value="5">Junio</option>
-            <option value="6">Julio</option>
-            <option value="7" selected>Agosto</option>
-            <option value="8">Septiembre</option>
-            <option value="9">Octubre</option>
-            <option value="10">Noviembre</option>
-            <option value="11">Diciembre</option>
-          </select>
-
-          <select id="selectYear" class="select-date" onchange="renderAll()">
-            <option value="ALL">Todos los Años</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026" selected>2026</option>
-          </select>
-        </div>
+        <select id="selectYear" class="select-date" onchange="renderActiveSheet()">
+          <option value="ALL">Todos los Años</option>
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026" selected>2026</option>
+        </select>
       </div>
     </header>
 
-    <!-- 1. DASHBOARD GENERAL -->
-    <section id="inicio" class="section-content active">
-      <div class="glass-panel">
-        <h3 style="color:#FFF; font-size:1.1rem; margin-bottom:15px;">Resumen Presupuestario</h3>
+    <!-- Visualizador Dinámico de Pestañas y Columnas -->
+    <section>
+      <div class="subtabs-bar" id="sheet-subtabs"></div>
+      <div class="table-container">
         <table class="data-table">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Rubro / Servicio</th>
-              <th>Presupuesto Asignado</th>
-              <th>Ejecutado</th>
-            </tr>
-          </thead>
-          <tbody id="presupuesto-table-body"></tbody>
+          <thead id="dynamic-table-head"></thead>
+          <tbody id="dynamic-table-body"></tbody>
         </table>
       </div>
     </section>
-
-    <!-- 2. REDES SOCIALES (Muestra datos de la red elegida filtrados por mes/año) -->
-    <section id="redes" class="section-content">
-      <div class="subtabs-bar" id="redes-subtabs"></div>
-      <div class="glass-panel">
-        <h3 id="red-title-header" style="color:#FFF; margin-bottom:15px;">Métricas de Red Social</h3>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Publicación / Campaña</th>
-              <th>Alcance</th>
-              <th>Interacciones</th>
-              <th>Clics</th>
-            </tr>
-          </thead>
-          <tbody id="redes-table-body"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- 3. CAMPAÑAS -->
-    <section id="campanas" class="section-content">
-      <div id="campanas-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;"></div>
-    </section>
-
-    <!-- 4. POSTS IMPULSADOS (PUNTO 4: BOTÓN SUBIR FOTO FUNCIONAL) -->
-    <section id="posts" class="section-content">
-      <div class="glass-panel">
-        <h2 style="color:#FFF; font-size:1.4rem;">POSTS IMPULSADOS</h2>
-        <div style="margin-top:5px; font-size:1.1rem; color:#FFF;">
-          INVERSIÓN FILTRADA: <span id="total-posts-inversion" style="color:var(--cyan-glow);">Q0.00</span>
-        </div>
-      </div>
-      <div class="iso-carousel" id="posts-iso-grid"></div>
-    </section>
-
-    <!-- 5. PLATAFORMAS (PUNTO 5: DATOS DE LA PESTAÑA PLATAFORMAS DE EXCEL Y FACTURAS) -->
-    <section id="plataformas" class="section-content">
-      <div class="glass-panel">
-        <h3 style="font-size:1.3rem; color:#FFF; margin-bottom:15px;"><i class="fa-solid fa-layer-group"></i> Facturación de Plataformas (Excel)</h3>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Plataforma / Servicio</th>
-              <th>Detalle / Concepto</th>
-              <th>Monto Factura</th>
-            </tr>
-          </thead>
-          <tbody id="plataformas-table-body"></tbody>
-        </table>
-        <div style="margin-top:15px; font-size:1.2rem; font-weight:700; color:var(--cyan-glow);" id="plataformas-total-facturas">
-          TOTAL FACTURADO: Q0.00
-        </div>
-      </div>
-    </section>
-
   </main>
 
-  <!-- MODAL CAMPAÑA -->
-  <div class="modal-overlay" id="campaign-modal">
-    <div class="modal-content">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h3 id="modal-camp-title">Detalle de Campaña</h3>
-        <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:1.5rem;" onclick="closeModal()"></i>
-      </div>
-      <div id="modal-camp-posts" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:15px;"></div>
-    </div>
-  </div>
-
   <script>
-    const LOGO_ACQUARONI = "https://communityacqua-dot.github.io/dashboard-marketing/WhatsApp%20Image%202026-08-07%20at%209.17.18%20AM.jpeg";
-    const LOGO_AZTEC = "https://communityacqua-dot.github.io/dashboard-marketing/WhatsApp%20Image%202026-08-07%20at%209.17.02%20AM.jpeg";
+    const SPREADSHEET_ID = "1CfA0hL41Za-gSGTVaQEOKoIczmF3BP2183zZ9miCqKs";
 
-    let currentBrand = 'acuaroni';
-    let currentTab = 'inicio';
-    let currentRedTab = 'Facebook';
-    let loadedWorkbook = null;
+    let googleSheetsData = {};
+    let activeSheetName = '';
 
-    // Base de datos de fallback estructurada con fechas (mes/año)
-    const excelDB = {
-      acuaroni: {
-        Presupuesto: [
-          { fecha: '2026-08-01', rubro: 'Meta Ads', asignado: 6000, ejecutado: 4500 },
-          { fecha: '2026-03-15', rubro: 'Campaña Marzo Meta', asignado: 5000, ejecutado: 5000 }
-        ],
-        Facebook: [
-          { fecha: '2026-08-05', publicacion: 'Promo Repuestos Agosto', alcance: 15400, interacciones: 1200, clics: 450 },
-          { fecha: '2026-03-10', publicacion: 'Promoción Marzomóvil', alcance: 22000, interacciones: 3100, clics: 890 }
-        ],
-        Instagram: [
-          { fecha: '2026-08-02', publicacion: 'Reel Aceites y Filtros', alcance: 8900, interacciones: 950, clics: 210 },
-          { fecha: '2026-03-18', publicacion: 'Carrusel Marzo Mantenimiento', alcance: 14000, interacciones: 1800, clics: 500 }
-        ],
-        TikTok: [
-          { fecha: '2026-08-04', publicacion: 'Video Tip Mecánico', alcance: 35000, interacciones: 4200, clics: 1100 }
-        ],
-        PostsImpulsados: [
-          { fecha: '2026-08-01', titulo: 'Promo Repuestos Motor', inversion: 450, alcance: 15400, img: 'https://picsum.photos/300/300?random=10' },
-          { fecha: '2026-03-05', titulo: 'Impulso Especial Marzo', inversion: 600, alcance: 21000, img: 'https://picsum.photos/300/300?random=11' }
-        ],
-        Plataformas: [
-          { fecha: '2026-08-01', servicio: 'Fanpage Karma', detalle: 'Factura Suscripción Monitoreo Social', monto: 850.00 },
-          { fecha: '2026-03-01', servicio: 'Fanpage Karma', detalle: 'Factura Licencia Marzo', monto: 850.00 }
-        ]
-      },
-      aztec: {
-        Presupuesto: [
-          { fecha: '2026-08-01', rubro: 'Industrial Oils FB', asignado: 4000, ejecutado: 3100 }
-        ],
-        Facebook: [
-          { fecha: '2026-08-03', publicacion: 'Lubricantes de Alto Rendimiento', alcance: 12500, interacciones: 800, clics: 300 }
-        ],
-        Instagram: [],
-        TikTok: [],
-        PostsImpulsados: [
-          { fecha: '2026-08-02', titulo: 'Gama Sintética AZtec', inversion: 800, alcance: 18900, img: 'https://picsum.photos/300/300?random=12' }
-        ],
-        Plataformas: [
-          { fecha: '2026-08-01', servicio: 'Fanpage Karma', detalle: 'Licencia AZtec', monto: 850.00 }
-        ]
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchGoogleSheetData();
+    });
+
+    async function fetchGoogleSheetData() {
+      const statusLabel = document.getElementById('status-label');
+      const fetchUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=xlsx`;
+
+      try {
+        const response = await fetch(fetchUrl);
+        if (!response.ok) throw new Error("No se pudo conectar a Google Sheets");
+
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
+
+        googleSheetsData = {};
+
+        workbook.SheetNames.forEach(sheetName => {
+          const sheet = workbook.Sheets[sheetName];
+          googleSheetsData[sheetName] = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+        });
+
+        statusLabel.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10B981;"></i> Conectado a Google Sheets`;
+
+        if (workbook.SheetNames.length > 0) {
+          activeSheetName = workbook.SheetNames[0];
+          buildSheetTabs(workbook.SheetNames);
+          renderActiveSheet();
+        }
+
+      } catch (err) {
+        statusLabel.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#EF4444;"></i> Error de conexión con Google Sheets`;
+        console.error(err);
       }
-    };
-
-    function switchTab(tabId, el) {
-      document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      el.classList.add('active');
-      currentTab = tabId;
-      renderAll();
     }
 
-    function setBrand(brand, el) {
-      document.querySelectorAll('.brand-btn').forEach(b => b.classList.remove('active'));
-      el.classList.add('active');
-      currentBrand = brand;
-
-      document.getElementById('brand-logo').src = (brand === 'acuaroni') ? LOGO_ACQUARONI : LOGO_AZTEC;
-      document.getElementById('brand-title').innerText = (brand === 'acuaroni') ? "REPUESTOS ACQUARONI" : "AZTEC OILS";
-
-      renderAll();
+    function buildSheetTabs(sheetNames) {
+      const subtabsContainer = document.getElementById('sheet-subtabs');
+      subtabsContainer.innerHTML = sheetNames.map(name => `
+        <button class="subtab-btn ${name === activeSheetName ? 'active' : ''}" onclick="selectSheet('${name}')">
+          ${name}
+        </button>
+      `).join('');
     }
 
-    // PUNTO 7: Función central de filtrado por Mes y Año sobre cualquier conjunto de filas del Excel
-    function filterByDate(dataArray) {
-      if (!dataArray || !Array.isArray(dataArray)) return [];
+    function selectSheet(name) {
+      activeSheetName = name;
+      document.querySelectorAll('.subtab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText.trim() === name);
+      });
+      renderActiveSheet();
+    }
 
+    function renderActiveSheet() {
+      const rows = googleSheetsData[activeSheetName] || [];
+      const thead = document.getElementById('dynamic-table-head');
+      const tbody = document.getElementById('dynamic-table-body');
+
+      if (rows.length === 0) {
+        thead.innerHTML = '';
+        tbody.innerHTML = `<tr><td style="color:#64748B;">La pestaña "${activeSheetName}" no contiene datos.</td></tr>`;
+        return;
+      }
+
+      const columns = Object.keys(rows[0]);
+      thead.innerHTML = `<tr>${columns.map(col => `<th>${col}</th>`).join('')}</tr>`;
+
+      const filteredRows = filterRowsByDate(rows, columns);
+
+      if (filteredRows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="${columns.length}" style="text-align:center; color:#64748B;">Sin datos para el mes/año seleccionado.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filteredRows.map(row => `
+        <tr>
+          ${columns.map(col => {
+            let val = row[col];
+            if (val instanceof Date) {
+              val = val.toISOString().split('T')[0];
+            }
+            return `<td>${val !== undefined ? val : ''}</td>`;
+          }).join('')}
+        </tr>
+      `).join('');
+    }
+
+    function filterRowsByDate(rows, columns) {
       const selMonth = document.getElementById('selectMonth').value;
       const selYear = document.getElementById('selectYear').value;
 
-      return dataArray.filter(row => {
-        let rawDate = row.fecha || row.Fecha || row.FECHA;
-        if (!rawDate) return true; // Si no tiene campo fecha, se mantiene
+      if (selMonth === 'ALL' && selYear === 'ALL') return rows;
+
+      const dateCol = columns.find(c => c.toLowerCase().includes('fecha') || c.toLowerCase().includes('date') || c.toLowerCase().includes('mes'));
+      if (!dateCol) return rows;
+
+      return rows.filter(row => {
+        let rawDate = row[dateCol];
+        if (!rawDate) return true;
 
         let d = new Date(rawDate);
         if (isNaN(d.getTime())) return true;
@@ -410,237 +215,6 @@
         return matchMonth && matchYear;
       });
     }
-
-    // Lectura de Excel en tiempo real
-    document.getElementById('excelFileInput').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const data = new Uint8Array(evt.target.result);
-        loadedWorkbook = XLSX.read(data, { type: 'array', cellDates: true });
-        parseWorkbookToDB();
-        renderAll();
-      };
-      reader.readAsArrayBuffer(file);
-    });
-
-    function parseWorkbookToDB() {
-      if (!loadedWorkbook) return;
-      
-      // Procesa automáticamente las pestañas del libro y las mapea al estado global
-      loadedWorkbook.SheetNames.forEach(sheetName => {
-        const sheet = loadedWorkbook.Sheets[sheetName];
-        const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-        
-        if (sheetName.toLowerCase().includes('plataforma')) {
-          excelDB[currentBrand].Plataformas = json;
-        } else if (sheetName.toLowerCase().includes('presupuesto')) {
-          excelDB[currentBrand].Presupuesto = json;
-        } else {
-          excelDB[currentBrand][sheetName] = json;
-        }
-      });
-    }
-
-    function renderAll() {
-      if (currentTab === 'inicio') renderDashboardGeneral();
-      if (currentTab === 'redes') renderRedes();
-      if (currentTab === 'campanas') renderCampanas();
-      if (currentTab === 'posts') renderPostsImpulsados();
-      if (currentTab === 'plataformas') renderPlataformas();
-    }
-
-    // 1. Dashboard General
-    function renderDashboardGeneral() {
-      const rawData = excelDB[currentBrand].Presupuesto || [];
-      const filtered = filterByDate(rawData);
-
-      const tbody = document.getElementById('presupuesto-table-body');
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748B;">No hay registros de presupuesto para el mes/año seleccionado.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(item => `
-        <tr>
-          <td>${item.fecha || '-'}</td>
-          <td style="color:#FFF; font-weight:600;">${item.rubro || item.Rubro || '-'}</td>
-          <td>Q${Number(item.asignado || item.Asignado || 0).toLocaleString()}</td>
-          <td style="color:var(--cyan-glow);">Q${Number(item.ejecutado || item.Ejecutado || 0).toLocaleString()}</td>
-        </tr>
-      `).join('');
-    }
-
-    // 2. Redes Sociales (Lee la pestaña específica de la red elegida y le aplica el filtro de mes/año)
-    function renderRedes() {
-      const availableRedes = (currentBrand === 'acuaroni') ? ['Facebook', 'Instagram', 'TikTok'] : ['Facebook', 'Instagram'];
-      const subtabs = document.getElementById('redes-subtabs');
-      
-      subtabs.innerHTML = availableRedes.map(red => `
-        <button class="subtab-btn ${red === currentRedTab ? 'active' : ''}" onclick="switchRedTab('${red}', this)">${red}</button>
-      `).join('');
-
-      document.getElementById('red-title-header').innerText = `${currentRedTab} (${currentBrand === 'acuaroni' ? 'Acquaroni' : 'AZtec'})`;
-
-      const rawRedData = excelDB[currentBrand][currentRedTab] || [];
-      const filtered = filterByDate(rawRedData);
-
-      const tbody = document.getElementById('redes-table-body');
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748B;">No hay datos en ${currentRedTab} para el período de fecha seleccionado.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(r => `
-        <tr>
-          <td>${r.fecha || r.Fecha || '-'}</td>
-          <td style="color:#FFF; font-weight:600;">${r.publicacion || r.Publicacion || r.Campaña || '-'}</td>
-          <td>${Number(r.alcance || r.Alcance || 0).toLocaleString()}</td>
-          <td>${Number(r.interacciones || r.Interacciones || 0).toLocaleString()}</td>
-          <td style="color:var(--cyan-glow);">${Number(r.clics || r.Clics || 0).toLocaleString()}</td>
-        </tr>
-      `).join('');
-    }
-
-    function switchRedTab(red, btn) {
-      currentRedTab = red;
-      document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderRedes();
-    }
-
-    // 3. Campañas
-    function renderCampanas() {
-      const grid = document.getElementById('campanas-grid');
-      grid.innerHTML = `
-        <div style="background:#FFF; color:#000; padding:20px; border-radius:14px; grid-column: 1/-1;">
-          <h4 style="margin-bottom:8px;">Campañas Activas</h4>
-          <p style="font-size:0.85rem; color:#475569;">Selecciona una campaña para cargar/revisar publicaciones individuales.</p>
-          <button style="margin-top:10px; padding:8px 16px; background:#0F172A; color:#FFF; border:none; border-radius:6px; cursor:pointer;" onclick="openCampaignModal('Campaña Principal', 3)">
-            Ver Publicaciones
-          </button>
-        </div>
-      `;
-    }
-
-    function openCampaignModal(nombre, count) {
-      document.getElementById('modal-camp-title').innerText = `Campaña: ${nombre}`;
-      const container = document.getElementById('modal-camp-posts');
-      let html = '';
-      for(let i = 1; i <= count; i++) {
-        html += `
-          <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:12px; text-align:center;">
-            <h5 style="color:#FFF; margin-bottom:10px;">Post #${i}</h5>
-            <input type="file" id="file-camp-${i}" style="display:none;" onchange="handleFileSelect(event)">
-            <button style="padding:6px 12px; background:var(--cyan-glow); border:none; border-radius:6px; font-weight:700; cursor:pointer;" onclick="document.getElementById('file-camp-${i}').click()">
-              <i class="fa-solid fa-upload"></i> Subir Arte
-            </button>
-          </div>
-        `;
-      }
-      container.innerHTML = html;
-      document.getElementById('campaign-modal').style.display = 'flex';
-    }
-
-    function closeModal() { document.getElementById('campaign-modal').style.display = 'none'; }
-
-    // 4. Posts Impulsados (Boton Subir Imagen Funcional + Filtro de Fecha)
-    function renderPostsImpulsados() {
-      const rawPosts = excelDB[currentBrand].PostsImpulsados || [];
-      const filtered = filterByDate(rawPosts);
-      const grid = document.getElementById('posts-iso-grid');
-      let total = 0;
-
-      if (filtered.length === 0) {
-        grid.innerHTML = `<div style="color:#64748B;">No hay posts impulsados en la fecha seleccionada.</div>`;
-        document.getElementById('total-posts-inversion').innerText = `Q0.00`;
-        return;
-      }
-
-      grid.innerHTML = filtered.map((p, idx) => {
-        const inv = Number(p.inversion || p.Inversion || 0);
-        total += inv;
-        return `
-          <div class="iso-card">
-            <img id="post-img-preview-${idx}" src="${p.img || 'https://via.placeholder.com/300?text=Subir+Imagen'}" style="width:100%; height:150px; object-fit:cover; border-radius:10px; margin-bottom:12px;">
-            <h4 style="color:#FFF; font-size:0.95rem; margin-bottom:8px;">${p.titulo || p.Titulo || 'Post Promocional'}</h4>
-            <div style="font-size:0.8rem; color:#A78BFA;">Fecha: ${p.fecha || '-'}</div>
-            <div style="font-size:0.8rem; color:#A78BFA;">Inversión: <strong>Q${inv}</strong></div>
-            <div style="font-size:0.8rem; color:#A78BFA; margin-bottom:12px;">Alcance: <strong>${Number(p.alcance || 0).toLocaleString()}</strong></div>
-            
-            <input type="file" id="file-post-${idx}" accept="image/*" style="display:none;" onchange="updatePostImage(event, 'post-img-preview-${idx}')">
-            <button style="width:100%; padding:8px; background:transparent; border:1px dashed var(--violet-glow); color:#FFF; border-radius:8px; cursor:pointer; font-size:0.8rem;" onclick="document.getElementById('file-post-${idx}').click()">
-              <i class="fa-solid fa-upload"></i> Cambiar Imagen
-            </button>
-          </div>
-        `;
-      }).join('');
-
-      document.getElementById('total-posts-inversion').innerText = `Q${total.toLocaleString('es-GT', {minimumFractionDigits: 2})}`;
-    }
-
-    function updatePostImage(evt, targetId) {
-      handleFileSelect(evt);
-      const file = evt.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById(targetId).src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    // 5. Plataformas (Pestaña Plataformas + Filtro de fecha y suma total)
-    function renderPlataformas() {
-      const rawPlat = excelDB[currentBrand].Plataformas || [];
-      const filtered = filterByDate(rawPlat);
-
-      const tbody = document.getElementById('plataformas-table-body');
-      let totalFacturas = 0;
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748B;">Sin facturas/plataformas registradas en la fecha seleccionada.</td></tr>`;
-        document.getElementById('plataformas-total-facturas').innerText = `TOTAL FACTURADO: Q0.00`;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(p => {
-        const monto = Number(p.monto || p.Monto || p.Factura || 0);
-        totalFacturas += monto;
-        return `
-          <tr>
-            <td>${p.fecha || p.Fecha || '-'}</td>
-            <td style="color:#FFF; font-weight:600;">${p.servicio || p.Servicio || p.Plataforma || '-'}</td>
-            <td style="color:#94A3B8;">${p.detalle || p.Detalle || p.Concepto || '-'}</td>
-            <td style="color:var(--cyan-glow); font-weight:700;">Q${monto.toLocaleString('es-GT', {minimumFractionDigits: 2})}</td>
-          </tr>
-        `;
-      }).join('');
-
-      document.getElementById('plataformas-total-facturas').innerText = `TOTAL FACTURADO: Q${totalFacturas.toLocaleString('es-GT', {minimumFractionDigits: 2})}`;
-    }
-
-    // 6. Preview Lateral al seleccionar cualquier imagen
-    function handleFileSelect(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const img = document.getElementById('sidebar-preview-img');
-          const placeholder = document.getElementById('sidebar-preview-placeholder');
-          img.src = evt.target.result;
-          img.style.display = 'block';
-          placeholder.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    // Inicialización
-    renderAll();
   </script>
 </body>
 </html>
