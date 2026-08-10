@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Marketing - Acquaroni & AZTEC</title>
+  <title>Dashboard Marketing - Lectura Dinámica</title>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -18,24 +18,22 @@
       --sidebar-width: 260px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
     body { background-color: var(--bg-dark); color: var(--text-main); display: flex; min-height: 100vh; }
 
     /* SIDEBAR */
     .sidebar { width: var(--sidebar-width); background: #020617; border-right: 1px solid rgba(255,255,255,0.1); padding: 20px; }
-    .sidebar h2 { color: #FFF; font-size: 1.2rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
-    .menu-item { padding: 12px; margin-bottom: 8px; color: #94A3B8; cursor: pointer; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .menu-item { padding: 12px; margin-bottom: 8px; color: #94A3B8; cursor: pointer; border-radius: 8px; font-weight: 600; }
     .menu-item:hover, .menu-item.active { background: rgba(0, 242, 254, 0.1); color: #FFF; border-left: 3px solid var(--cyan-glow); }
 
-    /* MAIN CONTENT */
+    /* MAIN */
     .main-content { flex-grow: 1; padding: 25px; width: calc(100% - var(--sidebar-width)); }
 
     /* TOPBAR */
     .topbar { display: flex; justify-content: space-between; align-items: center; background: #000; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; }
-    .status-badge { color: var(--cyan-glow); font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
     .select-date { background: #0F172A; color: #FFF; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; }
 
-    /* TABS Y TABLAS */
+    /* TABS Y TABLAS DINÁMICAS */
     .subtabs-bar { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
     .subtab-btn { background: #0F172A; border: 1px solid rgba(255,255,255,0.1); color: #94A3B8; padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
     .subtab-btn.active { background: var(--cyan-glow); color: #000; font-weight: 700; }
@@ -43,25 +41,39 @@
     .table-container { overflow-x: auto; background: var(--card-glass); border: 1px solid var(--border-glass); border-radius: 12px; padding: 15px; }
     .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
     .data-table th, .data-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .data-table th { color: var(--cyan-glow); text-transform: uppercase; white-space: nowrap; }
+    .data-table th { color: var(--cyan-glow); text-transform: uppercase; }
   </style>
 </head>
 <body>
 
   <aside class="sidebar">
-    <h2><i class="fa-solid fa-chart-line" style="color:var(--cyan-glow);"></i> Dashboard</h2>
-    <div class="menu-item active">
-      <i class="fa-solid fa-table"></i> Datos Google Sheets
+    <h3 style="color:#FFF; margin-bottom:20px;">Dashboard</h3>
+    <div class="menu-item active" onclick="switchSection('excel-data')">
+      <i class="fa-solid fa-table"></i> Pestañas del Excel
     </div>
   </aside>
 
   <main class="main-content">
     <header class="topbar">
-      <div id="status-label" class="status-badge">
-        <i class="fa-solid fa-spinner fa-spin"></i> Conectando a Google Sheets...
-      </div>
-      
-      <!-- Controles de Período / Fecha -->
+      <div id="status-label" style="color:var(--cyan-glow); font-size:0.9rem;">Cargando Excel automático...</div>
+      <header class="topbar">
+  <div id="status-label" class="status-badge">
+    <i class="fa-solid fa-spinner fa-spin"></i> Conectando a Google Sheets...
+  </div>
+  
+  <!-- 🟢 PEGAR AQUÍ EL INTERRUPTOR -->
+  <div class="brand-switch-container">
+    <span class="brand-label" id="label-acq" style="color:var(--cyan-glow);">Acquaroni</span>
+    <label class="switch">
+      <input type="checkbox" id="brandToggle" onchange="toggleBrand()">
+      <span class="slider"></span>
+    </label>
+    <span class="brand-label" id="label-aztec">AZtec Oils</span>
+  </div>
+
+  <!-- Controles de Período / Fecha -->
+  <div style="display:flex; gap:10px;">
+      <!-- Selector de Fecha -->
       <div style="display:flex; gap:10px;">
         <select id="selectMonth" class="select-date" onchange="renderActiveSheet()">
           <option value="ALL">Todos los Meses</option>
@@ -88,8 +100,8 @@
       </div>
     </header>
 
-    <!-- Visualizador Dinámico de Pestañas y Columnas -->
-    <section>
+    <!-- Área donde se renderizan las pestañas del Excel -->
+    <section id="excel-data">
       <div class="subtabs-bar" id="sheet-subtabs"></div>
       <div class="table-container">
         <table class="data-table">
@@ -101,35 +113,37 @@
   </main>
 
   <script>
-    const SPREADSHEET_ID = "1CfA0hL41Za-gSGTVaQEOKoIczmF3BP2183zZ9miCqKs";
-
-    let googleSheetsData = {};
+    // Objeto donde guardaremos los datos parsed del Excel
+    let excelSheetsData = {};
     let activeSheetName = '';
 
+    // Carga automática del archivo al iniciar la página
     window.addEventListener('DOMContentLoaded', () => {
-      fetchGoogleSheetData();
+      loadExcelAutomatically();
     });
 
-    async function fetchGoogleSheetData() {
+    async function loadExcelAutomatically() {
       const statusLabel = document.getElementById('status-label');
-      const fetchUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=xlsx`;
-
       try {
-        const response = await fetch(fetchUrl);
-        if (!response.ok) throw new Error("No se pudo conectar a Google Sheets");
-
+        // Busca el archivo datos.xlsx guardado en el mismo directorio
+        const response = await fetch('datos.xlsx');
+        if (!response.ok) throw new Error("No se encontró el archivo datos.xlsx");
+        
         const arrayBuffer = await response.arrayBuffer();
         const workbook = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
 
-        googleSheetsData = {};
+        excelSheetsData = {};
 
+        // Extrae TODAS las pestañas y TODAS sus filas/columnas
         workbook.SheetNames.forEach(sheetName => {
           const sheet = workbook.Sheets[sheetName];
-          googleSheetsData[sheetName] = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+          // Convertimos la pestaña en un arreglo de objetos JSON
+          excelSheetsData[sheetName] = XLSX.utils.sheet_to_json(sheet, { defval: "" });
         });
 
-        statusLabel.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10B981;"></i> Conectado a Google Sheets`;
-
+        statusLabel.innerText = "Excel cargado exitosamente";
+        
+        // Seleccionamos la primera pestaña por defecto
         if (workbook.SheetNames.length > 0) {
           activeSheetName = workbook.SheetNames[0];
           buildSheetTabs(workbook.SheetNames);
@@ -137,11 +151,12 @@
         }
 
       } catch (err) {
-        statusLabel.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#EF4444;"></i> Error de conexión con Google Sheets`;
+        statusLabel.innerText = "Error o archivo datos.xlsx no encontrado. (Revisa la consola)";
         console.error(err);
       }
     }
 
+    // Genera un botón dinámico para cada pestaña detectada en el Excel
     function buildSheetTabs(sheetNames) {
       const subtabsContainer = document.getElementById('sheet-subtabs');
       subtabsContainer.innerHTML = sheetNames.map(name => `
@@ -159,8 +174,9 @@
       renderActiveSheet();
     }
 
+    // Renderiza dinámicamente las columnas y filas de la pestaña activa con filtro de fecha
     function renderActiveSheet() {
-      const rows = googleSheetsData[activeSheetName] || [];
+      const rows = excelSheetsData[activeSheetName] || [];
       const thead = document.getElementById('dynamic-table-head');
       const tbody = document.getElementById('dynamic-table-body');
 
@@ -170,20 +186,26 @@
         return;
       }
 
+      // 1. Obtener dinámicamente los nombres de TODAS las columnas del Excel
       const columns = Object.keys(rows[0]);
+
+      // Generar la cabecera dinámica de la tabla
       thead.innerHTML = `<tr>${columns.map(col => `<th>${col}</th>`).join('')}</tr>`;
 
+      // 2. Filtrar por fecha si existe alguna columna de fecha
       const filteredRows = filterRowsByDate(rows, columns);
 
       if (filteredRows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${columns.length}" style="text-align:center; color:#64748B;">Sin datos para el mes/año seleccionado.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${columns.length}" style="text-align:center; color:#64748B;">No hay datos para el período seleccionado.</td></tr>`;
         return;
       }
 
+      // 3. Generar las filas dinámicamente leyendo el valor de cada columna
       tbody.innerHTML = filteredRows.map(row => `
         <tr>
           ${columns.map(col => {
             let val = row[col];
+            // Formatear si es una fecha JS
             if (val instanceof Date) {
               val = val.toISOString().split('T')[0];
             }
@@ -193,14 +215,16 @@
       `).join('');
     }
 
+    // Filtra las filas si detecta una columna cuyo nombre contenga 'fecha' o 'date'
     function filterRowsByDate(rows, columns) {
       const selMonth = document.getElementById('selectMonth').value;
       const selYear = document.getElementById('selectYear').value;
 
       if (selMonth === 'ALL' && selYear === 'ALL') return rows;
 
-      const dateCol = columns.find(c => c.toLowerCase().includes('fecha') || c.toLowerCase().includes('date') || c.toLowerCase().includes('mes'));
-      if (!dateCol) return rows;
+      // Buscar si alguna columna de la pestaña es de tipo fecha
+      const dateCol = columns.find(c => c.toLowerCase().includes('fecha') || c.toLowerCase().includes('date'));
+      if (!dateCol) return rows; // Si no hay columna de fecha, muestra todos los datos
 
       return rows.filter(row => {
         let rawDate = row[dateCol];
