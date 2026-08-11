@@ -4,38 +4,76 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Redes Sociales R.A</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary-color: #1a73e8;
-      --bg-color: #f4f7fe;
-      --card-bg: #ffffff;
-      --text-main: #2b3674;
-      --text-muted: #a3edd0;
-      --border-color: #e9ecef;
+      --bg-main: #0b1437;
+      --card-bg: #111c44;
+      --accent: #7551ff;
+      --accent-hover: #5d3eff;
+      --text-main: #ffffff;
+      --text-muted: #a3edcc;
+      --text-gray: #8f9bba;
+      --border: rgba(255, 255, 255, 0.1);
       --shadow: 0px 18px 40px rgba(112, 144, 176, 0.12);
     }
 
     * {
       box-sizing: border-box;
-      font-family: 'DM Sans', 'Segoe UI', Arial, sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      background-color: var(--bg-color);
+      background-color: var(--bg-main);
       color: var(--text-main);
-      margin: 0;
       padding: 30px;
+      min-height: 100vh;
     }
 
-    header {
+    /* Encabezado y Selector de Cuenta */
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     h1 {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
       color: var(--text-main);
-      margin: 0 0 20px 0;
+    }
+
+    .account-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card-bg);
+      padding: 8px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .account-selector label {
+      font-size: 13px;
+      color: var(--text-gray);
+      font-weight: 600;
+    }
+
+    .account-selector select {
+      background: #1b254b;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
     }
 
     /* Pestañas de Navegación */
@@ -48,32 +86,31 @@
     }
 
     .tab-btn {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 30px;
-      padding: 10px 20px;
-      font-size: 14px;
-      font-weight: 500;
-      color: #707ebe;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-gray);
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.2s ease;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.03);
     }
 
     .tab-btn:hover {
-      background: #e8f0fe;
-      color: var(--primary-color);
+      color: var(--text-main);
+      border-color: var(--accent);
     }
 
     .tab-btn.active {
-      background: var(--primary-color);
+      background: var(--accent);
       color: #ffffff;
-      border-color: var(--primary-color);
-      box-shadow: 0px 6px 16px rgba(26, 115, 232, 0.3);
+      border-color: var(--accent);
+      box-shadow: 0px 4px 12px rgba(117, 81, 255, 0.4);
     }
 
-    /* Sección de Tarjetas KPI */
+    /* Tarjetas KPI */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -85,36 +122,36 @@
       background: var(--card-bg);
       border-radius: 16px;
       padding: 20px;
+      border: 1px solid var(--border);
       box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
     }
 
     .kpi-title {
-      font-size: 13px;
-      color: #8f9bba;
-      font-weight: 500;
-      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--text-gray);
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      margin-bottom: 8px;
     }
 
     .kpi-value {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
       color: var(--text-main);
     }
 
-    /* Contenedor de Tabla */
+    /* Tabla */
     .table-card {
       background: var(--card-bg);
       border-radius: 16px;
       padding: 24px;
+      border: 1px solid var(--border);
       box-shadow: var(--shadow);
       overflow-x: auto;
     }
 
-    .table-header-title {
+    .table-title {
       font-size: 18px;
       font-weight: 700;
       margin-bottom: 20px;
@@ -127,51 +164,58 @@
     }
 
     th {
-      background-color: #f8f9fa;
-      color: #8f9bba;
+      background: #1b254b;
+      color: var(--text-gray);
       font-size: 12px;
       text-transform: uppercase;
       padding: 14px 16px;
-      border-bottom: 2px solid var(--border-color);
+      border-bottom: 1px solid var(--border);
     }
 
     td {
       padding: 14px 16px;
       font-size: 14px;
       color: var(--text-main);
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border);
     }
 
-    tr:hover {
-      background-color: #fcfdfe;
+    tr:hover td {
+      background-color: rgba(255, 255, 255, 0.03);
     }
 
     #loading {
       text-align: center;
-      padding: 40px;
-      font-weight: 500;
-      color: #707ebe;
+      padding: 50px;
+      font-size: 16px;
+      color: var(--text-gray);
     }
   </style>
 </head>
 <body>
 
-  <header>
+  <header class="header-container">
     <h1>Dashboard Redes Sociales R.A</h1>
-    <div id="tabs-container" class="tabs-wrapper"></div>
+    <div class="account-selector">
+      <label for="account-select">Cuenta:</label>
+      <select id="account-select" onchange="filterByAccount()">
+        <option value="ALL">Todas las cuentas</option>
+        <option value="Acquaroni">Repuestos Acquaroni</option>
+        <option value="AZtec">AZtec Oils</option>
+      </select>
+    </div>
   </header>
+
+  <div id="tabs-container" class="tabs-wrapper"></div>
 
   <main id="main-content">
     <div id="loading">Cargando datos desde Google Sheets...</div>
 
     <div id="dashboard-body" style="display: none;">
-      <!-- Tarjetas Resumen -->
       <div id="kpi-container" class="kpi-grid"></div>
 
-      <!-- Tabla Principal -->
       <div class="table-card">
-        <div class="table-header-title" id="current-tab-title">Detalle de Datos</div>
-        <table id="data-table">
+        <div class="table-title" id="current-tab-title">Detalle de Registros</div>
+        <table>
           <thead id="table-head"></thead>
           <tbody id="table-body"></tbody>
         </table>
@@ -182,51 +226,66 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-pcDIxBq4H7gNOnf7-YNQcKSe3Zb8m_w6FooiY2OPfBSdrnlg5KZL-fvYzeJaaEgb/exec";
 
-    let excelData = {};
+    let rawData = {};
     let currentSheet = "";
+    let selectedAccount = "ALL";
 
-    async function fetchData() {
+    async function init() {
       try {
         const response = await fetch(SCRIPT_URL);
-        excelData = await response.json();
-        
-        const sheets = Object.keys(excelData);
-        if (sheets.length === 0) return;
+        rawData = await response.json();
 
         document.getElementById('loading').style.display = 'none';
         document.getElementById('dashboard-body').style.display = 'block';
 
-        renderTabs(sheets);
-        switchSheet(sheets[0]);
+        renderTabs();
       } catch (err) {
-        document.getElementById('loading').innerText = "Error al conectar con la hoja de datos.";
         console.error(err);
+        document.getElementById('loading').innerText = "Error al conectar con la base de datos.";
       }
     }
 
-    function renderTabs(sheets) {
-      const container = document.getElementById('tabs-container');
-      container.innerHTML = "";
+    function renderTabs() {
+      const tabsContainer = document.getElementById('tabs-container');
+      tabsContainer.innerHTML = "";
 
-      sheets.forEach(name => {
+      let sheetNames = Object.keys(rawData);
+
+      // Filtrar según la cuenta seleccionada
+      if (selectedAccount !== "ALL") {
+        sheetNames = sheetNames.filter(name => name.toLowerCase().includes(selectedAccount.toLowerCase()));
+      }
+
+      sheetNames.forEach((name, index) => {
         const btn = document.createElement('button');
-        btn.className = `tab-btn ${name === currentSheet ? 'active' : ''}`;
+        btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
         btn.innerText = name;
         btn.onclick = () => switchSheet(name);
-        container.appendChild(btn);
+        tabsContainer.appendChild(btn);
       });
+
+      if (sheetNames.length > 0) {
+        switchSheet(sheetNames[0]);
+      } else {
+        document.getElementById('dashboard-body').style.display = 'none';
+      }
+    }
+
+    function filterByAccount() {
+      selectedAccount = document.getElementById('account-select').value;
+      document.getElementById('dashboard-body').style.display = 'block';
+      renderTabs();
     }
 
     function switchSheet(sheetName) {
       currentSheet = sheetName;
       document.getElementById('current-tab-title').innerText = sheetName;
 
-      // Actualizar estado de pestañas
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.innerText === sheetName);
       });
 
-      const rows = excelData[sheetName];
+      const rows = rawData[sheetName];
       if (!rows || rows.length === 0) return;
 
       renderKPIs(rows);
@@ -240,16 +299,17 @@
       if (rows.length < 2) return;
 
       const headers = rows[0];
-      const lastRow = rows[rows.length - 1]; // Tomar la última fila con registros para métricas actuales
+      const latestRow = rows[rows.length - 1]; // Toma los datos del último registro para los KPI
 
-      // Mostramos las primeras 4-5 columnas numéricas/clave como tarjetas KPI
       headers.slice(2, 7).forEach((header, idx) => {
-        const colIndex = idx + 2;
+        const colIdx = idx + 2;
+        const val = latestRow[colIdx] || "N/A";
+
         const card = document.createElement('div');
         card.className = 'kpi-card';
         card.innerHTML = `
           <div class="kpi-title">${header}</div>
-          <div class="kpi-value">${lastRow[colIndex] || 'N/A'}</div>
+          <div class="kpi-value">${val}</div>
         `;
         kpiContainer.appendChild(card);
       });
@@ -264,7 +324,7 @@
 
       const headers = rows[0];
 
-      // Cabecera
+      // Renderizar Encabezados
       const trHead = document.createElement('tr');
       headers.forEach(h => {
         const th = document.createElement('th');
@@ -273,7 +333,7 @@
       });
       thead.appendChild(trHead);
 
-      // Filas
+      // Renderizar Filas de Datos
       for (let i = 1; i < rows.length; i++) {
         const tr = document.createElement('tr');
         headers.forEach((_, colIdx) => {
@@ -285,7 +345,7 @@
       }
     }
 
-    window.addEventListener('DOMContentLoaded', fetchData);
+    window.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
