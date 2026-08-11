@@ -4,17 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Redes Sociales R.A</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-main: #0b1437;
+      --bg-main: #080d26;
       --card-bg: #111c44;
+      --card-inner: #1b254b;
       --accent: #7551ff;
-      --accent-hover: #5d3eff;
+      --accent-glow: rgba(117, 81, 255, 0.35);
       --text-main: #ffffff;
-      --text-gray: #8f9bba;
-      --border: rgba(255, 255, 255, 0.1);
-      --shadow: 0px 18px 40px rgba(112, 144, 176, 0.12);
+      --text-gray: #a3edd0;
+      --text-muted: #8f9bba;
+      --border: rgba(255, 255, 255, 0.08);
+      --shadow: 0px 18px 40px rgba(0, 0, 0, 0.4);
     }
 
     * {
@@ -31,7 +33,7 @@
       min-height: 100vh;
     }
 
-    /* Encabezado y Navegación Principal */
+    /* Header & Controles Superiores */
     .header-container {
       display: flex;
       justify-content: space-between;
@@ -43,42 +45,52 @@
 
     h1 {
       font-size: 24px;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: -0.5px;
     }
 
-    .account-selector {
+    .filters-bar {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       background: var(--card-bg);
-      padding: 8px 16px;
-      border-radius: 14px;
+      padding: 10px 20px;
+      border-radius: 16px;
       border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      flex-wrap: wrap;
     }
 
-    .account-selector label {
-      font-size: 13px;
-      color: var(--text-gray);
-      font-weight: 600;
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .account-selector select {
-      background: #1b254b;
+    .filter-group label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .filter-group select {
+      background: var(--card-inner);
       color: var(--text-main);
       border: 1px solid var(--border);
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 14px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
       font-weight: 600;
       outline: none;
       cursor: pointer;
     }
 
-    /* Navegación por Módulos / Secciones */
+    /* Módulos Principales */
     .modules-nav {
       display: flex;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       border-bottom: 1px solid var(--border);
       padding-bottom: 15px;
       overflow-x: auto;
@@ -87,27 +99,28 @@
     .module-btn {
       background: transparent;
       border: none;
-      color: var(--text-gray);
+      color: var(--text-muted);
       font-size: 15px;
-      font-weight: 600;
-      padding: 8px 16px;
+      font-weight: 700;
+      padding: 10px 20px;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 12px;
       transition: all 0.2s ease;
       white-space: nowrap;
     }
 
     .module-btn:hover {
       color: var(--text-main);
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.04);
     }
 
     .module-btn.active {
       color: #ffffff;
       background: var(--accent);
+      box-shadow: 0px 4px 15px var(--accent-glow);
     }
 
-    /* Sub-pestañas de Plataformas (FB, IG, TikTok, etc.) */
+    /* Pestañas de Plataformas (FB, IG, TikTok, etc.) */
     .tabs-wrapper {
       display: flex;
       gap: 10px;
@@ -123,7 +136,7 @@
       padding: 10px 18px;
       font-size: 13px;
       font-weight: 600;
-      color: var(--text-gray);
+      color: var(--text-muted);
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.2s ease;
@@ -135,150 +148,171 @@
     }
 
     .tab-btn.active {
-      background: var(--accent);
+      background: var(--card-inner);
       color: #ffffff;
       border-color: var(--accent);
-      box-shadow: 0px 4px 12px rgba(117, 81, 255, 0.4);
+      box-shadow: 0px 0px 12px var(--accent-glow);
     }
 
-    /* Tarjetas KPI */
-    .kpi-grid {
+    /* Dashboard Widgets Grid (Basado en el diseño de Pinterest) */
+    .dashboard-widgets {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 20px;
       margin-bottom: 30px;
     }
 
-    .kpi-card {
+    .widget-card {
       background: var(--card-bg);
-      border-radius: 16px;
-      padding: 20px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-    }
-
-    .kpi-title {
-      font-size: 12px;
-      color: var(--text-gray);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
-
-    .kpi-value {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    /* Tablas */
-    .table-card {
-      background: var(--card-bg);
-      border-radius: 16px;
+      border-radius: 20px;
       padding: 24px;
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
-      overflow-x: auto;
-    }
-
-    .table-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-
-    th {
-      background: #1b254b;
-      color: var(--text-gray);
-      font-size: 12px;
-      text-transform: uppercase;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    td {
-      padding: 14px 16px;
-      font-size: 14px;
-      color: var(--text-main);
-      border-bottom: 1px solid var(--border);
-    }
-
-    tr:hover td {
-      background-color: rgba(255, 255, 255, 0.03);
-    }
-
-    /* Galería de Campañas / Post Impulsados */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .campaign-card {
-      background: var(--card-bg);
-      border-radius: 16px;
-      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
       overflow: hidden;
+      min-height: 120px;
+    }
+
+    .widget-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--accent);
+      opacity: 0.8;
+    }
+
+    .widget-header {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+    }
+
+    .widget-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .widget-subtext {
+      font-size: 12px;
+      color: var(--text-gray);
+      font-weight: 600;
+    }
+
+    /* Bloque de Perfil Demográfico (Edad y Género) */
+    .demographics-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .demo-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid var(--border);
       box-shadow: var(--shadow);
     }
 
-    .campaign-img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      background: #1b254b;
-    }
-
-    .campaign-body {
-      padding: 16px;
-    }
-
-    .campaign-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .campaign-meta {
+    .demo-title {
       font-size: 13px;
-      color: var(--text-gray);
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .demo-badge {
+      display: inline-block;
+      background: var(--card-inner);
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent);
+      border: 1px solid var(--border);
+    }
+
+    #empty-state {
+      text-align: center;
+      padding: 60px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 15px;
+      font-weight: 600;
     }
 
     #loading {
       text-align: center;
-      padding: 50px;
+      padding: 60px;
       font-size: 16px;
-      color: var(--text-gray);
+      color: var(--text-muted);
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
 
-  <!-- Encabezado y Selector de Cuentas -->
+  <!-- Encabezado y Filtros Globales -->
   <header class="header-container">
     <h1>Dashboard Redes Sociales R.A</h1>
-    <div class="account-selector">
-      <label for="account-select">Cuenta:</label>
-      <select id="account-select" onchange="onAccountChange()">
-        <option value="ALL">Todas las cuentas</option>
-        <option value="Acquaroni">Repuestos Acquaroni</option>
-        <option value="AZtec">AZtec Oils</option>
-      </select>
+
+    <div class="filters-bar">
+      <!-- Filtro de Cuenta -->
+      <div class="filter-group">
+        <label for="account-select">Cuenta:</label>
+        <select id="account-select" onchange="applyFilters()">
+          <option value="ALL">Todas las cuentas</option>
+          <option value="Acquaroni">Repuestos Acquaroni</option>
+          <option value="AZtec">AZtec Oils</option>
+        </select>
+      </div>
+
+      <!-- Filtro de Año -->
+      <div class="filter-group">
+        <label for="year-select">Año:</label>
+        <select id="year-select" onchange="applyFilters()">
+          <option value="ALL">Todos los Años</option>
+        </select>
+      </div>
+
+      <!-- Filtro de Mes -->
+      <div class="filter-group">
+        <label for="month-select">Mes:</label>
+        <select id="month-select" onchange="applyFilters()">
+          <option value="ALL">Todos los Meses</option>
+          <option value="Enero">Enero</option>
+          <option value="Febrero">Febrero</option>
+          <option value="Marzo">Marzo</option>
+          <option value="Abril">Abril</option>
+          <option value="Mayo">Mayo</option>
+          <option value="Junio">Junio</option>
+          <option value="Julio">Julio</option>
+          <option value="Agosto">Agosto</option>
+          <option value="Septiembre">Septiembre</option>
+          <option value="Octubre">Octubre</option>
+          <option value="Noviembre">Noviembre</option>
+          <option value="Diciembre">Diciembre</option>
+        </select>
+      </div>
     </div>
   </header>
 
-  <!-- Navegación por Secciones Principales -->
+  <!-- Navegación de Módulos Principales -->
   <nav class="modules-nav">
     <button class="module-btn active" onclick="switchModule('redes')">Redes Sociales</button>
     <button class="module-btn" onclick="switchModule('impulsados')">Post Impulsados</button>
@@ -287,28 +321,34 @@
     <button class="module-btn" onclick="switchModule('plataformas')">Plataformas</button>
   </nav>
 
-  <!-- Pestañas Específicas (Plataformas) -->
+  <!-- Sub-pestañas de Plataformas -->
   <div id="tabs-container" class="tabs-wrapper"></div>
 
-  <!-- Contenido Principal -->
+  <!-- Vista Dashboard -->
   <main id="main-content">
     <div id="loading">Cargando datos desde Google Sheets...</div>
 
     <div id="dashboard-body" style="display: none;">
-      <!-- Métricas Resumen (KPIs) -->
-      <div id="kpi-container" class="kpi-grid"></div>
+      
+      <!-- Contenedor de Widgets KPIs estilizados -->
+      <div id="widgets-container" class="dashboard-widgets"></div>
 
-      <!-- Vista Tabla -->
-      <div id="table-view" class="table-card">
-        <div class="table-title" id="current-tab-title">Detalle de Registros</div>
-        <table>
-          <thead id="table-head"></thead>
-          <tbody id="table-body"></tbody>
-        </table>
+      <!-- Contenedor Demográfico (Edad y Género) -->
+      <div id="demographics-container" class="demographics-container" style="display: none;">
+        <div class="demo-card">
+          <div class="demo-title">Rango de Edad Principal</div>
+          <div id="age-value" class="demo-badge">N/A</div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-title">Género Predominante</div>
+          <div id="gender-value" class="demo-badge">N/A</div>
+        </div>
       </div>
 
-      <!-- Vista Galería (para Campañas / Impulsados) -->
-      <div id="gallery-view" class="gallery-grid" style="display: none;"></div>
+      <div id="empty-state" style="display: none;">
+        No hay datos registrados para los filtros seleccionados.
+      </div>
+
     </div>
   </main>
 
@@ -318,6 +358,8 @@
     let rawData = {};
     let currentModule = "redes";
     let selectedAccount = "ALL";
+    let selectedYear = "ALL";
+    let selectedMonth = "ALL";
     let activeSheet = "";
 
     async function init() {
@@ -328,6 +370,7 @@
         document.getElementById('loading').style.display = 'none';
         document.getElementById('dashboard-body').style.display = 'block';
 
+        populateYearFilter();
         renderModule();
       } catch (err) {
         console.error(err);
@@ -335,8 +378,36 @@
       }
     }
 
-    function onAccountChange() {
+    // Llenar el dropdown de Años automáticamente analizando la data
+    function populateYearFilter() {
+      const yearSelect = document.getElementById('year-select');
+      const years = new Set();
+
+      Object.values(rawData).forEach(sheetRows => {
+        if (sheetRows.length > 1) {
+          const headers = sheetRows[0];
+          const yearColIdx = headers.findIndex(h => String(h).toUpperCase().includes('AÑO') || String(h).toUpperCase().includes('ANO'));
+          if (yearColIdx !== -1) {
+            for (let i = 1; i < sheetRows.length; i++) {
+              const val = sheetRows[i][yearColIdx];
+              if (val) years.add(String(val));
+            }
+          }
+        }
+      });
+
+      years.forEach(y => {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.innerText = y;
+        yearSelect.appendChild(opt);
+      });
+    }
+
+    function applyFilters() {
       selectedAccount = document.getElementById('account-select').value;
+      selectedYear = document.getElementById('year-select').value;
+      selectedMonth = document.getElementById('month-select').value;
       renderModule();
     }
 
@@ -352,7 +423,6 @@
       const allSheets = Object.keys(rawData);
       let filteredSheets = allSheets;
 
-      // Filtrar pestañas por el módulo activo
       if (currentModule === 'redes') {
         filteredSheets = allSheets.filter(s => 
           !s.toLowerCase().includes('impulsados') && 
@@ -370,7 +440,6 @@
         filteredSheets = allSheets.filter(s => s.toLowerCase().includes('plataforma'));
       }
 
-      // Filtrar por cuenta (Acquaroni vs AZtec)
       if (selectedAccount !== "ALL") {
         filteredSheets = filteredSheets.filter(s => s.toLowerCase().includes(selectedAccount.toLowerCase()));
       }
@@ -383,12 +452,13 @@
       container.innerHTML = "";
 
       if (sheets.length === 0) {
-        document.getElementById('current-tab-title').innerText = "No se encontraron pestañas para este filtro.";
-        document.getElementById('table-head').innerHTML = "";
-        document.getElementById('table-body').innerHTML = "";
-        document.getElementById('kpi-container').innerHTML = "";
+        document.getElementById('widgets-container').innerHTML = "";
+        document.getElementById('demographics-container').style.display = 'none';
+        document.getElementById('empty-state').style.display = 'block';
         return;
       }
+
+      document.getElementById('empty-state').style.display = 'none';
 
       sheets.forEach((name, index) => {
         const btn = document.createElement('button');
@@ -403,7 +473,6 @@
 
     function switchSheet(sheetName) {
       activeSheet = sheetName;
-      document.getElementById('current-tab-title').innerText = sheetName;
 
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.innerText === sheetName);
@@ -412,70 +481,87 @@
       const rows = rawData[sheetName];
       if (!rows || rows.length === 0) return;
 
-      renderKPIs(rows);
-      
-      if (currentModule === 'campanas' || currentModule === 'impulsados') {
-        // Opción de vista tarjetas si contienen imágenes o resumen visual
-        renderTable(rows); 
+      renderFilteredData(rows);
+    }
+
+    function renderFilteredData(rows) {
+      const headers = rows[0];
+      const dataRows = rows.slice(1);
+
+      const yearIdx = headers.findIndex(h => String(h).toUpperCase().includes('AÑO') || String(h).toUpperCase().includes('ANO'));
+      const monthIdx = headers.findIndex(h => String(h).toUpperCase().includes('MES'));
+
+      // Filtrar filas por Año y Mes si aplican
+      const filtered = dataRows.filter(row => {
+        let matchYear = true;
+        let matchMonth = true;
+
+        if (selectedYear !== "ALL" && yearIdx !== -1) {
+          matchYear = String(row[yearIdx]) === String(selectedYear);
+        }
+        if (selectedMonth !== "ALL" && monthIdx !== -1) {
+          matchMonth = String(row[monthIdx]).toLowerCase().includes(selectedMonth.toLowerCase());
+        }
+
+        return matchYear && matchMonth;
+      });
+
+      if (filtered.length === 0) {
+        document.getElementById('widgets-container').innerHTML = "";
+        document.getElementById('demographics-container').style.display = 'none';
+        document.getElementById('empty-state').style.display = 'block';
       } else {
-        renderTable(rows);
+        document.getElementById('empty-state').style.display = 'none';
+        renderWidgets(headers, filtered);
       }
     }
 
-    function renderKPIs(rows) {
-      const kpiContainer = document.getElementById('kpi-container');
-      kpiContainer.innerHTML = "";
+    function renderWidgets(headers, filteredRows) {
+      const container = document.getElementById('widgets-container');
+      container.innerHTML = "";
 
-      if (rows.length < 2) return;
+      const demoContainer = document.getElementById('demographics-container');
+      demoContainer.style.display = 'none';
 
-      const headers = rows[0];
-      const latestRow = rows[rows.length - 1]; // Toma los datos del último registro para métricas acumuladas
+      let ageVal = 'N/A';
+      let genderVal = 'N/A';
 
-      headers.slice(2, 7).forEach((header, idx) => {
-        const colIdx = idx + 2;
-        const val = latestRow[colIdx] !== undefined ? latestRow[colIdx] : "N/A";
+      headers.forEach((h, colIdx) => {
+        const headerUpper = String(h).toUpperCase().trim();
+
+        // Omitir columnas de filtrado de la grilla de métricas
+        if (headerUpper.includes('AÑO') || headerUpper.includes('ANO') || headerUpper.includes('MES') || headerUpper.includes('CUENTA')) {
+          return;
+        }
+
+        if (headerUpper.includes('EDAD')) {
+          ageVal = filteredRows[filteredRows.length - 1][colIdx] || 'N/A';
+          return;
+        }
+
+        if (headerUpper.includes('GÉNERO') || headerUpper.includes('GENERO')) {
+          genderVal = filteredRows[filteredRows.length - 1][colIdx] || 'N/A';
+          return;
+        }
+
+        // Mostrar cada columna del Excel como una tarjeta KPI estilizada
+        const latestVal = filteredRows[filteredRows.length - 1][colIdx] || "0";
 
         const card = document.createElement('div');
-        card.className = 'kpi-card';
+        card.className = 'widget-card';
         card.innerHTML = `
-          <div class="kpi-title">${header}</div>
-          <div class="kpi-value">${val}</div>
+          <div class="widget-header">${h}</div>
+          <div class="widget-value">${latestVal}</div>
+          <div class="widget-subtext">Valor en el período</div>
         `;
-        kpiContainer.appendChild(card);
+        container.appendChild(card);
       });
-    }
 
-    function renderTable(rows) {
-      document.getElementById('table-view').style.display = 'block';
-      document.getElementById('gallery-view').style.display = 'none';
-
-      const thead = document.getElementById('table-head');
-      const tbody = document.getElementById('table-body');
-
-      thead.innerHTML = "";
-      tbody.innerHTML = "";
-
-      const headers = rows[0];
-
-      // Cabecera de la Tabla
-      const trHead = document.createElement('tr');
-      headers.forEach(h => {
-        const th = document.createElement('th');
-        th.innerText = h || "";
-        trHead.appendChild(th);
-      });
-      thead.appendChild(trHead);
-
-      // Filas con la información del Excel
-      for (let i = 1; i < rows.length; i++) {
-        const tr = document.createElement('tr');
-        headers.forEach((_, colIdx) => {
-          const td = document.createElement('td');
-          const cellVal = rows[i][colIdx] !== undefined ? rows[i][colIdx] : "";
-          td.innerText = cellVal;
-          tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
+      // Mostrar demografía si existe
+      if (ageVal !== 'N/A' || genderVal !== 'N/A') {
+        demoContainer.style.display = 'grid';
+        document.getElementById('age-value').innerText = ageVal;
+        document.getElementById('gender-value').innerText = genderVal;
       }
     }
 
