@@ -4,568 +4,348 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Redes Sociales R.A</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
-    :root {
-      --bg-main: #080d26;
-      --card-bg: #111c44;
-      --card-inner: #1b254b;
-      --accent: #7551ff;
-      --accent-glow: rgba(117, 81, 255, 0.35);
-      --text-main: #ffffff;
-      --text-gray: #a3edd0;
-      --text-muted: #8f9bba;
-      --border: rgba(255, 255, 255, 0.08);
-      --shadow: 0px 18px 40px rgba(0, 0, 0, 0.4);
-    }
-
-    * {
-      box-sizing: border-box;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     body {
-      background-color: var(--bg-main);
-      color: var(--text-main);
-      padding: 30px;
-      min-height: 100vh;
-    }
-
-    /* Header & Filtros */
-    .header-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-
-    h1 {
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .filters-bar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--card-bg);
-      padding: 10px 20px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      flex-wrap: wrap;
-    }
-
-    .filter-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .filter-group label {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .filter-group select {
-      background: var(--card-inner);
-      color: var(--text-main);
-      border: 1px solid var(--border);
-      padding: 8px 14px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      outline: none;
-      cursor: pointer;
-    }
-
-    /* Navegación de Módulos */
-    .modules-nav {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 25px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 15px;
-      overflow-x: auto;
-    }
-
-    .module-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 15px;
-      font-weight: 700;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 12px;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .module-btn:hover {
-      color: var(--text-main);
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .module-btn.active {
-      color: #ffffff;
-      background: var(--accent);
-      box-shadow: 0px 4px 15px var(--accent-glow);
-    }
-
-    /* Pestañas de Plataformas */
-    .tabs-wrapper {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 10px;
-      margin-bottom: 25px;
-    }
-
-    .tab-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 18px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s ease;
-    }
-
-    .tab-btn:hover {
-      color: var(--text-main);
-      border-color: var(--accent);
-    }
-
-    .tab-btn.active {
-      background: var(--card-inner);
-      color: #ffffff;
-      border-color: var(--accent);
-      box-shadow: 0px 0px 12px var(--accent-glow);
-    }
-
-    /* Grid de Tarjetas / Widgets */
-    .dashboard-widgets {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .widget-card {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 22px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-      min-height: 110px;
-    }
-
-    .widget-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: var(--accent);
-      opacity: 0.8;
-    }
-
-    .widget-header {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 10px;
-    }
-
-    .widget-value {
-      font-size: 26px;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 4px;
-    }
-
-    .widget-subtext {
-      font-size: 12px;
-      color: var(--text-gray);
-      font-weight: 600;
-    }
-
-    /* Demografía */
-    .demographics-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .demo-card {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 22px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-    }
-
-    .demo-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    .demo-badge {
-      display: inline-block;
-      background: var(--card-inner);
-      padding: 10px 18px;
-      border-radius: 12px;
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--accent);
-      border: 1px solid var(--border);
-    }
-
-    #empty-state {
-      text-align: center;
-      padding: 60px;
-      background: var(--card-bg);
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    #loading {
-      text-align: center;
-      padding: 60px;
-      font-size: 16px;
-      color: var(--text-muted);
-      font-weight: 600;
+      font-family: 'Inter', sans-serif;
     }
   </style>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-800">
 
-  <!-- Encabezado y Filtros Globales -->
-  <header class="header-container">
-    <h1>Dashboard Redes Sociales R.A</h1>
-
-    <div class="filters-bar">
-      <!-- Filtro de Cuenta -->
-      <div class="filter-group">
-        <label for="account-select">Cuenta:</label>
-        <select id="account-select" onchange="applyFilters()">
-          <option value="ALL">Todas las cuentas</option>
-          <option value="Acquaroni">Repuestos Acquaroni</option>
-          <option value="AZtec">AZtec Oils</option>
-        </select>
-      </div>
-
-      <!-- Filtro de Año -->
-      <div class="filter-group">
-        <label for="year-select">Año:</label>
-        <select id="year-select" onchange="applyFilters()">
-          <option value="ALL">Todos los Años</option>
-        </select>
-      </div>
-
-      <!-- Filtro de Mes -->
-      <div class="filter-group">
-        <label for="month-select">Mes:</label>
-        <select id="month-select" onchange="applyFilters()">
-          <option value="ALL">Todos los Meses</option>
-          <option value="Enero">Enero</option>
-          <option value="Febrero">Febrero</option>
-          <option value="Marzo">Marzo</option>
-          <option value="Abril">Abril</option>
-          <option value="Mayo">Mayo</option>
-          <option value="Junio">Junio</option>
-          <option value="Julio">Julio</option>
-          <option value="Agosto">Agosto</option>
-          <option value="Septiembre">Septiembre</option>
-          <option value="Octubre">Octubre</option>
-          <option value="Noviembre">Noviembre</option>
-          <option value="Diciembre">Diciembre</option>
-        </select>
-      </div>
-    </div>
-  </header>
-
-  <!-- Navegación de Módulos Principales -->
-  <nav class="modules-nav">
-    <button class="module-btn active" onclick="switchModule('redes')">Redes Sociales</button>
-    <button class="module-btn" onclick="switchModule('impulsados')">Post Impulsados</button>
-    <button class="module-btn" onclick="switchModule('campanas')">Campañas</button>
-    <button class="module-btn" onclick="switchModule('presupuesto')">Presupuesto</button>
-    <button class="module-btn" onclick="switchModule('plataformas')">Plataformas</button>
-  </nav>
-
-  <!-- Sub-pestañas de Plataformas -->
-  <div id="tabs-container" class="tabs-wrapper"></div>
-
-  <!-- Vista Dashboard -->
-  <main id="main-content">
-    <div id="loading">Cargando datos desde Google Sheets...</div>
-
-    <div id="dashboard-body" style="display: none;">
-      
-      <!-- Contenedor de Tarjetas / Widgets KPIs -->
-      <div id="widgets-container" class="dashboard-widgets"></div>
-
-      <!-- Contenedor Demográfico (Edad y Género) -->
-      <div id="demographics-container" class="demographics-container" style="display: none;">
-        <div class="demo-card">
-          <div class="demo-title">Rango de Edad Principal</div>
-          <div id="age-value" class="demo-badge">N/A</div>
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col justify-between hidden md:flex">
+      <div>
+        <div class="p-6">
+          <h1 class="text-2xl font-bold tracking-wider text-blue-400">R.A DASHBOARD</h1>
+          <p class="text-xs text-gray-400 mt-1">Marketing & Analítica</p>
         </div>
-        <div class="demo-card">
-          <div class="demo-title">Género Predominante</div>
-          <div id="gender-value" class="demo-badge">N/A</div>
+        <nav class="mt-6">
+          <a href="#" class="flex items-center gap-3 px-6 py-3 bg-blue-600 text-white font-medium">
+            <i class="fa-solid fa-chart-pie"></i> Redes Sociales
+          </a>
+          <a href="#" class="flex items-center gap-3 px-6 py-3 text-gray-400 hover:bg-slate-800 hover:text-white transition">
+            <i class="fa-solid fa-bullhorn"></i> Post Impulsados
+          </a>
+          <a href="#" class="flex items-center gap-3 px-6 py-3 text-gray-400 hover:bg-slate-800 hover:text-white transition">
+            <i class="fa-solid fa-rectangle-ad"></i> Campañas
+          </a>
+          <a href="#" class="flex items-center gap-3 px-6 py-3 text-gray-400 hover:bg-slate-800 hover:text-white transition">
+            <i class="fa-solid fa-wallet"></i> Presupuesto
+          </a>
+        </nav>
+      </div>
+      <div class="p-6 border-t border-slate-800 text-xs text-gray-500">
+        Dashboard Redes Sociales R.A v2.0
+      </div>
+    </aside>
+
+    <!-- Content Area -->
+    <div class="flex-1 flex flex-col overflow-y-auto">
+      <!-- Top Navbar -->
+      <header class="bg-white border-b border-gray-200 px-8 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-gray-800">Dashboard Redes Sociales R.A</h2>
+          <p class="text-sm text-gray-500">Métricas consolidadas de rendimiento</p>
         </div>
-      </div>
+        
+        <!-- Filters Header -->
+        <div class="flex items-center gap-3">
+          <label for="accountSelect" class="text-sm font-medium text-gray-600">Cuenta:</label>
+          <select id="accountSelect" onchange="updateDashboard()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+            <option value="all">Todas las cuentas</option>
+            <option value="acquaroni" selected>Repuestos Acquaroni</option>
+            <option value="aztec">AZtec Oils</option>
+          </select>
+        </div>
+      </header>
 
-      <div id="empty-state" style="display: none;">
-        No hay datos disponibles para la combinación de filtros elegida.
-      </div>
+      <!-- Main Content -->
+      <main class="p-8">
+        
+        <!-- Platforms Selector Tabs -->
+        <div class="mb-6 border-b border-gray-200">
+          <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="platformTabs">
+            <li class="mr-2">
+              <button onclick="changePlatform('fb_acquaroni')" id="tab-fb_acquaroni" class="inline-flex items-center p-4 border-b-2 border-blue-600 text-blue-600 rounded-t-lg active group gap-2">
+                <i class="fa-brands fa-facebook text-blue-600"></i> Facebook Repuestos Acquaroni
+              </button>
+            </li>
+            <li class="mr-2">
+              <button onclick="changePlatform('ig_acquaroni')" id="tab-ig_acquaroni" class="inline-flex items-center p-4 border-b-2 border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg group gap-2">
+                <i class="fa-brands fa-instagram text-pink-600"></i> Instagram Repuestos Acquaroni
+              </button>
+            </li>
+            <li class="mr-2">
+              <button onclick="changePlatform('tt_live_acquaroni')" id="tab-tt_live_acquaroni" class="inline-flex items-center p-4 border-b-2 border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg group gap-2">
+                <i class="fa-brands fa-tiktok text-black"></i> Tiktok Live Repuestos Acquaroni
+              </button>
+            </li>
+            <li class="mr-2">
+              <button onclick="changePlatform('tt_acquaroni')" id="tab-tt_acquaroni" class="inline-flex items-center p-4 border-b-2 border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg group gap-2">
+                <i class="fa-brands fa-tiktok text-black"></i> Tiktok Repuestos Acquaroni
+              </button>
+            </li>
+            <li class="mr-2">
+              <button onclick="changePlatform('yt_acquaroni')" id="tab-yt_acquaroni" class="inline-flex items-center p-4 border-b-2 border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg group gap-2">
+                <i class="fa-brands fa-youtube text-red-600"></i> Youtube Repuestos Acquaroni
+              </button>
+            </li>
+            <li class="mr-2">
+              <button onclick="changePlatform('fb_aztec')" id="tab-fb_aztec" class="inline-flex items-center p-4 border-b-2 border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg group gap-2">
+                <i class="fa-brands fa-facebook text-blue-800"></i> Facebook AZtec Oils
+              </button>
+            </li>
+            <li class="mr-2">
+              <button onclick="changePlatform('ig_aztec')" id="tab-ig_aztec" class="inline-flex items-center p-4 border-b-2 border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg group gap-2">
+                <i class="fa-brands fa-instagram text-purple-600"></i> Instagram AZtec Oils
+              </button>
+            </li>
+            <li class="mr-2">
+              <button onclick="changePlatform('tt_aztec')" id="tab-tt_aztec" class="inline-flex items-center p-4 border-b-2 border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300 rounded-t-lg group gap-2">
+                <i class="fa-brands fa-tiktok text-black"></i> Tiktok AZtec Oils
+              </button>
+            </li>
+          </ul>
+        </div>
 
+        <!-- Metric KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Inversión Total</span>
+            <div class="text-2xl font-bold text-gray-800 mt-2" id="kpi-inversion">Q 0.00</div>
+            <span class="text-xs text-green-500 font-medium mt-1 inline-block"><i class="fa-solid fa-arrow-up"></i> Actualizado</span>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">CTR Promedio</span>
+            <div class="text-2xl font-bold text-gray-800 mt-2" id="kpi-ctr">0.00%</div>
+            <span class="text-xs text-gray-400 mt-1 inline-block">Rendimiento global</span>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Alcance Total</span>
+            <div class="text-2xl font-bold text-gray-800 mt-2" id="kpi-alcance">0</div>
+            <span class="text-xs text-blue-500 font-medium mt-1 inline-block"><i class="fa-solid fa-users"></i> Personas alcanzadas</span>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Impresiones</span>
+            <div class="text-2xl font-bold text-gray-800 mt-2" id="kpi-impresiones">0</div>
+            <span class="text-xs text-gray-400 mt-1 inline-block">Visualizaciones de anuncios</span>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Perfil Principal</span>
+            <div class="text-2xl font-bold text-gray-800 mt-2" id="kpi-audiencia">25-34 | Hombre</div>
+            <span class="text-xs text-gray-400 mt-1 inline-block">Edad y Género dominante</span>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Inversión vs Alcance</h3>
+            <canvas id="chartInversionAlcance" height="250"></canvas>
+          </div>
+          <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Evolución de Interacciones y Seguidores</h3>
+            <canvas id="chartInteracciones" height="250"></canvas>
+          </div>
+        </div>
+
+        <!-- Data Table Container -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-gray-800" id="tableTitle">Facebook Repuestos Acquaroni</h3>
+            <span class="text-sm text-gray-500">Histórico de Rendimiento</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-500">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th scope="col" class="px-6 py-3">Año</th>
+                  <th scope="col" class="px-6 py-3">Mes</th>
+                  <th scope="col" class="px-6 py-3">Inversión (Q)</th>
+                  <th scope="col" class="px-6 py-3">CTR</th>
+                  <th scope="col" class="px-6 py-3">Alcance</th>
+                  <th scope="col" class="px-6 py-3">Impresiones</th>
+                  <th scope="col" class="px-6 py-3">Edad Dominante</th>
+                  <th scope="col" class="px-6 py-3">Género</th>
+                  <th scope="col" class="px-6 py-3">Visualizaciones</th>
+                  <th scope="col" class="px-6 py-3">Interacciones</th>
+                  <th scope="col" class="px-6 py-3">Nuevos Seguidores</th>
+                </tr>
+              </thead>
+              <tbody id="dataTableBody">
+                <!-- Data populated dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
     </div>
-  </main>
+  </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-pcDIxBq4H7gNOnf7-YNQcKSe3Zb8m_w6FooiY2OPfBSdrnlg5KZL-fvYzeJaaEgb/exec";
-
-    let rawData = {};
-    let currentModule = "redes";
-    let selectedAccount = "ALL";
-    let selectedYear = "ALL";
-    let selectedMonth = "ALL";
-
-    async function init() {
-      try {
-        const response = await fetch(SCRIPT_URL);
-        rawData = await response.json();
-
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('dashboard-body').style.display = 'block';
-
-        populateYearFilter();
-        renderModule();
-      } catch (err) {
-        console.error(err);
-        document.getElementById('loading').innerText = "Error al obtener datos desde Google Sheets.";
+    // Data Structure
+    const datasets = {
+      fb_acquaroni: {
+        name: "Facebook Repuestos Acquaroni",
+        data: [
+          // 2025
+          { anio: 2025, mes: "Enero", inversion: 5974.17, ctr: 2.95, alcance: 585399, impresiones: 1359127, edad: "25–34", genero: "Hombre", visualizaciones: 1500000, interacciones: 12800, seguidores: 658 },
+          { anio: 2025, mes: "Febrero", inversion: 5391.91, ctr: 2.36, alcance: 472602, impresiones: 1135262, edad: "25–34", genero: "Hombre", visualizaciones: 2600000, interacciones: 21700, seguidores: 1400 },
+          { anio: 2025, mes: "Marzo", inversion: 6905.15, ctr: 1.88, alcance: 598764, impresiones: 1370822, edad: "25–34", genero: "Hombre", visualizaciones: 1200000, interacciones: 15600, seguidores: 556 },
+          { anio: 2025, mes: "Abril", inversion: 4592.00, ctr: 2.95, alcance: 249963, impresiones: 621839, edad: "25–34", genero: "Hombre", visualizaciones: 730200, interacciones: 5100, seguidores: 559 },
+          { anio: 2025, mes: "Mayo", inversion: 10337.02, ctr: 1.95, alcance: 1353080, impresiones: 3957450, edad: "18–24", genero: "Hombre", visualizaciones: 300000, interacciones: 14800, seguidores: 730 },
+          { anio: 2025, mes: "Junio", inversion: 6160.57, ctr: 2.68, alcance: 440587, impresiones: 1113964, edad: "18–24", genero: "Hombre", visualizaciones: 1500000, interacciones: 24300, seguidores: 525 },
+          { anio: 2025, mes: "Julio", inversion: 9916.74, ctr: 2.16, alcance: 90229, impresiones: 2317446, edad: "25–34", genero: "Hombre", visualizaciones: 2600000, interacciones: 23200, seguidores: 546 },
+          { anio: 2025, mes: "Agosto", inversion: 4089.55, ctr: 1.97, alcance: 461875, impresiones: 962986, edad: "25–34", genero: "Hombre", visualizaciones: 1100000, interacciones: 5400, seguidores: 417 },
+          { anio: 2025, mes: "Septiembre", inversion: 2678.42, ctr: 2.07, alcance: 368151, impresiones: 681733, edad: "25–34", genero: "Hombre", visualizaciones: 522500, interacciones: 4600, seguidores: 439 },
+          { anio: 2025, mes: "Octubre", inversion: 400.00, ctr: 1.87, alcance: 59407, impresiones: 94586, edad: "25–34", genero: "Hombre", visualizaciones: 471700, interacciones: 3300, seguidores: 509 },
+          { anio: 2025, mes: "Noviembre", inversion: 794.75, ctr: 2.02, alcance: 80562, impresiones: 123775, edad: "25–34", genero: "Hombre", visualizaciones: 720400, interacciones: 6400, seguidores: 823 },
+          { anio: 2025, mes: "Diciembre", inversion: 1255.65, ctr: 3.68, alcance: 102102, impresiones: 208157, edad: "25–34", genero: "Hombre", visualizaciones: 1900000, interacciones: 4900, seguidores: 917 },
+          // 2026
+          { anio: 2026, mes: "Enero", inversion: 1531.76, ctr: 1.15, alcance: 321342, impresiones: 487558, edad: "25–34", genero: "Hombre", visualizaciones: 2100000, interacciones: 4300, seguidores: 920 },
+          { anio: 2026, mes: "Febrero", inversion: 2742.37, ctr: 1.39, alcance: 684281, impresiones: 1101566, edad: "25–34", genero: "Hombre", visualizaciones: 1200000, interacciones: 3300, seguidores: 901 },
+          { anio: 2026, mes: "Marzo", inversion: 1213.54, ctr: 1.58, alcance: 146735, impresiones: 29437, edad: "25–34", genero: "Hombre", visualizaciones: 1100000, interacciones: 10100, seguidores: 579 },
+          { anio: 2026, mes: "Abril", inversion: 1166.87, ctr: 0.45, alcance: 225916, impresiones: 287222, edad: "25–34", genero: "Hombre", visualizaciones: 1100000, interacciones: 2500, seguidores: 747 },
+          { anio: 2026, mes: "Mayo", inversion: 1879.87, ctr: 0.85, alcance: 175406, impresiones: 34655, edad: "25–34", genero: "Hombre", visualizaciones: 931500, interacciones: 3100, seguidores: 373 },
+          { anio: 2026, mes: "Junio", inversion: 1190.00, ctr: 0.97, alcance: 192064, impresiones: 246978, edad: "25–34", genero: "Hombre", visualizaciones: 879300, interacciones: 11100, seguidores: 329 },
+          { anio: 2026, mes: "Julio", inversion: 4134.39, ctr: 1.29, alcance: 31351, impresiones: 850425, edad: "25–34", genero: "Hombre", visualizaciones: 967900, interacciones: 2700, seguidores: 256 }
+        ]
       }
-    }
+    };
 
-    function populateYearFilter() {
-      const yearSelect = document.getElementById('year-select');
-      const years = new Set();
+    let currentPlatform = 'fb_acquaroni';
+    let chartInversion, chartInteracciones;
 
-      Object.values(rawData).forEach(sheetRows => {
-        if (sheetRows && sheetRows.length > 1) {
-          const headers = sheetRows[0];
-          const yearColIdx = headers.findIndex(h => String(h).toUpperCase().includes('AÑO') || String(h).toUpperCase().includes('ANO'));
-          if (yearColIdx !== -1) {
-            for (let i = 1; i < sheetRows.length; i++) {
-              const val = sheetRows[i][yearColIdx];
-              if (val) years.add(String(val));
-            }
-          }
-        }
+    function initCharts() {
+      const ctx1 = document.getElementById('chartInversionAlcance').getContext('2d');
+      chartInversion = new Chart(ctx1, {
+        type: 'line',
+        data: { labels: [], datasets: [] },
+        options: { responsive: true, maintainAspectRatio: false }
       });
 
-      years.forEach(y => {
-        const opt = document.createElement('option');
-        opt.value = y;
-        opt.innerText = y;
-        yearSelect.appendChild(opt);
+      const ctx2 = document.getElementById('chartInteracciones').getContext('2d');
+      chartInteracciones = new Chart(ctx2, {
+        type: 'bar',
+        data: { labels: [], datasets: [] },
+        options: { responsive: true, maintainAspectRatio: false }
       });
     }
 
-    function applyFilters() {
-      selectedAccount = document.getElementById('account-select').value;
-      selectedYear = document.getElementById('year-select').value;
-      selectedMonth = document.getElementById('month-select').value;
-      renderModule();
-    }
-
-    function switchModule(moduleName) {
-      currentModule = moduleName;
-      document.querySelectorAll('.module-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('onclick').includes(moduleName));
+    function changePlatform(platformKey) {
+      currentPlatform = platformKey;
+      
+      // Update Tab Styles
+      document.querySelectorAll('#platformTabs button').forEach(btn => {
+        btn.classList.remove('border-blue-600', 'text-blue-600');
+        btn.classList.add('border-transparent', 'text-gray-500');
       });
-      renderModule();
-    }
-
-    function renderModule() {
-      const allSheets = Object.keys(rawData);
-      let filteredSheets = allSheets;
-
-      if (currentModule === 'redes') {
-        filteredSheets = allSheets.filter(s => 
-          !s.toLowerCase().includes('impulsados') && 
-          !s.toLowerCase().includes('campaña') && 
-          !s.toLowerCase().includes('presupuesto') && 
-          !s.toLowerCase().includes('plataforma')
-        );
-      } else if (currentModule === 'impulsados') {
-        filteredSheets = allSheets.filter(s => s.toLowerCase().includes('impulsados'));
-      } else if (currentModule === 'campanas') {
-        filteredSheets = allSheets.filter(s => s.toLowerCase().includes('campaña') || s.toLowerCase().includes('campanas'));
-      } else if (currentModule === 'presupuesto') {
-        filteredSheets = allSheets.filter(s => s.toLowerCase().includes('presupuesto'));
-      } else if (currentModule === 'plataformas') {
-        filteredSheets = allSheets.filter(s => s.toLowerCase().includes('plataforma'));
+      const activeTab = document.getElementById(`tab-${platformKey}`);
+      if (activeTab) {
+        activeTab.classList.remove('border-transparent', 'text-gray-500');
+        activeTab.classList.add('border-blue-600', 'text-blue-600');
       }
 
-      if (selectedAccount !== "ALL") {
-        filteredSheets = filteredSheets.filter(s => s.toLowerCase().includes(selectedAccount.toLowerCase()));
-      }
-
-      renderTabs(filteredSheets);
+      updateDashboard();
     }
 
-    function renderTabs(sheets) {
-      const container = document.getElementById('tabs-container');
-      container.innerHTML = "";
+    function updateDashboard() {
+      const platformInfo = datasets[currentPlatform] || { name: 'Sin datos', data: [] };
+      const data = platformInfo.data;
 
-      if (sheets.length === 0) {
-        document.getElementById('widgets-container').innerHTML = "";
-        document.getElementById('demographics-container').style.display = 'none';
-        document.getElementById('empty-state').style.display = 'block';
-        return;
-      }
+      document.getElementById('tableTitle').innerText = platformInfo.name;
 
-      document.getElementById('empty-state').style.display = 'none';
-
-      sheets.forEach((name, index) => {
-        const btn = document.createElement('button');
-        btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
-        btn.innerText = name;
-        btn.onclick = () => switchSheet(name);
-        container.appendChild(btn);
+      // Calculate Metrics
+      let totalInversion = 0, totalAlcance = 0, totalImpresiones = 0, sumCtr = 0;
+      data.forEach(item => {
+        totalInversion += item.inversion || 0;
+        totalAlcance += item.alcance || 0;
+        totalImpresiones += item.impresiones || 0;
+        sumCtr += item.ctr || 0;
       });
 
-      switchSheet(sheets[0]);
-    }
+      const avgCtr = data.length > 0 ? (sumCtr / data.length).toFixed(2) : '0.00';
 
-    function switchSheet(sheetName) {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.innerText === sheetName);
-      });
+      document.getElementById('kpi-inversion').innerText = `Q ${totalInversion.toLocaleString('es-GT', {minimumFractionDigits: 2})}`;
+      document.getElementById('kpi-ctr').innerText = `${avgCtr}%`;
+      document.getElementById('kpi-alcance').innerText = totalAlcance.toLocaleString('es-GT');
+      document.getElementById('kpi-impresiones').innerText = totalImpresiones.toLocaleString('es-GT');
 
-      const rows = rawData[sheetName];
-      if (!rows || rows.length === 0) return;
+      // Populate Table
+      const tbody = document.getElementById('dataTableBody');
+      tbody.innerHTML = '';
 
-      renderDashboardView(rows);
-    }
+      const labels = [];
+      const inversionData = [];
+      const alcanceData = [];
+      const interaccionesData = [];
+      const seguidoresData = [];
 
-    function renderDashboardView(rows) {
-      const headers = rows[0];
-      const dataRows = rows.slice(1);
+      data.forEach(row => {
+        const label = `${row.mes.substring(0, 3)} ${row.anio}`;
+        labels.push(label);
+        inversionData.push(row.inversion);
+        alcanceData.push(row.alcance);
+        interaccionesData.push(row.interacciones);
+        seguidoresData.push(row.seguidores);
 
-      const yearIdx = headers.findIndex(h => String(h).toUpperCase().includes('AÑO') || String(h).toUpperCase().includes('ANO'));
-      const monthIdx = headers.findIndex(h => String(h).toUpperCase().includes('MES'));
-
-      // Filtrado por fecha
-      let filtered = dataRows.filter(row => {
-        let matchYear = true;
-        let matchMonth = true;
-
-        if (selectedYear !== "ALL" && yearIdx !== -1) {
-          matchYear = String(row[yearIdx]) === String(selectedYear);
-        }
-        if (selectedMonth !== "ALL" && monthIdx !== -1) {
-          matchMonth = String(row[monthIdx]).toLowerCase().includes(selectedMonth.toLowerCase());
-        }
-
-        return matchYear && matchMonth;
-      });
-
-      const widgetsContainer = document.getElementById('widgets-container');
-      const demoContainer = document.getElementById('demographics-container');
-      const emptyState = document.getElementById('empty-state');
-
-      widgetsContainer.innerHTML = "";
-      demoContainer.style.display = 'none';
-
-      // Si no hay datos filtrados, usar la lista completa
-      const activeRows = filtered.length > 0 ? filtered : dataRows;
-
-      if (activeRows.length === 0) {
-        emptyState.style.display = 'block';
-        return;
-      }
-
-      emptyState.style.display = 'none';
-
-      // Tomar el registro más reciente según los filtros
-      const latestRow = activeRows[activeRows.length - 1];
-
-      let ageVal = 'N/A';
-      let genderVal = 'N/A';
-
-      headers.forEach((h, colIdx) => {
-        const headerText = String(h).trim();
-        const headerUpper = headerText.toUpperCase();
-
-        // Ignorar columnas de control de fecha
-        if (headerUpper.includes('AÑO') || headerUpper.includes('ANO') || headerUpper.includes('MES')) {
-          return;
-        }
-
-        // Extraer valores de edad y género
-        if (headerUpper.includes('EDAD')) {
-          ageVal = latestRow[colIdx] || 'N/A';
-          return;
-        }
-        if (headerUpper.includes('GÉNERO') || headerUpper.includes('GENERO')) {
-          genderVal = latestRow[colIdx] || 'N/A';
-          return;
-        }
-
-        // Crear Tarjeta KPI
-        const val = latestRow[colIdx] !== undefined && latestRow[colIdx] !== "" ? latestRow[colIdx] : "0";
-
-        const card = document.createElement('div');
-        card.className = 'widget-card';
-        card.innerHTML = `
-          <div class="widget-header">${headerText}</div>
-          <div class="widget-value">${val}</div>
-          <div class="widget-subtext">Valor registrado</div>
+        const tr = document.createElement('tr');
+        tr.className = 'bg-white border-b border-gray-100 hover:bg-gray-50';
+        tr.innerHTML = `
+          <td class="px-6 py-4 font-medium text-gray-900">${row.anio}</td>
+          <td class="px-6 py-4">${row.mes}</td>
+          <td class="px-6 py-4 font-semibold text-gray-800">Q ${row.inversion.toLocaleString('es-GT', {minimumFractionDigits: 2})}</td>
+          <td class="px-6 py-4">${row.ctr}%</td>
+          <td class="px-6 py-4">${row.alcance.toLocaleString('es-GT')}</td>
+          <td class="px-6 py-4">${row.impresiones.toLocaleString('es-GT')}</td>
+          <td class="px-6 py-4">${row.edad}</td>
+          <td class="px-6 py-4">${row.genero}</td>
+          <td class="px-6 py-4">${row.visualizaciones.toLocaleString('es-GT')}</td>
+          <td class="px-6 py-4">${row.interacciones.toLocaleString('es-GT')}</td>
+          <td class="px-6 py-4 text-green-600 font-medium">+${row.seguidores.toLocaleString('es-GT')}</td>
         `;
-        widgetsContainer.appendChild(card);
+        tbody.appendChild(tr);
       });
 
-      // Mostrar tarjetas de edad y género
-      if (ageVal !== 'N/A' || genderVal !== 'N/A') {
-        demoContainer.style.display = 'grid';
-        document.getElementById('age-value').innerText = ageVal;
-        document.getElementById('gender-value').innerText = genderVal;
-      }
+      // Update Charts
+      chartInversion.data = {
+        labels: labels,
+        datasets: [
+          { label: 'Inversión (Q)', data: inversionData, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true, yAxisID: 'y' },
+          { label: 'Alcance', data: alcanceData, borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y1' }
+        ]
+      };
+      chartInversion.options.scales = {
+        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Inversión (Q)' } },
+        y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Alcance' } }
+      };
+      chartInversion.update();
+
+      chartInteracciones.data = {
+        labels: labels,
+        datasets: [
+          { label: 'Interacciones', data: interaccionesData, backgroundColor: '#8b5cf6' },
+          { label: 'Nuevos Seguidores', data: seguidoresData, backgroundColor: '#f59e0b' }
+        ]
+      };
+      chartInteracciones.update();
     }
 
-    window.addEventListener('DOMContentLoaded', init);
+    window.onload = function() {
+      initCharts();
+      updateDashboard();
+    };
   </script>
 </body>
 </html>
