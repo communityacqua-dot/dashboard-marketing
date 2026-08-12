@@ -22,7 +22,6 @@
                     </div>
                 </div>
 
-                <!-- Botones del Menú Lateral -->
                 <nav class="space-y-2">
                     <button onclick="cambiarModulo('redes')" id="btn-nav-redes" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium transition">
                         <i class="fa-solid fa-chart-simple"></i> Redes Sociales
@@ -43,7 +42,7 @@
             </div>
 
             <div class="text-xs text-gray-500 border-t border-slate-800 pt-4 flex justify-between items-center">
-                <span>Dashboard R.A v3.0</span>
+                <span>Dashboard R.A v3.1</span>
                 <span id="loader-status" class="text-blue-400 text-xs hidden"><i class="fa-solid fa-spinner fa-spin"></i></span>
             </div>
         </aside>
@@ -51,13 +50,11 @@
         <!-- 📌 ÁREA PRINCIPAL -->
         <main class="flex-1 flex flex-col overflow-y-auto">
             
-            <!-- BARRA SUPERIOR (HEADER) -->
+            <!-- HEADER CON FILTROS -->
             <header class="bg-white border-b px-8 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10 shadow-sm">
                 <h2 id="titulo-seccion" class="text-xl font-bold text-gray-800">Redes Sociales</h2>
 
-                <!-- Filtros Globales -->
                 <div class="flex items-center gap-4">
-                    <!-- Filtro Año -->
                     <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
                         <i class="fa-solid fa-calendar text-gray-400"></i>
                         <select id="filtro-anio" onchange="actualizarTodo()" class="bg-transparent text-sm font-semibold focus:outline-none">
@@ -66,7 +63,6 @@
                         </select>
                     </div>
 
-                    <!-- Filtro Mes -->
                     <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
                         <i class="fa-solid fa-filter text-gray-400"></i>
                         <select id="filtro-mes" onchange="actualizarTodo()" class="bg-transparent text-sm font-semibold focus:outline-none">
@@ -86,7 +82,6 @@
                         </select>
                     </div>
 
-                    <!-- Filtro Cuenta -->
                     <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
                         <i class="fa-solid fa-building text-gray-400"></i>
                         <select id="filtro-cuenta" onchange="cambiarCuentaPrincipal()" class="bg-transparent text-sm font-semibold focus:outline-none">
@@ -104,46 +99,63 @@
                 <section id="mod-redes" class="modulo-seccion space-y-6">
                     <div id="tabs-redes" class="flex gap-2 border-b pb-2"></div>
 
-                    <!-- KPIs -->
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                    <!-- Contenedor KPIs Estándar -->
+                    <div id="kpis-estandar" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
                             <p class="text-xs text-gray-500 font-semibold uppercase">Inversión Total</p>
                             <p id="kpi-inversion" class="text-xl font-extrabold text-blue-600 mt-1">Q 0.00</p>
                         </div>
-                        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
                             <p class="text-xs text-gray-500 font-semibold uppercase">CTR Promedio</p>
                             <p id="kpi-ctr" class="text-xl font-extrabold text-green-600 mt-1">0.00%</p>
                         </div>
-                        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
                             <p class="text-xs text-gray-500 font-semibold uppercase">Alcance Total</p>
                             <p id="kpi-alcance" class="text-xl font-extrabold text-purple-600 mt-1">0</p>
                         </div>
-                        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
                             <p class="text-xs text-gray-500 font-semibold uppercase">Impresiones</p>
                             <p id="kpi-impresiones" class="text-xl font-extrabold text-orange-600 mt-1">0</p>
                         </div>
-                        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                            <p class="text-xs text-gray-500 font-semibold uppercase">Interacciones</p>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
+                            <p class="text-xs text-gray-500 font-semibold uppercase">Interacciones / Seg.</p>
                             <p id="kpi-interacciones" class="text-xl font-extrabold text-gray-700 mt-1">0</p>
                         </div>
                     </div>
 
-                    <!-- Tabla de Desglose -->
+                    <!-- Contenedor KPIs TikTok Live (Específico) -->
+                    <div id="kpis-tiktok-live" class="grid grid-cols-1 md:grid-cols-6 gap-4 hidden">
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
+                            <p class="text-xs text-gray-500 font-semibold uppercase">Visualizaciones</p>
+                            <p id="kpi-live-views" class="text-xl font-extrabold text-blue-600 mt-1">0</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
+                            <p class="text-xs text-gray-500 font-semibold uppercase">Donadores</p>
+                            <p id="kpi-live-donadores" class="text-xl font-extrabold text-purple-600 mt-1">0</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
+                            <p class="text-xs text-gray-500 font-semibold uppercase">Diamantes</p>
+                            <p id="kpi-live-diamantes" class="text-xl font-extrabold text-yellow-600 mt-1">0</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
+                            <p class="text-xs text-gray-500 font-semibold uppercase">Seguidores Nuevos</p>
+                            <p id="kpi-live-seguidores" class="text-xl font-extrabold text-green-600 mt-1">0</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
+                            <p class="text-xs text-gray-500 font-semibold uppercase">Comentarios</p>
+                            <p id="kpi-live-comentarios" class="text-xl font-extrabold text-indigo-600 mt-1">0</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm">
+                            <p class="text-xs text-gray-500 font-semibold uppercase">Me Gusta</p>
+                            <p id="kpi-live-likes" class="text-xl font-extrabold text-pink-600 mt-1">0</p>
+                        </div>
+                    </div>
+
+                    <!-- Tabla Dinámica de Rendimiento -->
                     <div class="bg-white rounded-xl border shadow-sm p-4 overflow-x-auto">
-                        <h3 class="font-bold text-gray-700 mb-4" id="titulo-tabla-redes">Histórico de Rendimiento</h3>
+                        <h3 class="font-bold text-gray-700 mb-4">Histórico de Rendimiento</h3>
                         <table class="w-full text-sm text-left border-collapse">
-                            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
-                                <tr>
-                                    <th class="p-3">Año</th>
-                                    <th class="p-3">Mes</th>
-                                    <th class="p-3">Inversión (Q)</th>
-                                    <th class="p-3">CTR</th>
-                                    <th class="p-3">Alcance</th>
-                                    <th class="p-3">Impresiones</th>
-                                    <th class="p-3">Interacciones</th>
-                                    <th class="p-3">Seguidores / Suscriptores</th>
-                                </tr>
-                            </thead>
+                            <thead id="tabla-redes-head" class="bg-gray-50 text-xs text-gray-500 uppercase"></thead>
                             <tbody id="tabla-redes-body" class="divide-y"></tbody>
                         </table>
                     </div>
@@ -162,7 +174,7 @@
                                     <th class="p-3">Red Social</th>
                                     <th class="p-3">Inversión (Q)</th>
                                     <th class="p-3">Interacciones</th>
-                                    <th class="p-3">CPC</th>
+                                    <th class="p-3">CPC / Métricas</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-posts-body" class="divide-y"></tbody>
@@ -230,7 +242,18 @@
         </main>
     </div>
 
-    <!-- LOGICA DE CONTROL E INTEGRACIÓN APPS SCRIPT -->
+    <!-- 🪟 MODAL DESGLOSE DE CAMPAÑA -->
+    <div id="modal-campana" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl max-w-3xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modal-campana-titulo" class="text-lg font-bold text-gray-800"></h3>
+                <button onclick="cerrarModalCampana()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div id="modal-campana-contenido" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+        </div>
+    </div>
+
+    <!-- SCRIPT PRINCIPAL -->
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHljnZMPV_Y0Ntap-a0_elmOMbVu7H8jcuurbY-j5-CYzvqd3HVOZka4MZ2dYsYVfn/exec';
         let rawData = {};
@@ -287,7 +310,6 @@
 
             redes.forEach((red) => {
                 const button = document.createElement('button');
-                button.id = `tab-red-${red.replace(/\s+/g, '')}`;
                 button.className = `px-4 py-2 text-sm font-semibold rounded-lg transition ${red === redActiva ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-100'}`;
                 button.innerText = red;
                 button.onclick = () => {
@@ -356,44 +378,114 @@
 
             const filas = rawData[nombreHoja] || [];
             const filasFiltradas = filtrarFilas(filas, 0, 1);
+            
+            const kpisEstandar = document.getElementById('kpis-estandar');
+            const kpisLive = document.getElementById('kpis-tiktok-live');
+            const thead = document.getElementById('tabla-redes-head');
             const tbody = document.getElementById('tabla-redes-body');
             tbody.innerHTML = '';
 
-            let totalInv = 0, totalAlc = 0, totalImp = 0, totalInt = 0, countCtr = 0, sumCtr = 0;
+            if (redActiva === 'TikTok Live') {
+                kpisEstandar.classList.add('hidden');
+                kpisLive.classList.remove('hidden');
 
-            filasFiltradas.forEach(f => {
-                const inv = parseFloat(f[2]) || 0;
-                const ctr = parseFloat(f[3]) || 0;
-                const alc = parseInt(f[4]) || 0;
-                const imp = parseInt(f[5]) || 0;
-                const inter = parseInt(f[6]) || 0;
-                const seg = f[7] || 0;
-
-                totalInv += inv;
-                totalAlc += alc;
-                totalImp += imp;
-                totalInt += inter;
-                if (ctr > 0) { sumCtr += ctr; countCtr++; }
-
-                tbody.innerHTML += `
+                thead.innerHTML = `
                     <tr>
-                        <td class="p-3 font-semibold">${f[0]}</td>
-                        <td class="p-3">${f[1]}</td>
-                        <td class="p-3">Q ${inv.toFixed(2)}</td>
-                        <td class="p-3">${ctr.toFixed(2)}%</td>
-                        <td class="p-3">${alc.toLocaleString()}</td>
-                        <td class="p-3">${imp.toLocaleString()}</td>
-                        <td class="p-3">${inter.toLocaleString()}</td>
-                        <td class="p-3">${seg.toLocaleString()}</td>
+                        <th class="p-3">Año</th>
+                        <th class="p-3">Mes</th>
+                        <th class="p-3">Visualizaciones</th>
+                        <th class="p-3">Donadores</th>
+                        <th class="p-3">Diamantes</th>
+                        <th class="p-3">Seguidores Nuevos</th>
+                        <th class="p-3">Comentarios</th>
+                        <th class="p-3">Me Gusta</th>
                     </tr>
                 `;
-            });
 
-            document.getElementById('kpi-inversion').innerText = `Q ${totalInv.toFixed(2)}`;
-            document.getElementById('kpi-ctr').innerText = `${(countCtr ? sumCtr / countCtr : 0).toFixed(2)}%`;
-            document.getElementById('kpi-alcance').innerText = totalAlc.toLocaleString();
-            document.getElementById('kpi-impresiones').innerText = totalImp.toLocaleString();
-            document.getElementById('kpi-interacciones').innerText = totalInt.toLocaleString();
+                let tViews = 0, tDon = 0, tDiam = 0, tSeg = 0, tCom = 0, tLikes = 0;
+
+                filasFiltradas.forEach(f => {
+                    const views = parseInt(f[2]) || 0;
+                    const don = parseInt(f[3]) || 0;
+                    const diam = parseInt(f[4]) || 0;
+                    const seg = parseInt(f[5]) || 0;
+                    const com = parseInt(f[6]) || 0;
+                    const likes = parseInt(f[7]) || 0;
+
+                    tViews += views; tDon += don; tDiam += diam;
+                    tSeg += seg; tCom += com; tLikes += likes;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="p-3 font-semibold">${f[0]}</td>
+                            <td class="p-3">${f[1]}</td>
+                            <td class="p-3">${views.toLocaleString()}</td>
+                            <td class="p-3">${don.toLocaleString()}</td>
+                            <td class="p-3">${diam.toLocaleString()}</td>
+                            <td class="p-3">${seg.toLocaleString()}</td>
+                            <td class="p-3">${com.toLocaleString()}</td>
+                            <td class="p-3">${likes.toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('kpi-live-views').innerText = tViews.toLocaleString();
+                document.getElementById('kpi-live-donadores').innerText = tDon.toLocaleString();
+                document.getElementById('kpi-live-diamantes').innerText = tDiam.toLocaleString();
+                document.getElementById('kpi-live-seguidores').innerText = tSeg.toLocaleString();
+                document.getElementById('kpi-live-comentarios').innerText = tCom.toLocaleString();
+                document.getElementById('kpi-live-likes').innerText = tLikes.toLocaleString();
+
+            } else {
+                kpisLive.classList.add('hidden');
+                kpisEstandar.classList.remove('hidden');
+
+                thead.innerHTML = `
+                    <tr>
+                        <th class="p-3">Año</th>
+                        <th class="p-3">Mes</th>
+                        <th class="p-3">Inversión (Q)</th>
+                        <th class="p-3">CTR</th>
+                        <th class="p-3">Alcance</th>
+                        <th class="p-3">Impresiones</th>
+                        <th class="p-3">Interacciones</th>
+                        <th class="p-3">Seguidores / Suscriptores</th>
+                    </tr>
+                `;
+
+                let totalInv = 0, totalAlc = 0, totalImp = 0, totalInt = 0, countCtr = 0, sumCtr = 0;
+
+                filasFiltradas.forEach(f => {
+                    const inv = parseFloat(f[2]) || 0;
+                    const ctr = parseFloat(f[3]) || 0;
+                    const alc = parseInt(f[4]) || 0;
+                    const imp = parseInt(f[5]) || 0;
+                    const inter = parseInt(f[6]) || 0;
+                    const seg = f[7] || 0;
+
+                    totalInv += inv; totalAlc += alc; totalImp += imp; totalInt += inter;
+                    if (ctr > 0) { sumCtr += ctr; countCtr++; }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="p-3 font-semibold">${f[0]}</td>
+                            <td class="p-3">${f[1]}</td>
+                            <td class="p-3">Q ${inv.toFixed(2)}</td>
+                            <td class="p-3">${ctr.toFixed(2)}%</td>
+                            <td class="p-3">${alc.toLocaleString()}</td>
+                            <td class="p-3">${imp.toLocaleString()}</td>
+                            <td class="p-3">${inter.toLocaleString()}</td>
+                            <td class="p-3">${seg.toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('kpi-inversion').innerText = `Q ${totalInv.toFixed(2)}`;
+                document.getElementById('kpi-ctr').innerText = `${(countCtr ? sumCtr / countCtr : 0).toFixed(2)}%`;
+                document.getElementById('kpi-alcance').innerText = totalAlc.toLocaleString();
+                document.getElementById('kpi-impresiones').innerText = totalImp.toLocaleString();
+                document.getElementById('kpi-interacciones').innerText = totalInt.toLocaleString();
+            }
         }
 
         // --- RENDER MÓDULO 2: POST IMPULSADOS ---
@@ -420,7 +512,7 @@
                         <td class="p-3">${f[3] || '-'}</td>
                         <td class="p-3">Q ${(parseFloat(f[4])||0).toFixed(2)}</td>
                         <td class="p-3">${(parseInt(f[5])||0).toLocaleString()}</td>
-                        <td class="p-3">Q ${(parseFloat(f[6])||0).toFixed(2)}</td>
+                        <td class="p-3">${f[6] ? 'Q ' + parseFloat(f[6]).toFixed(2) : '-'}</td>
                     </tr>
                 `;
             });
@@ -435,7 +527,7 @@
             }
         }
 
-        // --- RENDER MÓDULO 3: CAMPAÑAS ---
+        // --- RENDER MÓDULO 3: CAMPAÑAS Y MODAL DESGLOSE ---
         function renderizarModuloCampanas() {
             const cuenta = document.getElementById('filtro-cuenta').value;
             const nombreHoja = cuenta === 'acquaroni' ? 'Campañas Repuestos Acquaroni' : 'Campañas AZtec Oils';
@@ -445,16 +537,17 @@
             container.innerHTML = '';
 
             filasFiltradas.forEach((f, idx) => {
+                const nombreCampana = f[2] || 'Campaña sin título';
                 container.innerHTML += `
-                    <div class="bg-white rounded-xl border shadow-sm overflow-hidden p-4 space-y-3">
+                    <div onclick="abrirDesgloseCampana('${nombreCampana.replace(/'/g, "\\'")}')" class="bg-white rounded-xl border shadow-sm hover:shadow-md transition cursor-pointer p-4 space-y-3 relative group">
                         <div class="h-32 bg-gray-100 rounded-lg flex flex-col justify-center items-center relative overflow-hidden border">
                             <img id="cover-campana-${idx}" class="absolute inset-0 w-full h-full object-cover hidden">
-                            <label class="z-10 cursor-pointer bg-white/80 hover:bg-white text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">
-                                <i class="fa-solid fa-camera mr-1"></i> Portada Campaña
+                            <label onclick="event.stopPropagation()" class="z-10 cursor-pointer bg-white/80 hover:bg-white text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">
+                                <i class="fa-solid fa-camera mr-1"></i> Portada
                                 <input type="file" class="hidden" accept="image/*" onchange="previewImagenPost(event, 'cover-campana-${idx}')">
                             </label>
                         </div>
-                        <h4 class="font-bold text-gray-800">${f[2] || 'Campaña sin título'}</h4>
+                        <h4 class="font-bold text-gray-800 group-hover:text-blue-600 transition">${nombreCampana}</h4>
                         <p class="text-xs text-gray-500">${f[0]} - ${f[1]}</p>
                         <div class="flex justify-between text-xs border-t pt-2 font-semibold">
                             <span>Inversión: Q ${(parseFloat(f[3])||0).toFixed(2)}</span>
@@ -463,6 +556,48 @@
                     </div>
                 `;
             });
+        }
+
+        function abrirDesgloseCampana(nombreCampana) {
+            const cuenta = document.getElementById('filtro-cuenta').value;
+            const hojaPosts = cuenta === 'acquaroni' ? 'Post impulsados Repuestos Acquaroni' : 'Post impulsados AZtec Oils';
+            const posts = rawData[hojaPosts] || [];
+            
+            // Filtrar los posts correspondientes a esta campaña
+            const postsCampana = posts.slice(1).filter(p => p[2] && p[2].toString().toLowerCase().trim() === nombreCampana.toLowerCase().trim());
+
+            document.getElementById('modal-campana-titulo').innerText = `Desglose de Posts: ${nombreCampana}`;
+            const container = document.getElementById('modal-campana-contenido');
+            container.innerHTML = '';
+
+            if (postsCampana.length === 0) {
+                container.innerHTML = `<p class="text-sm text-gray-500 col-span-2">No se encontraron publicaciones asociadas a esta campaña.</p>`;
+            } else {
+                postsCampana.forEach((p, i) => {
+                    container.innerHTML += `
+                        <div class="border rounded-xl p-3 space-y-2 bg-gray-50">
+                            <div class="h-28 bg-gray-200 rounded flex items-center justify-center relative overflow-hidden">
+                                <img id="modal-post-img-${i}" class="absolute inset-0 w-full h-full object-cover hidden">
+                                <label class="z-10 cursor-pointer bg-white px-2 py-1 rounded text-xs font-bold shadow">
+                                    <i class="fa-solid fa-upload"></i> Subir Imagen
+                                    <input type="file" class="hidden" accept="image/*" onchange="previewImagenPost(event, 'modal-post-img-${i}')">
+                                </label>
+                            </div>
+                            <p class="font-semibold text-sm text-gray-700">${p[3] || 'Red Social N/A'}</p>
+                            <div class="text-xs text-gray-600 flex justify-between border-t pt-1">
+                                <span>Inversión: Q ${(parseFloat(p[4])||0).toFixed(2)}</span>
+                                <span>Interacciones: ${(parseInt(p[5])||0).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('modal-campana').classList.remove('hidden');
+        }
+
+        function cerrarModalCampana() {
+            document.getElementById('modal-campana').classList.add('hidden');
         }
 
         // --- RENDER MÓDULO 4: PRESUPUESTO ---
@@ -513,7 +648,7 @@
             document.getElementById('total-plataformas-mes').innerText = `Total: Q ${totalMonto.toFixed(2)}`;
         }
 
-        // Inicialización al cargar la página
+        // Inicialización
         document.addEventListener('DOMContentLoaded', () => {
             renderizarTabsRedes();
             cargarDatosSheets();
