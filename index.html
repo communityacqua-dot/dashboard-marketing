@@ -1,625 +1,867 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Dashboard Redes Sociales R.A</title>
+<title>Dashboard Redes Sociales R.A</title>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- FontAwesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    >
+<!-- FontAwesome -->
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+>
 
 </head>
 
-
 <body class="bg-gray-100 font-sans text-gray-800">
-
 
 <div class="flex h-screen overflow-hidden">
 
+<!-- =========================================================
+     SIDEBAR
+========================================================== -->
 
-    <!-- =========================================================
-         SIDEBAR
-    ========================================================== -->
+<aside
+    class="w-64 bg-slate-900 text-white flex flex-col justify-between p-4 shadow-lg"
+>
 
-    <aside
-        class="w-64 bg-slate-900 text-white flex flex-col justify-between p-4 shadow-lg"
+    <div>
+
+        <div class="mb-8 flex items-center gap-3">
+
+            <i
+                class="fa-solid fa-chart-pie text-2xl text-blue-400"
+            ></i>
+
+            <div>
+
+                <h1
+                    class="font-bold text-lg leading-tight"
+                >
+                    R.A DASHBOARD
+                </h1>
+
+                <p class="text-xs text-gray-400">
+                    Marketing & Analítica
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <nav class="space-y-2">
+
+
+            <!-- REDES SOCIALES -->
+
+            <button
+                onclick="cambiarModulo('redes')"
+                id="btn-nav-redes"
+                class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium transition"
+            >
+
+                <i class="fa-solid fa-chart-simple"></i>
+
+                Redes Sociales
+
+            </button>
+
+
+            <!-- POST IMPULSADOS -->
+
+            <button
+                onclick="cambiarModulo('posts')"
+                id="btn-nav-posts"
+                class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
+            >
+
+                <i class="fa-solid fa-rocket"></i>
+
+                Post Impulsados
+
+            </button>
+
+
+            <!-- CAMPAÑAS -->
+
+            <button
+                onclick="cambiarModulo('campanas')"
+                id="btn-nav-campanas"
+                class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
+            >
+
+                <i class="fa-solid fa-bullhorn"></i>
+
+                Campañas
+
+            </button>
+
+
+            <!-- PRESUPUESTO -->
+
+            <button
+                onclick="cambiarModulo('presupuesto')"
+                id="btn-nav-presupuesto"
+                class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
+            >
+
+                <i class="fa-solid fa-wallet"></i>
+
+                Presupuesto
+
+            </button>
+
+
+            <!-- PLATAFORMAS -->
+
+            <button
+                onclick="cambiarModulo('plataformas')"
+                id="btn-nav-plataformas"
+                class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
+            >
+
+                <i class="fa-solid fa-server"></i>
+
+                Plataformas
+
+            </button>
+
+
+        </nav>
+
+    </div>
+
+
+    <div
+        class="text-xs text-gray-500 border-t border-slate-800 pt-4 flex justify-between items-center"
     >
 
-        <div>
+        <span>
+            Dashboard R.A v3.4
+        </span>
 
-            <div class="mb-8 flex items-center gap-3">
+        <span
+            id="loader-status"
+            class="text-blue-400 text-xs hidden"
+        >
+
+            <i class="fa-solid fa-spinner fa-spin"></i>
+
+        </span>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =========================================================
+     ÁREA PRINCIPAL
+========================================================== -->
+
+<main
+    class="flex-1 flex flex-col overflow-y-auto"
+>
+
+
+    <!-- HEADER -->
+
+    <header
+        class="bg-white border-b px-8 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10 shadow-sm"
+    >
+
+        <h2
+            id="titulo-seccion"
+            class="text-xl font-bold text-gray-800"
+        >
+            Redes Sociales
+        </h2>
+
+
+        <div class="flex items-center gap-4">
+
+
+            <!-- AÑO -->
+
+            <div
+                class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5"
+            >
 
                 <i
-                    class="fa-solid fa-chart-pie text-2xl text-blue-400"
+                    class="fa-solid fa-calendar text-gray-400"
                 ></i>
 
-                <div>
+                <select
+                    id="filtro-anio"
+                    onchange="actualizarTodo()"
+                    class="bg-transparent text-sm font-semibold focus:outline-none"
+                >
 
-                    <h1
-                        class="font-bold text-lg leading-tight"
+                    <option value="2026">
+                        2026
+                    </option>
+
+                    <option value="2025">
+                        2025
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- MES -->
+
+            <div
+                class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5"
+            >
+
+                <i
+                    class="fa-solid fa-filter text-gray-400"
+                ></i>
+
+                <select
+                    id="filtro-mes"
+                    onchange="actualizarTodo()"
+                    class="bg-transparent text-sm font-semibold focus:outline-none"
+                >
+
+                    <option value="todos">
+                        Todos los Meses
+                    </option>
+
+                    <option value="Enero">
+                        Enero
+                    </option>
+
+                    <option value="Febrero">
+                        Febrero
+                    </option>
+
+                    <option value="Marzo">
+                        Marzo
+                    </option>
+
+                    <option value="Abril">
+                        Abril
+                    </option>
+
+                    <option value="Mayo">
+                        Mayo
+                    </option>
+
+                    <option value="Junio">
+                        Junio
+                    </option>
+
+                    <option value="Julio">
+                        Julio
+                    </option>
+
+                    <option value="Agosto">
+                        Agosto
+                    </option>
+
+                    <option value="Septiembre">
+                        Septiembre
+                    </option>
+
+                    <option value="Octubre">
+                        Octubre
+                    </option>
+
+                    <option value="Noviembre">
+                        Noviembre
+                    </option>
+
+                    <option value="Diciembre">
+                        Diciembre
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- CUENTA -->
+
+            <div
+                class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5"
+            >
+
+                <i
+                    class="fa-solid fa-building text-gray-400"
+                ></i>
+
+                <select
+                    id="filtro-cuenta"
+                    onchange="cambiarCuentaPrincipal()"
+                    class="bg-transparent text-sm font-semibold focus:outline-none"
+                >
+
+                    <option value="acquaroni">
+                        Repuestos Acquaroni
+                    </option>
+
+                    <option value="aztec">
+                        AZtec Oils
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         CONTENIDO
+    ====================================================== -->
+
+    <div class="p-8 space-y-8">
+
+
+        <!-- =================================================
+             MÓDULO 1: REDES SOCIALES
+        ================================================== -->
+
+        <section
+            id="mod-redes"
+            class="modulo-seccion space-y-6"
+        >
+
+            <div
+                id="tabs-redes"
+                class="flex gap-2 border-b pb-2"
+            ></div>
+
+
+            <!-- KPIs ESTÁNDAR -->
+
+            <div
+                id="kpis-estandar"
+                class="grid grid-cols-1 md:grid-cols-5 gap-4"
+            >
+
+
+                <div
+                    id="card-kpi-inversion"
+                    class="bg-white p-4 rounded-xl border shadow-sm"
+                >
+
+                    <p
+                        class="text-xs text-gray-500 font-semibold uppercase"
                     >
-                        R.A DASHBOARD
-                    </h1>
+                        Inversión Total
+                    </p>
 
-                    <p class="text-xs text-gray-400">
-                        Marketing & Analítica
+                    <p
+                        id="kpi-inversion"
+                        class="text-xl font-extrabold text-blue-600 mt-1"
+                    >
+                        Q 0.00
                     </p>
 
                 </div>
 
-            </div>
-
-
-            <nav class="space-y-2">
-
-
-                <!-- REDES SOCIALES -->
-
-                <button
-                    onclick="cambiarModulo('redes')"
-                    id="btn-nav-redes"
-                    class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium transition"
-                >
-
-                    <i class="fa-solid fa-chart-simple"></i>
-
-                    Redes Sociales
-
-                </button>
-
-
-                <!-- POST IMPULSADOS -->
-
-                <button
-                    onclick="cambiarModulo('posts')"
-                    id="btn-nav-posts"
-                    class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-                >
-
-                    <i class="fa-solid fa-rocket"></i>
-
-                    Post Impulsados
-
-                </button>
-
-
-                <!-- CAMPAÑAS -->
-
-                <button
-                    onclick="cambiarModulo('campanas')"
-                    id="btn-nav-campanas"
-                    class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-                >
-
-                    <i class="fa-solid fa-bullhorn"></i>
-
-                    Campañas
-
-                </button>
-
-
-                <!-- PRESUPUESTO -->
-
-                <button
-                    onclick="cambiarModulo('presupuesto')"
-                    id="btn-nav-presupuesto"
-                    class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-                >
-
-                    <i class="fa-solid fa-wallet"></i>
-
-                    Presupuesto
-
-                </button>
-
-
-                <!-- PLATAFORMAS -->
-
-                <button
-                    onclick="cambiarModulo('plataformas')"
-                    id="btn-nav-plataformas"
-                    class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-                >
-
-                    <i class="fa-solid fa-server"></i>
-
-                    Plataformas
-
-                </button>
-
-
-            </nav>
-
-        </div>
-
-
-        <div
-            class="text-xs text-gray-500 border-t border-slate-800 pt-4 flex justify-between items-center"
-        >
-
-            <span>
-                Dashboard R.A v3.4
-            </span>
-
-            <span
-                id="loader-status"
-                class="text-blue-400 text-xs hidden"
-            >
-
-                <i class="fa-solid fa-spinner fa-spin"></i>
-
-            </span>
-
-        </div>
-
-    </aside>
-
-
-
-    <!-- =========================================================
-         ÁREA PRINCIPAL
-    ========================================================== -->
-
-    <main
-        class="flex-1 flex flex-col overflow-y-auto"
-    >
-
-
-        <!-- HEADER -->
-
-        <header
-            class="bg-white border-b px-8 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10 shadow-sm"
-        >
-
-            <h2
-                id="titulo-seccion"
-                class="text-xl font-bold text-gray-800"
-            >
-                Redes Sociales
-            </h2>
-
-
-            <div class="flex items-center gap-4">
-
-
-                <!-- AÑO -->
 
                 <div
-                    class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5"
+                    id="card-kpi-ctr"
+                    class="bg-white p-4 rounded-xl border shadow-sm"
                 >
 
-                    <i
-                        class="fa-solid fa-calendar text-gray-400"
-                    ></i>
-
-                    <select
-                        id="filtro-anio"
-                        onchange="actualizarTodo()"
-                        class="bg-transparent text-sm font-semibold focus:outline-none"
+                    <p
+                        class="text-xs text-gray-500 font-semibold uppercase"
                     >
+                        CTR Promedio
+                    </p>
 
-                        <option value="2026">
-                            2026
-                        </option>
-
-                        <option value="2025">
-                            2025
-                        </option>
-
-                    </select>
+                    <p
+                        id="kpi-ctr"
+                        class="text-xl font-extrabold text-green-600 mt-1"
+                    >
+                        0.00%
+                    </p>
 
                 </div>
 
 
-                <!-- MES -->
-
                 <div
-                    class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5"
+                    class="bg-white p-4 rounded-xl border shadow-sm"
                 >
 
-                    <i
-                        class="fa-solid fa-filter text-gray-400"
-                    ></i>
-
-                    <select
-                        id="filtro-mes"
-                        onchange="actualizarTodo()"
-                        class="bg-transparent text-sm font-semibold focus:outline-none"
+                    <p
+                        class="text-xs text-gray-500 font-semibold uppercase"
                     >
+                        Alcance Total
+                    </p>
 
-                        <option value="todos">
-                            Todos los Meses
-                        </option>
-
-                        <option value="Enero">
-                            Enero
-                        </option>
-
-                        <option value="Febrero">
-                            Febrero
-                        </option>
-
-                        <option value="Marzo">
-                            Marzo
-                        </option>
-
-                        <option value="Abril">
-                            Abril
-                        </option>
-
-                        <option value="Mayo">
-                            Mayo
-                        </option>
-
-                        <option value="Junio">
-                            Junio
-                        </option>
-
-                        <option value="Julio">
-                            Julio
-                        </option>
-
-                        <option value="Agosto">
-                            Agosto
-                        </option>
-
-                        <option value="Septiembre">
-                            Septiembre
-                        </option>
-
-                        <option value="Octubre">
-                            Octubre
-                        </option>
-
-                        <option value="Noviembre">
-                            Noviembre
-                        </option>
-
-                        <option value="Diciembre">
-                            Diciembre
-                        </option>
-
-                    </select>
+                    <p
+                        id="kpi-alcance"
+                        class="text-xl font-extrabold text-purple-600 mt-1"
+                    >
+                        0
+                    </p>
 
                 </div>
 
 
-                <!-- CUENTA -->
-
                 <div
-                    class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5"
+                    class="bg-white p-4 rounded-xl border shadow-sm"
                 >
 
-                    <i
-                        class="fa-solid fa-building text-gray-400"
-                    ></i>
-
-                    <select
-                        id="filtro-cuenta"
-                        onchange="cambiarCuentaPrincipal()"
-                        class="bg-transparent text-sm font-semibold focus:outline-none"
+                    <p
+                        class="text-xs text-gray-500 font-semibold uppercase"
                     >
+                        Impresiones
+                    </p>
 
-                        <option value="acquaroni">
-                            Repuestos Acquaroni
-                        </option>
+                    <p
+                        id="kpi-impresiones"
+                        class="text-xl font-extrabold text-orange-600 mt-1"
+                    >
+                        0
+                    </p>
 
-                        <option value="aztec">
-                            AZtec Oils
-                        </option>
+                </div>
 
-                    </select>
+
+                <div
+                    class="bg-white p-4 rounded-xl border shadow-sm"
+                >
+
+                    <p
+                        class="text-xs text-gray-500 font-semibold uppercase"
+                    >
+                        Interacciones / Seg.
+                    </p>
+
+                    <p
+                        id="kpi-interacciones"
+                        class="text-xl font-extrabold text-gray-700 mt-1"
+                    >
+                        0
+                    </p>
 
                 </div>
 
 
             </div>
 
-        </header>
 
+            <!-- KPIs TIKTOK LIVE -->
 
-
-        <!-- =====================================================
-             CONTENIDO
-        ====================================================== -->
-
-        <div class="p-8 space-y-8">
-
-
-            <!-- =================================================
-                 MÓDULO 1: REDES SOCIALES
-            ================================================== -->
-
-            <section
-                id="mod-redes"
-                class="modulo-seccion space-y-6"
+            <div
+                id="kpis-tiktok-live"
+                class="grid grid-cols-1 md:grid-cols-6 gap-4 hidden"
             >
 
-                <div
-                    id="tabs-redes"
-                    class="flex gap-2 border-b pb-2"
-                ></div>
-
-
-                <!-- KPIs ESTÁNDAR -->
 
                 <div
-                    id="kpis-estandar"
-                    class="grid grid-cols-1 md:grid-cols-5 gap-4"
+                    class="bg-white p-4 rounded-xl border shadow-sm"
                 >
 
-
-                    <div
-                        id="card-kpi-inversion"
-                        class="bg-white p-4 rounded-xl border shadow-sm"
+                    <p
+                        class="text-xs text-gray-500 font-semibold uppercase"
                     >
+                        Visualizaciones
+                    </p>
 
-                        <p
-                            class="text-xs text-gray-500 font-semibold uppercase"
-                        >
-                            Inversión Total
-                        </p>
-
-                        <p
-                            id="kpi-inversion"
-                            class="text-xl font-extrabold text-blue-600 mt-1"
-                        >
-                            Q 0.00
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        id="card-kpi-ctr"
-                        class="bg-white p-4 rounded-xl border shadow-sm"
+                    <p
+                        id="kpi-live-views"
+                        class="text-xl font-extrabold text-blue-600 mt-1"
                     >
-
-                        <p
-                            class="text-xs text-gray-500 font-semibold uppercase"
-                        >
-                            CTR Promedio
-                        </p>
-
-                        <p
-                            id="kpi-ctr"
-                            class="text-xl font-extrabold text-green-600 mt-1"
-                        >
-                            0.00%
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-semibold uppercase"
-                        >
-                            Alcance Total
-                        </p>
-
-                        <p
-                            id="kpi-alcance"
-                            class="text-xl font-extrabold text-purple-600 mt-1"
-                        >
-                            0
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-semibold uppercase"
-                        >
-                            Impresiones
-                        </p>
-
-                        <p
-                            id="kpi-impresiones"
-                            class="text-xl font-extrabold text-orange-600 mt-1"
-                        >
-                            0
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-semibold uppercase"
-                        >
-                            Interacciones / Seg.
-                        </p>
-
-                        <p
-                            id="kpi-interacciones"
-                            class="text-xl font-extrabold text-gray-700 mt-1"
-                        >
-                            0
-                        </p>
-
-                    </div>
-
+                        0
+                    </p>
 
                 </div>
 
 
-                <!-- KPIs TIKTOK LIVE -->
-
                 <div
-                    id="kpis-tiktok-live"
-                    class="grid grid-cols-1 md:grid-cols-6 gap-4 hidden"
+                    class="bg-white p-4 rounded-xl border shadow-sm"
                 >
 
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm"
+                    <p
+                        class="text-xs text-gray-500 font-semibold uppercase"
                     >
+                        Donadores
+                    </p>
 
-                        <p
-                            class="text-xs text-gray-500 font-semibold uppercase"
-                        >
-                            Visualizaciones
-                        </p>
-
-                        <p
-                            id="kpi-live-views"
-                            class="text-xl font-extrabold text-blue-600 mt-1"
-                        >
-                            0
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm"
+                    <p
+                        id="kpi-live-donadores"
+                        class="text-xl font-extrabold text-purple-600 mt-1"
                     >
-
-                        <p
-                            class="text-xs text-gray-500 font-semibold uppercase"
-                        >
-                            Donadores
-                        </p>
-
-                        <p
-                            id="kpi-live-donadores"
-                            class="text-xl font-extrabold text-purple-600 mt-1"
-                        >
-                            0
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-semibold uppercase"
-                        >
-                            Diamantes
-                        </p>
-
-                        <p
-                            id="kpi-live-diamantes"
-                            class="text-xl font-extrabold text-yellow-600 mt-1"
-                        >
-                            0
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-semibold uppercase"
-                        >
-                            Seguidores Nuevos
-                        </p>
-
-                        <p
-                            id="kpi-live-seguidores"
-                            class="text-xl font-extrabold text-green-600 mt-1"
-                        >
-                            0
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-semibold uppercase"
-                        >
-                            Comentarios
-                        </p>
-
-                        <p
-                            id="kpi-live-comentarios"
-                            class="text-xl font-extrabold text-indigo-600 mt-1"
-                        >
-                            0
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-semibold uppercase"
-                        >
-                            Me Gusta
-                        </p>
-
-                        <p
-                            id="kpi-live-likes"
-                            class="text-xl font-extrabold text-pink-600 mt-1"
-                        >
-                            0
-                        </p>
-
-                    </div>
-
+                        0
+                    </p>
 
                 </div>
 
-            </section>
+
+                <div
+                    class="bg-white p-4 rounded-xl border shadow-sm"
+                >
+
+                    <p
+                        class="text-xs text-gray-500 font-semibold uppercase"
+                    >
+                        Diamantes
+                    </p>
+
+                    <p
+                        id="kpi-live-diamantes"
+                        class="text-xl font-extrabold text-yellow-600 mt-1"
+                    >
+                        0
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="bg-white p-4 rounded-xl border shadow-sm"
+                >
+
+                    <p
+                        class="text-xs text-gray-500 font-semibold uppercase"
+                    >
+                        Seguidores Nuevos
+                    </p>
+
+                    <p
+                        id="kpi-live-seguidores"
+                        class="text-xl font-extrabold text-green-600 mt-1"
+                    >
+                        0
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="bg-white p-4 rounded-xl border shadow-sm"
+                >
+
+                    <p
+                        class="text-xs text-gray-500 font-semibold uppercase"
+                    >
+                        Comentarios
+                    </p>
+
+                    <p
+                        id="kpi-live-comentarios"
+                        class="text-xl font-extrabold text-indigo-600 mt-1"
+                    >
+                        0
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="bg-white p-4 rounded-xl border shadow-sm"
+                >
+
+                    <p
+                        class="text-xs text-gray-500 font-semibold uppercase"
+                    >
+                        Me Gusta
+                    </p>
+
+                    <p
+                        id="kpi-live-likes"
+                        class="text-xl font-extrabold text-pink-600 mt-1"
+                    >
+                        0
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
 
 
 
-            <!-- =================================================
-                 MÓDULO 2: POST IMPULSADOS
-                 ⚠️ SE MANTIENE COMO ESTABA
-            ================================================== -->
+        <!-- =================================================
+             MÓDULO 2: POST IMPULSADOS
+             ⚠️ SE MANTIENE COMO ESTABA
+        ================================================== -->
 
-            <section
-                id="mod-posts"
-                class="modulo-seccion hidden space-y-6"
+        <section
+            id="mod-posts"
+            class="modulo-seccion hidden space-y-6"
+        >
+
+            <h3 class="text-lg font-bold">
+                Publicaciones Promocionadas
+            </h3>
+
+
+            <div
+                class="bg-white rounded-xl border shadow-sm p-4 overflow-x-auto"
             >
+
+                <table
+                    class="w-full text-sm text-left border-collapse"
+                >
+
+                    <thead
+                        class="bg-gray-50 text-xs text-gray-500 uppercase"
+                    >
+
+                        <tr>
+
+                            <th class="p-3">
+                                Vista Previa
+                            </th>
+
+                            <th class="p-3">
+                                Año / Mes
+                            </th>
+
+                            <th class="p-3">
+                                Publicación
+                            </th>
+
+                            <th class="p-3">
+                                Red Social
+                            </th>
+
+                            <th class="p-3">
+                                Inversión (Q)
+                            </th>
+
+                            <th class="p-3">
+                                Interacciones
+                            </th>
+
+                            <th class="p-3">
+                                CPC / Métricas
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="tabla-posts-body"
+                        class="divide-y"
+                    ></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MÓDULO 3: CAMPAÑAS
+        ================================================== -->
+
+        <section
+            id="mod-campanas"
+            class="modulo-seccion hidden space-y-6"
+        >
+
+            <div>
 
                 <h3 class="text-lg font-bold">
-                    Publicaciones Promocionadas
+                    Gestión de Campañas
                 </h3>
+
+                <p class="text-sm text-gray-500 mt-1">
+                    Selecciona una campaña para ver sus posts,
+                    artes y métricas.
+                </p>
+
+            </div>
+
+
+            <div
+                id="contenedor-campanas"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MÓDULO 4: PRESUPUESTO
+        ================================================== -->
+
+        <section
+            id="mod-presupuesto"
+            class="modulo-seccion hidden space-y-6"
+        >
+
+            <h3 class="text-lg font-bold mb-4">
+                Consolidado de Presupuesto
+            </h3>
+
+
+            <div
+                class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4"
+            >
 
 
                 <div
-                    class="bg-white rounded-xl border shadow-sm p-4 overflow-x-auto"
+                    class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-blue-500"
                 >
 
-                    <table
-                        class="w-full text-sm text-left border-collapse"
+                    <p
+                        class="text-xs text-gray-500 font-bold uppercase"
                     >
+                        Asignado Total
+                    </p>
+
+                    <p
+                        id="pres-asignado"
+                        class="text-xl font-extrabold text-gray-800 mt-2"
+                    >
+                        Q 0.00
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-green-500"
+                >
+
+                    <p
+                        class="text-xs text-gray-500 font-bold uppercase"
+                    >
+                        Ejecutado Total
+                    </p>
+
+                    <p
+                        id="pres-ejecutado"
+                        class="text-xl font-extrabold text-gray-800 mt-2"
+                    >
+                        Q 0.00
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-red-500"
+                >
+
+                    <p
+                        class="text-xs text-gray-500 font-bold uppercase"
+                    >
+                        Repuestos Acquaroni
+                    </p>
+
+                    <p
+                        id="pres-acquaroni"
+                        class="text-xl font-extrabold text-gray-800 mt-2"
+                    >
+                        Q 0.00
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-yellow-500"
+                >
+
+                    <p
+                        class="text-xs text-gray-500 font-bold uppercase"
+                    >
+                        AZtec Oils
+                    </p>
+
+                    <p
+                        id="pres-aztec"
+                        class="text-xl font-extrabold text-gray-800 mt-2"
+                    >
+                        Q 0.00
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-purple-500"
+                >
+
+                    <p
+                        class="text-xs text-gray-500 font-bold uppercase"
+                    >
+                        Plataformas Externas
+                    </p>
+
+                    <p
+                        id="pres-plataformas-m4"
+                        class="text-xl font-extrabold text-gray-800 mt-2"
+                    >
+                        Q 0.00
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MÓDULO 5: PLATAFORMAS
+        ================================================== -->
+
+        <section
+            id="mod-plataformas"
+            class="modulo-seccion hidden space-y-6"
+        >
+
+            <div
+                class="bg-white p-6 rounded-xl border shadow-sm space-y-4"
+            >
+
+                <div
+                    class="flex justify-between items-center border-b pb-3"
+                >
+
+                    <span class="font-bold text-gray-700">
+                        Facturación de Herramientas y Servicios
+                    </span>
+
+                    <span
+                        id="total-plataformas-mes"
+                        class="text-xl font-black text-blue-600"
+                    >
+                        Total: Q 0.00
+                    </span>
+
+                </div>
+
+
+                <div class="overflow-x-auto">
+
+                    <table class="w-full text-sm text-left">
 
                         <thead
                             class="bg-gray-50 text-xs text-gray-500 uppercase"
@@ -628,31 +870,19 @@
                             <tr>
 
                                 <th class="p-3">
-                                    Vista Previa
+                                    Año
                                 </th>
 
                                 <th class="p-3">
-                                    Año / Mes
+                                    Mes
                                 </th>
 
                                 <th class="p-3">
-                                    Publicación
+                                    Plataforma
                                 </th>
 
                                 <th class="p-3">
-                                    Red Social
-                                </th>
-
-                                <th class="p-3">
-                                    Inversión (Q)
-                                </th>
-
-                                <th class="p-3">
-                                    Interacciones
-                                </th>
-
-                                <th class="p-3">
-                                    CPC / Métricas
+                                    Monto (Q)
                                 </th>
 
                             </tr>
@@ -661,7 +891,7 @@
 
 
                         <tbody
-                            id="tabla-posts-body"
+                            id="tabla-plataformas-body"
                             class="divide-y"
                         ></tbody>
 
@@ -669,246 +899,14 @@
 
                 </div>
 
-            </section>
+            </div>
 
+        </section>
 
 
-            <!-- =================================================
-                 MÓDULO 3: CAMPAÑAS
-            ================================================== -->
+    </div>
 
-            <section
-                id="mod-campanas"
-                class="modulo-seccion hidden space-y-6"
-            >
-
-                <div>
-
-                    <h3 class="text-lg font-bold">
-                        Gestión de Campañas
-                    </h3>
-
-                    <p class="text-sm text-gray-500 mt-1">
-                        Selecciona una campaña para ver sus posts,
-                        artes y métricas.
-                    </p>
-
-                </div>
-
-
-                <div
-                    id="contenedor-campanas"
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                ></div>
-
-            </section>
-
-
-
-            <!-- =================================================
-                 MÓDULO 4: PRESUPUESTO
-            ================================================== -->
-
-            <section
-                id="mod-presupuesto"
-                class="modulo-seccion hidden space-y-6"
-            >
-
-                <h3 class="text-lg font-bold mb-4">
-                    Consolidado de Presupuesto
-                </h3>
-
-
-                <div
-                    class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4"
-                >
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-blue-500"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-bold uppercase"
-                        >
-                            Asignado Total
-                        </p>
-
-                        <p
-                            id="pres-asignado"
-                            class="text-xl font-extrabold text-gray-800 mt-2"
-                        >
-                            Q 0.00
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-green-500"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-bold uppercase"
-                        >
-                            Ejecutado Total
-                        </p>
-
-                        <p
-                            id="pres-ejecutado"
-                            class="text-xl font-extrabold text-gray-800 mt-2"
-                        >
-                            Q 0.00
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-red-500"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-bold uppercase"
-                        >
-                            Repuestos Acquaroni
-                        </p>
-
-                        <p
-                            id="pres-acquaroni"
-                            class="text-xl font-extrabold text-gray-800 mt-2"
-                        >
-                            Q 0.00
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-yellow-500"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-bold uppercase"
-                        >
-                            AZtec Oils
-                        </p>
-
-                        <p
-                            id="pres-aztec"
-                            class="text-xl font-extrabold text-gray-800 mt-2"
-                        >
-                            Q 0.00
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-purple-500"
-                    >
-
-                        <p
-                            class="text-xs text-gray-500 font-bold uppercase"
-                        >
-                            Plataformas Externas
-                        </p>
-
-                        <p
-                            id="pres-plataformas-m4"
-                            class="text-xl font-extrabold text-gray-800 mt-2"
-                        >
-                            Q 0.00
-                        </p>
-
-                    </div>
-
-
-                </div>
-
-            </section>
-
-
-
-            <!-- =================================================
-                 MÓDULO 5: PLATAFORMAS
-            ================================================== -->
-
-            <section
-                id="mod-plataformas"
-                class="modulo-seccion hidden space-y-6"
-            >
-
-                <div
-                    class="bg-white p-6 rounded-xl border shadow-sm space-y-4"
-                >
-
-                    <div
-                        class="flex justify-between items-center border-b pb-3"
-                    >
-
-                        <span class="font-bold text-gray-700">
-                            Facturación de Herramientas y Servicios
-                        </span>
-
-                        <span
-                            id="total-plataformas-mes"
-                            class="text-xl font-black text-blue-600"
-                        >
-                            Total: Q 0.00
-                        </span>
-
-                    </div>
-
-
-                    <div class="overflow-x-auto">
-
-                        <table class="w-full text-sm text-left">
-
-                            <thead
-                                class="bg-gray-50 text-xs text-gray-500 uppercase"
-                            >
-
-                                <tr>
-
-                                    <th class="p-3">
-                                        Año
-                                    </th>
-
-                                    <th class="p-3">
-                                        Mes
-                                    </th>
-
-                                    <th class="p-3">
-                                        Plataforma
-                                    </th>
-
-                                    <th class="p-3">
-                                        Monto (Q)
-                                    </th>
-
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody
-                                id="tabla-plataformas-body"
-                                class="divide-y"
-                            ></tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-        </div>
-
-    </main>
+</main>
 
 </div>
 
@@ -923,61 +921,61 @@
     class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4"
 >
 
+<div
+    class="bg-white rounded-2xl max-w-6xl w-full max-h-[92vh] overflow-y-auto shadow-2xl"
+>
+
+
+    <!-- HEADER MODAL -->
+
     <div
-        class="bg-white rounded-2xl max-w-6xl w-full max-h-[92vh] overflow-y-auto shadow-2xl"
+        class="sticky top-0 z-20 bg-white border-b px-6 py-5"
     >
 
-
-        <!-- HEADER MODAL -->
-
         <div
-            class="sticky top-0 z-20 bg-white border-b px-6 py-5"
+            class="flex justify-between items-start gap-4"
         >
 
-            <div
-                class="flex justify-between items-start gap-4"
-            >
+            <div>
 
-                <div>
+                <h3
+                    id="modal-campana-titulo"
+                    class="text-xl font-bold text-gray-800"
+                ></h3>
 
-                    <h3
-                        id="modal-campana-titulo"
-                        class="text-xl font-bold text-gray-800"
-                    ></h3>
-
-                    <p
-                        id="modal-campana-subtitulo"
-                        class="text-sm text-gray-500 mt-1"
-                    ></p>
-
-                </div>
-
-
-                <button
-                    onclick="cerrarModalCampana()"
-                    class="text-gray-400 hover:text-gray-700 transition"
-                >
-
-                    <i
-                        class="fa-solid fa-xmark text-2xl"
-                    ></i>
-
-                </button>
+                <p
+                    id="modal-campana-subtitulo"
+                    class="text-sm text-gray-500 mt-1"
+                ></p>
 
             </div>
 
+
+            <button
+                onclick="cerrarModalCampana()"
+                class="text-gray-400 hover:text-gray-700 transition"
+            >
+
+                <i
+                    class="fa-solid fa-xmark text-2xl"
+                ></i>
+
+            </button>
+
         </div>
 
-
-        <!-- CONTENIDO -->
-
-        <div
-            id="modal-campana-contenido"
-            class="p-6 space-y-6"
-        ></div>
-
-
     </div>
+
+
+    <!-- CONTENIDO -->
+
+    <div
+        id="modal-campana-contenido"
+        class="p-6 space-y-6"
+    ></div>
+
+
+</div>
 
 </div>
 
@@ -2085,11 +2083,11 @@ function renderizarModuloPosts() {
                         <td class="p-3">
 
                             ${
-                                f[8]
+                                f[6]
 
                                     ? 'Q ' +
                                       limpiarValorNum(
-                                          f[8]
+                                          f[6]
                                       ).toFixed(2)
 
                                     : '-'
@@ -3971,7 +3969,6 @@ window.addEventListener(
 
 
 </script>
-
 
 </body>
 
