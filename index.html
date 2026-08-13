@@ -60,7 +60,6 @@
 
         <nav class="space-y-2">
 
-
             <!-- REDES SOCIALES -->
 
             <button
@@ -135,7 +134,6 @@
 
             </button>
 
-
         </nav>
 
     </div>
@@ -172,7 +170,6 @@
     class="flex-1 flex flex-col overflow-y-auto"
 >
 
-
     <!-- HEADER -->
 
     <header
@@ -188,7 +185,6 @@
 
 
         <div class="flex items-center gap-4">
-
 
             <!-- AÑO -->
 
@@ -320,7 +316,6 @@
 
             </div>
 
-
         </div>
 
     </header>
@@ -355,7 +350,6 @@
                 id="kpis-estandar"
                 class="grid grid-cols-1 md:grid-cols-5 gap-4"
             >
-
 
                 <div
                     id="card-kpi-inversion"
@@ -458,7 +452,6 @@
 
                 </div>
 
-
             </div>
 
 
@@ -468,7 +461,6 @@
                 id="kpis-tiktok-live"
                 class="grid grid-cols-1 md:grid-cols-6 gap-4 hidden"
             >
-
 
                 <div
                     class="bg-white p-4 rounded-xl border shadow-sm"
@@ -589,7 +581,6 @@
 
                 </div>
 
-
             </div>
 
         </section>
@@ -598,7 +589,6 @@
 
         <!-- =================================================
              MÓDULO 2: POST IMPULSADOS
-             ⚠️ SE MANTIENE COMO ESTABA
         ================================================== -->
 
         <section
@@ -721,7 +711,6 @@
                 class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4"
             >
 
-
                 <div
                     class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-blue-500"
                 >
@@ -821,7 +810,6 @@
 
                 </div>
 
-
             </div>
 
         </section>
@@ -903,7 +891,6 @@
 
         </section>
 
-
     </div>
 
 </main>
@@ -924,7 +911,6 @@
 <div
     class="bg-white rounded-2xl max-w-6xl w-full max-h-[92vh] overflow-y-auto shadow-2xl"
 >
-
 
     <!-- HEADER MODAL -->
 
@@ -974,7 +960,6 @@
         class="p-6 space-y-6"
     ></div>
 
-
 </div>
 
 </div>
@@ -1007,7 +992,6 @@ let redActiva = '';
 ============================================================= */
 
 function cambiarModulo(moduloId) {
-
 
     document
         .querySelectorAll('.modulo-seccion')
@@ -1086,7 +1070,6 @@ function cambiarModulo(moduloId) {
 
 function cambiarCuentaPrincipal() {
 
-
     const cuenta =
         document
             .getElementById('filtro-cuenta')
@@ -1099,7 +1082,6 @@ function cambiarCuentaPrincipal() {
 
 
     if (cuenta === 'aztec') {
-
 
         btnPlataformas
             .classList
@@ -1117,9 +1099,7 @@ function cambiarCuentaPrincipal() {
 
         }
 
-
     } else {
-
 
         btnPlataformas
             .classList
@@ -1141,7 +1121,6 @@ function cambiarCuentaPrincipal() {
 ============================================================= */
 
 function renderizarTabsRedes() {
-
 
     const cuenta =
         document
@@ -1181,7 +1160,6 @@ function renderizarTabsRedes() {
 
     redes.forEach(red => {
 
-
         const button =
             document.createElement('button');
 
@@ -1199,7 +1177,6 @@ function renderizarTabsRedes() {
 
 
         button.onclick = () => {
-
 
             redActiva =
                 red;
@@ -1241,7 +1218,6 @@ function renderizarTabsRedes() {
 
 function obtenerHojaInsensible(busqueda) {
 
-
     if (!rawData)
         return [];
 
@@ -1279,7 +1255,6 @@ function obtenerHojaInsensible(busqueda) {
 
 async function cargarDatosSheets() {
 
-
     const loader =
         document
             .getElementById('loader-status');
@@ -1291,7 +1266,6 @@ async function cargarDatosSheets() {
 
 
     try {
-
 
         const res =
             await fetch(
@@ -1314,7 +1288,6 @@ async function cargarDatosSheets() {
 
     } catch (error) {
 
-
         console.error(
             'Error cargando los datos:',
             error
@@ -1322,7 +1295,6 @@ async function cargarDatosSheets() {
 
 
     } finally {
-
 
         loader
             .classList
@@ -1343,7 +1315,6 @@ function filtrarFilas(
     indexAnio = 0,
     indexMes = 1
 ) {
-
 
     if (
         !filas ||
@@ -1370,7 +1341,6 @@ function filtrarFilas(
     return filas
         .slice(1)
         .filter(row => {
-
 
             const anioMatch =
                 !row[indexAnio] ||
@@ -1409,7 +1379,6 @@ function filtrarFilas(
 
 function limpiarValorNum(val) {
 
-
     if (
         val === null ||
         val === undefined ||
@@ -1443,7 +1412,6 @@ function limpiarValorNum(val) {
 
 function actualizarTodo() {
 
-
     if (
         !rawData ||
         Object.keys(rawData).length === 0
@@ -1458,8 +1426,7 @@ function actualizarTodo() {
 
 
     /*
-     * ⚠️ POST IMPULSADOS
-     * SE MANTIENE.
+     * POST IMPULSADOS
      */
 
     renderizarModuloPosts();
@@ -1486,7 +1453,6 @@ function actualizarTodo() {
 
 function renderizarModuloRedes() {
 
-
     const cuenta =
         document
             .getElementById('filtro-cuenta')
@@ -1499,7 +1465,6 @@ function renderizarModuloRedes() {
     if (
         cuenta === 'acquaroni'
     ) {
-
 
         if (
             redActiva === 'Facebook'
@@ -1542,7 +1507,6 @@ function renderizarModuloRedes() {
 
 
     } else {
-
 
         if (
             redActiva === 'Facebook'
@@ -1617,7 +1581,6 @@ function renderizarModuloRedes() {
         'TikTok Live'
     ) {
 
-
         kpisEstandar
             .classList
             .add('hidden');
@@ -1642,7 +1605,6 @@ function renderizarModuloRedes() {
 
 
         filasFiltradas.forEach(f => {
-
 
             tViews +=
                 limpiarValorNum(
@@ -1732,7 +1694,6 @@ function renderizarModuloRedes() {
 
     } else {
 
-
         kpisLive
             .classList
             .add('hidden');
@@ -1750,7 +1711,6 @@ function renderizarModuloRedes() {
                 'TikTok'
         ) {
 
-
             cardInversion
                 .classList
                 .add('hidden');
@@ -1762,7 +1722,6 @@ function renderizarModuloRedes() {
 
 
         } else {
-
 
             cardInversion
                 .classList
@@ -1792,12 +1751,10 @@ function renderizarModuloRedes() {
         filasFiltradas
             .forEach(f => {
 
-
                 if (
                     redActiva ===
                     'TikTok'
                 ) {
-
 
                     totalAlc +=
                         limpiarValorNum(
@@ -1822,7 +1779,6 @@ function renderizarModuloRedes() {
                     'Instagram'
                 ) {
 
-
                     totalAlc +=
                         limpiarValorNum(
                             f[2]
@@ -1842,7 +1798,6 @@ function renderizarModuloRedes() {
 
 
                 } else {
-
 
                     const inv =
                         limpiarValorNum(
@@ -1949,11 +1904,10 @@ function renderizarModuloRedes() {
 
 /* =============================================================
    MÓDULO POST IMPULSADOS
-   ⚠️ NO MODIFICADO
+   ⚠️ ÚNICO CAMBIO: CPC = INVERSIÓN / INTERACCIONES
 ============================================================= */
 
 function renderizarModuloPosts() {
-
 
     const cuenta =
         document
@@ -1998,6 +1952,42 @@ function renderizarModuloPosts() {
     filasFiltradas
         .forEach(
             (f, idx) => {
+
+                /*
+                 * INVERSIÓN
+                 * Columna E = índice 4
+                 */
+
+                const inversion =
+                    limpiarValorNum(
+                        f[4]
+                    );
+
+
+                /*
+                 * INTERACCIONES
+                 * Columna F = índice 5
+                 */
+
+                const interacciones =
+                    limpiarValorNum(
+                        f[5]
+                    );
+
+
+                /*
+                 * CPC
+                 *
+                 * CPC = Inversión / Interacciones
+                 *
+                 * Si no hay interacciones,
+                 * mostramos "-"
+                 */
+
+                const cpc =
+                    interacciones > 0
+                        ? inversion / interacciones
+                        : 0;
 
 
                 tbody.innerHTML += `
@@ -2060,22 +2050,14 @@ function renderizarModuloPosts() {
 
                         <td class="p-3">
 
-                            Q ${(
-                                limpiarValorNum(
-                                    f[4]
-                                )
-                            ).toFixed(2)}
+                            Q ${inversion.toFixed(2)}
 
                         </td>
 
 
                         <td class="p-3">
 
-                            ${(
-                                limpiarValorNum(
-                                    f[5]
-                                )
-                            ).toLocaleString()}
+                            ${interacciones.toLocaleString()}
 
                         </td>
 
@@ -2083,13 +2065,9 @@ function renderizarModuloPosts() {
                         <td class="p-3">
 
                             ${
-                                f[6]
-
+                                interacciones > 0
                                     ? 'Q ' +
-                                      limpiarValorNum(
-                                          f[6]
-                                      ).toFixed(2)
-
+                                      cpc.toFixed(2)
                                     : '-'
                             }
 
@@ -2111,13 +2089,11 @@ function previewImagenPost(
     id
 ) {
 
-
     const file =
         e.target.files[0];
 
 
     if (file) {
-
 
         const img =
             document.getElementById(
@@ -2156,7 +2132,6 @@ function normalizarCampana(
     valor
 ) {
 
-
     return (
         valor || ''
     )
@@ -2176,31 +2151,12 @@ function normalizarCampana(
 /*
  * =============================================================
  * PREPARAR FILAS DE CAMPAÑAS
- *
- * ESTA ES LA CORRECCIÓN PRINCIPAL.
- *
- * En Google Sheets:
- *
- * Pancho pistón | Post 1
- *                Post 2
- *                Post 3
- *                Post 4
- *
- * Las filas 3, 4 y 5 tienen C vacía.
- *
- * Aquí hacemos "fill down":
- *
- * Pancho pistón | Post 1
- * Pancho pistón | Post 2
- * Pancho pistón | Post 3
- * Pancho pistón | Post 4
  * =============================================================
  */
 
 function prepararFilasCampanas(
     filas
 ) {
-
 
     if (
         !filas ||
@@ -2243,19 +2199,9 @@ function prepararFilasCampanas(
         .forEach(
             filaOriginal => {
 
-
-                /*
-                 * Hacemos una copia para no modificar
-                 * rawData directamente.
-                 */
-
                 const fila =
                     [...filaOriginal];
 
-
-                /*
-                 * AÑO
-                 */
 
                 if (
                     fila[0] !== undefined &&
@@ -2273,10 +2219,6 @@ function prepararFilasCampanas(
                 }
 
 
-                /*
-                 * MES
-                 */
-
                 if (
                     fila[1] !== undefined &&
                     fila[1] !== null &&
@@ -2292,10 +2234,6 @@ function prepararFilasCampanas(
 
                 }
 
-
-                /*
-                 * CAMPAÑA
-                 */
 
                 if (
                     fila[2] !== undefined &&
@@ -2313,39 +2251,20 @@ function prepararFilasCampanas(
                 }
 
 
-                /*
-                 * Si la fila tiene año vacío,
-                 * usamos el año anterior.
-                 */
-
                 fila[0] =
                     fila[0] ||
                     anioActual;
 
-
-                /*
-                 * Si la fila tiene mes vacío,
-                 * usamos el mes anterior.
-                 */
 
                 fila[1] =
                     fila[1] ||
                     mesActual;
 
 
-                /*
-                 * Si la fila tiene campaña vacía,
-                 * usamos la campaña anterior.
-                 */
-
                 fila[2] =
                     fila[2] ||
                     campanaActual;
 
-
-                /*
-                 * FILTRO AÑO
-                 */
 
                 const coincideAnio =
                     fila[0]
@@ -2353,10 +2272,6 @@ function prepararFilasCampanas(
                         .trim() ===
                     anioSeleccionado;
 
-
-                /*
-                 * FILTRO MES
-                 */
 
                 const coincideMes =
                     mesSeleccionado ===
@@ -2369,11 +2284,6 @@ function prepararFilasCampanas(
                     mesSeleccionado
                         .toLowerCase();
 
-
-                /*
-                 * Solo agregamos filas que tengan
-                 * nombre de post en D.
-                 */
 
                 const tienePost =
                     fila[3] !== undefined &&
@@ -2413,7 +2323,6 @@ function prepararFilasCampanas(
 
 function renderizarModuloCampanas() {
 
-
     const cuenta =
         document
             .getElementById(
@@ -2421,12 +2330,6 @@ function renderizarModuloCampanas() {
             )
             .value;
 
-
-    /*
-     * CADA CUENTA USA SU PROPIA PESTAÑA.
-     *
-     * NO SE USA POST IMPULSADOS.
-     */
 
     const nombreHoja =
         cuenta === 'acquaroni'
@@ -2441,13 +2344,6 @@ function renderizarModuloCampanas() {
             nombreHoja
         );
 
-
-    /*
-     * PREPARAR FILAS
-     *
-     * Aquí se resuelve el problema de las
-     * celdas vacías de campaña.
-     */
 
     const filasCampanas =
         prepararFilasCampanas(
@@ -2468,7 +2364,6 @@ function renderizarModuloCampanas() {
     if (
         !filasCampanas.length
     ) {
-
 
         container.innerHTML = `
 
@@ -2508,17 +2403,12 @@ function renderizarModuloCampanas() {
     }
 
 
-    /*
-     * AGRUPAR CAMPAÑAS
-     */
-
     const campanas = {};
 
 
     filasCampanas
         .forEach(
             fila => {
-
 
                 const nombreCampana =
                     fila[2]
@@ -2535,7 +2425,6 @@ function renderizarModuloCampanas() {
                 if (
                     !campanas[clave]
                 ) {
-
 
                     campanas[clave] = {
 
@@ -2565,25 +2454,14 @@ function renderizarModuloCampanas() {
         );
 
 
-    /*
-     * CREAR TARJETAS
-     */
-
     Object
         .keys(campanas)
         .forEach(
             (clave, index) => {
 
-
                 const campana =
                     campanas[clave];
 
-
-                /*
-                 * SUMAR PRESUPUESTO
-                 *
-                 * H = índice 7
-                 */
 
                 const presupuestoTotal =
                     campana
@@ -2593,7 +2471,6 @@ function renderizarModuloCampanas() {
                                 total,
                                 fila
                             ) => {
-
 
                                 return (
                                     total +
@@ -2624,13 +2501,9 @@ function renderizarModuloCampanas() {
                         class="bg-white rounded-xl border shadow-sm hover:shadow-lg transition overflow-hidden"
                     >
 
-
-                        <!-- PORTADA -->
-
                         <div
                             class="h-40 bg-gradient-to-br from-slate-100 to-gray-200 relative flex items-center justify-center overflow-hidden"
                         >
-
 
                             <img
                                 id="${idPortada}"
@@ -2657,8 +2530,6 @@ function renderizarModuloCampanas() {
 
                             </div>
 
-
-                            <!-- SUBIR PORTADA -->
 
                             <label
                                 onclick="event.stopPropagation()"
@@ -2688,17 +2559,13 @@ function renderizarModuloCampanas() {
                         </div>
 
 
-                        <!-- INFORMACIÓN -->
-
                         <div
                             class="p-5"
                         >
 
-
                             <div
                                 class="flex justify-between items-start gap-3"
                             >
-
 
                                 <div>
 
@@ -2732,8 +2599,6 @@ function renderizarModuloCampanas() {
                                 </div>
 
 
-                                <!-- CANTIDAD REAL DE POSTS -->
-
                                 <span
                                     class="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap"
                                 >
@@ -2751,8 +2616,6 @@ function renderizarModuloCampanas() {
 
                             </div>
 
-
-                            <!-- PRESUPUESTO TOTAL -->
 
                             <div
                                 class="mt-4 pt-3 border-t flex justify-between items-center"
@@ -2777,8 +2640,6 @@ function renderizarModuloCampanas() {
 
                             </div>
 
-
-                            <!-- BOTÓN ENTRAR -->
 
                             <button
                                 type="button"
@@ -2822,7 +2683,6 @@ function abrirDesgloseCampana(
     nombreCampana
 ) {
 
-
     const cuenta =
         document
             .getElementById(
@@ -2830,11 +2690,6 @@ function abrirDesgloseCampana(
             )
             .value;
 
-
-    /*
-     * USAR LA PESTAÑA DE CAMPAÑAS
-     * CORRESPONDIENTE A LA CUENTA.
-     */
 
     const nombreHoja =
         cuenta === 'acquaroni'
@@ -2850,20 +2705,11 @@ function abrirDesgloseCampana(
         );
 
 
-    /*
-     * PREPARAR LAS FILAS IGUAL QUE
-     * EN LA PORTADA.
-     */
-
     const filasCampanas =
         prepararFilasCampanas(
             filas
         );
 
-
-    /*
-     * BUSCAR POSTS DE ESTA CAMPAÑA.
-     */
 
     const postsCampana =
         filasCampanas
@@ -2879,10 +2725,6 @@ function abrirDesgloseCampana(
             );
 
 
-    /*
-     * PRESUPUESTO TOTAL
-     */
-
     const presupuestoTotal =
         postsCampana
             .reduce(
@@ -2890,7 +2732,6 @@ function abrirDesgloseCampana(
                     total,
                     fila
                 ) => {
-
 
                     return (
                         total +
@@ -2904,10 +2745,6 @@ function abrirDesgloseCampana(
             );
 
 
-    /*
-     * TÍTULO
-     */
-
     document
         .getElementById(
             'modal-campana-titulo'
@@ -2915,10 +2752,6 @@ function abrirDesgloseCampana(
         .innerText =
             `Campaña: ${nombreCampana}`;
 
-
-    /*
-     * SUBTÍTULO
-     */
 
     document
         .getElementById(
@@ -2943,14 +2776,9 @@ function abrirDesgloseCampana(
     container.innerHTML = '';
 
 
-    /*
-     * SI NO HAY POSTS
-     */
-
     if (
         !postsCampana.length
     ) {
-
 
         container.innerHTML = `
 
@@ -2983,17 +2811,12 @@ function abrirDesgloseCampana(
     }
 
 
-    /*
-     * CREAR FICHA DE CADA POST
-     */
-
     postsCampana
         .forEach(
             (
                 fila,
                 index
             ) => {
-
 
                 crearFichaPostCampana(
                     fila,
@@ -3018,7 +2841,6 @@ function abrirDesgloseCampana(
  */
 
 function abrirModalCampana() {
-
 
     const modal =
         document
@@ -3051,21 +2873,6 @@ function crearFichaPostCampana(
     index,
     container
 ) {
-
-
-    /*
-     * ESTRUCTURA REAL DE TU HOJA:
-     *
-     * A = Año
-     * B = Mes
-     * C = Campaña
-     * D = Artes de campaña
-     * E = Reproducciones
-     * F = Alcance
-     * G = Conversaciones
-     * H = Presupuesto
-     */
-
 
     const nombrePost =
         fila[3]
@@ -3111,18 +2918,13 @@ function crearFichaPostCampana(
             class="bg-white border rounded-2xl shadow-sm overflow-hidden"
         >
 
-
-            <!-- HEADER DEL POST -->
-
             <div
                 class="px-5 py-4 border-b bg-gray-50 flex justify-between items-center"
             >
 
-
                 <div
                     class="flex items-center gap-3"
                 >
-
 
                     <div
                         class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-black"
@@ -3158,7 +2960,6 @@ function crearFichaPostCampana(
 
                     </div>
 
-
                 </div>
 
 
@@ -3185,7 +2986,6 @@ function crearFichaPostCampana(
 
                 </div>
 
-
             </div>
 
 
@@ -3194,13 +2994,7 @@ function crearFichaPostCampana(
                 class="p-5"
             >
 
-
-                <!-- =================================================
-                     ARTE
-                ================================================== -->
-
                 <div>
-
 
                     <p
                         class="text-sm font-bold text-gray-700 mb-3"
@@ -3218,14 +3012,10 @@ function crearFichaPostCampana(
                         class="relative border-2 border-dashed border-gray-300 rounded-xl min-h-[230px] bg-gray-50 flex flex-col items-center justify-center text-center overflow-hidden"
                     >
 
-
-                        <!-- PLACEHOLDER -->
-
                         <div
                             id="${postId}-placeholder"
                             class="p-6"
                         >
-
 
                             <div
                                 class="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center mx-auto mb-3"
@@ -3279,20 +3069,14 @@ function crearFichaPostCampana(
 
                             </label>
 
-
                         </div>
 
-
-
-                        <!-- IMAGEN -->
 
                         <img
                             id="${postId}-image"
                             class="hidden absolute inset-0 w-full h-full object-contain bg-white"
                         >
 
-
-                        <!-- CAMBIAR -->
 
                         <label
                             id="${postId}-change"
@@ -3318,26 +3102,19 @@ function crearFichaPostCampana(
 
                         </label>
 
-
                     </div>
 
                 </div>
 
 
 
-                <!-- =================================================
-                     MÉTRICAS
-                ================================================== -->
-
                 <div
                     class="mt-6"
                 >
 
-
                     <div
                         class="flex justify-between items-center mb-3"
                     >
-
 
                         <div>
 
@@ -3367,7 +3144,6 @@ function crearFichaPostCampana(
                             class="fa-solid fa-chart-line text-blue-500"
                         ></i>
 
-
                     </div>
 
 
@@ -3375,9 +3151,6 @@ function crearFichaPostCampana(
                     <div
                         class="grid grid-cols-1 md:grid-cols-4 gap-3"
                     >
-
-
-                        <!-- REPRODUCCIONES -->
 
                         <div
                             class="bg-gray-50 border rounded-xl p-4"
@@ -3403,9 +3176,6 @@ function crearFichaPostCampana(
                         </div>
 
 
-
-                        <!-- ALCANCE -->
-
                         <div
                             class="bg-gray-50 border rounded-xl p-4"
                         >
@@ -3429,9 +3199,6 @@ function crearFichaPostCampana(
 
                         </div>
 
-
-
-                        <!-- CONVERSACIONES -->
 
                         <div
                             class="bg-gray-50 border rounded-xl p-4"
@@ -3457,9 +3224,6 @@ function crearFichaPostCampana(
                         </div>
 
 
-
-                        <!-- PRESUPUESTO -->
-
                         <div
                             class="bg-gray-50 border rounded-xl p-4"
                         >
@@ -3483,15 +3247,11 @@ function crearFichaPostCampana(
 
                         </div>
 
-
                     </div>
-
 
                 </div>
 
-
             </div>
-
 
         </article>
 
@@ -3512,7 +3272,6 @@ function previewArteCampana(
     postId
 ) {
 
-
     const file =
         event.target.files[0];
 
@@ -3526,7 +3285,6 @@ function previewArteCampana(
             'image/'
         )
     ) {
-
 
         alert(
             'Por favor selecciona un archivo de imagen.'
@@ -3594,7 +3352,6 @@ function previewImagenCampana(
     id
 ) {
 
-
     const file =
         event.target.files[0];
 
@@ -3632,7 +3389,6 @@ function previewImagenCampana(
 
 function cerrarModalCampana() {
 
-
     const modal =
         document
             .getElementById(
@@ -3667,7 +3423,6 @@ document
         'click',
         function(event) {
 
-
             if (
                 event.target ===
                 this
@@ -3692,7 +3447,6 @@ document.addEventListener(
     'keydown',
     function(event) {
 
-
         if (
             event.key ===
             'Escape'
@@ -3716,7 +3470,6 @@ document.addEventListener(
 function escapeHtml(
     valor
 ) {
-
 
     return (
         valor || ''
@@ -3753,7 +3506,6 @@ function escapeHtml(
 
 function renderizarModuloPresupuesto() {
 
-
     const filasPres =
         obtenerHojaInsensible(
             'Presupuesto'
@@ -3782,7 +3534,6 @@ function renderizarModuloPresupuesto() {
     filasFiltradas
         .forEach(
             f => {
-
 
                 asig +=
                     limpiarValorNum(
@@ -3866,7 +3617,6 @@ function renderizarModuloPresupuesto() {
 
 function renderizarModuloPlataformas() {
 
-
     const filasPlat =
         obtenerHojaInsensible(
             'Plataformas'
@@ -3897,7 +3647,6 @@ function renderizarModuloPlataformas() {
     filasFiltradas
         .forEach(
             f => {
-
 
                 const monto =
                     limpiarValorNum(
@@ -3957,12 +3706,9 @@ window.addEventListener(
     'DOMContentLoaded',
     () => {
 
-
         renderizarTabsRedes();
 
-
         cargarDatosSheets();
-
 
     }
 );
