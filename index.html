@@ -1,19 +1,14 @@
 <!DOCTYPE html>
-
 <html lang="es">
 
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Dashboard Redes Sociales R.A</title>
 
-<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- FontAwesome -->
 <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -29,23 +24,17 @@
      SIDEBAR
 ========================================================== -->
 
-<aside
-    class="w-64 bg-slate-900 text-white flex flex-col justify-between p-4 shadow-lg"
->
+<aside class="w-64 bg-slate-900 text-white flex flex-col justify-between p-4 shadow-lg">
 
     <div>
 
         <div class="mb-8 flex items-center gap-3">
 
-            <i
-                class="fa-solid fa-chart-pie text-2xl text-blue-400"
-            ></i>
+            <i class="fa-solid fa-chart-pie text-2xl text-blue-400"></i>
 
             <div>
 
-                <h1
-                    class="font-bold text-lg leading-tight"
-                >
+                <h1 class="font-bold text-lg leading-tight">
                     R.A DASHBOARD
                 </h1>
 
@@ -57,93 +46,58 @@
 
         </div>
 
-
         <nav class="space-y-2">
-
-
-            <!-- REDES SOCIALES -->
 
             <button
                 onclick="cambiarModulo('redes')"
                 id="btn-nav-redes"
                 class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium transition"
             >
-
                 <i class="fa-solid fa-chart-simple"></i>
-
                 Redes Sociales
-
             </button>
-
-
-            <!-- POST IMPULSADOS -->
 
             <button
                 onclick="cambiarModulo('posts')"
                 id="btn-nav-posts"
                 class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
             >
-
                 <i class="fa-solid fa-rocket"></i>
-
                 Post Impulsados
-
             </button>
-
-
-            <!-- CAMPAÑAS -->
 
             <button
                 onclick="cambiarModulo('campanas')"
                 id="btn-nav-campanas"
                 class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
             >
-
                 <i class="fa-solid fa-bullhorn"></i>
-
                 Campañas
-
             </button>
-
-
-            <!-- PRESUPUESTO -->
 
             <button
                 onclick="cambiarModulo('presupuesto')"
                 id="btn-nav-presupuesto"
                 class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
             >
-
                 <i class="fa-solid fa-wallet"></i>
-
                 Presupuesto
-
             </button>
-
-
-            <!-- PLATAFORMAS -->
 
             <button
                 onclick="cambiarModulo('plataformas')"
                 id="btn-nav-plataformas"
                 class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
             >
-
                 <i class="fa-solid fa-server"></i>
-
                 Plataformas
-
             </button>
-
 
         </nav>
 
     </div>
 
-
-    <div
-        class="text-xs text-gray-500 border-t border-slate-800 pt-4 flex justify-between items-center"
-    >
+    <div class="text-xs text-gray-500 border-t border-slate-800 pt-4 flex justify-between items-center">
 
         <span>
             Dashboard R.A v3.4
@@ -153,9 +107,7 @@
             id="loader-status"
             class="text-blue-400 text-xs hidden"
         >
-
             <i class="fa-solid fa-spinner fa-spin"></i>
-
         </span>
 
     </div>
@@ -163,692 +115,569 @@
 </aside>
 
 
-
 <!-- =========================================================
      ÁREA PRINCIPAL
 ========================================================== -->
 
-<main
-    class="flex-1 flex flex-col overflow-y-auto"
->
+<main class="flex-1 flex flex-col overflow-y-auto">
 
+<header class="bg-white border-b px-8 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10 shadow-sm">
 
-    <!-- HEADER -->
-
-    <header
-        class="bg-white border-b px-8 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10 shadow-sm"
+    <h2
+        id="titulo-seccion"
+        class="text-xl font-bold text-gray-800"
     >
+        Redes Sociales
+    </h2>
 
-        <h2
-            id="titulo-seccion"
-            class="text-xl font-bold text-gray-800"
-        >
-            Redes Sociales
-        </h2>
+    <div class="flex items-center gap-4">
 
+        <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
 
-        <div class="flex items-center gap-4">
+            <i class="fa-solid fa-calendar text-gray-400"></i>
 
-
-            <!-- AÑO -->
-
-            <div
-                class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5"
+            <select
+                id="filtro-anio"
+                onchange="actualizarTodo()"
+                class="bg-transparent text-sm font-semibold focus:outline-none"
             >
 
-                <i
-                    class="fa-solid fa-calendar text-gray-400"
-                ></i>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
 
-                <select
-                    id="filtro-anio"
-                    onchange="actualizarTodo()"
-                    class="bg-transparent text-sm font-semibold focus:outline-none"
-                >
-
-                    <option value="2026">
-                        2026
-                    </option>
-
-                    <option value="2025">
-                        2025
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- MES -->
-
-            <div
-                class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5"
-            >
-
-                <i
-                    class="fa-solid fa-filter text-gray-400"
-                ></i>
-
-                <select
-                    id="filtro-mes"
-                    onchange="actualizarTodo()"
-                    class="bg-transparent text-sm font-semibold focus:outline-none"
-                >
-
-                    <option value="todos">
-                        Todos los Meses
-                    </option>
-
-                    <option value="Enero">Enero</option>
-                    <option value="Febrero">Febrero</option>
-                    <option value="Marzo">Marzo</option>
-                    <option value="Abril">Abril</option>
-                    <option value="Mayo">Mayo</option>
-                    <option value="Junio">Junio</option>
-                    <option value="Julio">Julio</option>
-                    <option value="Agosto">Agosto</option>
-                    <option value="Septiembre">Septiembre</option>
-                    <option value="Octubre">Octubre</option>
-                    <option value="Noviembre">Noviembre</option>
-                    <option value="Diciembre">Diciembre</option>
-
-                </select>
-
-            </div>
-
-
-            <!-- CUENTA -->
-
-            <div
-                class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5"
-            >
-
-                <i
-                    class="fa-solid fa-building text-gray-400"
-                ></i>
-
-                <select
-                    id="filtro-cuenta"
-                    onchange="cambiarCuentaPrincipal()"
-                    class="bg-transparent text-sm font-semibold focus:outline-none"
-                >
-
-                    <option value="acquaroni">
-                        Repuestos Acquaroni
-                    </option>
-
-                    <option value="aztec">
-                        AZtec Oils
-                    </option>
-
-                </select>
-
-            </div>
-
+            </select>
 
         </div>
 
-    </header>
+        <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
 
+            <i class="fa-solid fa-filter text-gray-400"></i>
 
-
-    <!-- =====================================================
-         CONTENIDO
-    ====================================================== -->
-
-    <div class="p-8 space-y-8">
-
-
-        <!-- =================================================
-             MÓDULO 1: REDES SOCIALES
-        ================================================== -->
-
-        <section
-            id="mod-redes"
-            class="modulo-seccion space-y-6"
-        >
-
-            <div
-                id="tabs-redes"
-                class="flex gap-2 border-b pb-2"
-            ></div>
-
-
-            <!-- KPIs ESTÁNDAR -->
-
-            <div
-                id="kpis-estandar"
-                class="grid grid-cols-1 md:grid-cols-5 gap-4"
+            <select
+                id="filtro-mes"
+                onchange="actualizarTodo()"
+                class="bg-transparent text-sm font-semibold focus:outline-none"
             >
 
-                <div
-                    id="card-kpi-inversion"
-                    class="bg-white p-4 rounded-xl border shadow-sm"
-                >
+                <option value="todos">Todos los Meses</option>
+                <option value="Enero">Enero</option>
+                <option value="Febrero">Febrero</option>
+                <option value="Marzo">Marzo</option>
+                <option value="Abril">Abril</option>
+                <option value="Mayo">Mayo</option>
+                <option value="Junio">Junio</option>
+                <option value="Julio">Julio</option>
+                <option value="Agosto">Agosto</option>
+                <option value="Septiembre">Septiembre</option>
+                <option value="Octubre">Octubre</option>
+                <option value="Noviembre">Noviembre</option>
+                <option value="Diciembre">Diciembre</option>
 
-                    <p
-                        class="text-xs text-gray-500 font-semibold uppercase"
-                    >
-                        Inversión Total
-                    </p>
+            </select>
 
-                    <p
-                        id="kpi-inversion"
-                        class="text-xl font-extrabold text-blue-600 mt-1"
-                    >
-                        Q 0.00
-                    </p>
+        </div>
 
-                </div>
+        <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
 
+            <i class="fa-solid fa-building text-gray-400"></i>
 
-                <div
-                    id="card-kpi-ctr"
-                    class="bg-white p-4 rounded-xl border shadow-sm"
-                >
-
-                    <p
-                        class="text-xs text-gray-500 font-semibold uppercase"
-                    >
-                        CTR Promedio
-                    </p>
-
-                    <p
-                        id="kpi-ctr"
-                        class="text-xl font-extrabold text-green-600 mt-1"
-                    >
-                        0.00%
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="bg-white p-4 rounded-xl border shadow-sm"
-                >
-
-                    <p
-                        class="text-xs text-gray-500 font-semibold uppercase"
-                    >
-                        Alcance Total
-                    </p>
-
-                    <p
-                        id="kpi-alcance"
-                        class="text-xl font-extrabold text-purple-600 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="bg-white p-4 rounded-xl border shadow-sm"
-                >
-
-                    <p
-                        class="text-xs text-gray-500 font-semibold uppercase"
-                    >
-                        Impresiones
-                    </p>
-
-                    <p
-                        id="kpi-impresiones"
-                        class="text-xl font-extrabold text-orange-600 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="bg-white p-4 rounded-xl border shadow-sm"
-                >
-
-                    <p
-                        class="text-xs text-gray-500 font-semibold uppercase"
-                    >
-                        Interacciones / Seg.
-                    </p>
-
-                    <p
-                        id="kpi-interacciones"
-                        class="text-xl font-extrabold text-gray-700 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-
-            </div>
-
-
-            <!-- KPIs TIKTOK LIVE -->
-
-            <div
-                id="kpis-tiktok-live"
-                class="grid grid-cols-1 md:grid-cols-6 gap-4 hidden"
+            <select
+                id="filtro-cuenta"
+                onchange="cambiarCuentaPrincipal()"
+                class="bg-transparent text-sm font-semibold focus:outline-none"
             >
 
-                <div class="bg-white p-4 rounded-xl border shadow-sm">
+                <option value="acquaroni">
+                    Repuestos Acquaroni
+                </option>
 
-                    <p class="text-xs text-gray-500 font-semibold uppercase">
-                        Visualizaciones
-                    </p>
+                <option value="aztec">
+                    AZtec Oils
+                </option>
 
-                    <p
-                        id="kpi-live-views"
-                        class="text-xl font-extrabold text-blue-600 mt-1"
-                    >
-                        0
-                    </p>
+            </select>
 
-                </div>
-
-
-                <div class="bg-white p-4 rounded-xl border shadow-sm">
-
-                    <p class="text-xs text-gray-500 font-semibold uppercase">
-                        Donadores
-                    </p>
-
-                    <p
-                        id="kpi-live-donadores"
-                        class="text-xl font-extrabold text-purple-600 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-
-                <div class="bg-white p-4 rounded-xl border shadow-sm">
-
-                    <p class="text-xs text-gray-500 font-semibold uppercase">
-                        Diamantes
-                    </p>
-
-                    <p
-                        id="kpi-live-diamantes"
-                        class="text-xl font-extrabold text-yellow-600 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-
-                <div class="bg-white p-4 rounded-xl border shadow-sm">
-
-                    <p class="text-xs text-gray-500 font-semibold uppercase">
-                        Seguidores Nuevos
-                    </p>
-
-                    <p
-                        id="kpi-live-seguidores"
-                        class="text-xl font-extrabold text-green-600 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-
-                <div class="bg-white p-4 rounded-xl border shadow-sm">
-
-                    <p class="text-xs text-gray-500 font-semibold uppercase">
-                        Comentarios
-                    </p>
-
-                    <p
-                        id="kpi-live-comentarios"
-                        class="text-xl font-extrabold text-indigo-600 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-
-                <div class="bg-white p-4 rounded-xl border shadow-sm">
-
-                    <p class="text-xs text-gray-500 font-semibold uppercase">
-                        Me Gusta
-                    </p>
-
-                    <p
-                        id="kpi-live-likes"
-                        class="text-xl font-extrabold text-pink-600 mt-1"
-                    >
-                        0
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             MÓDULO 2: POST IMPULSADOS
-             CAMBIO: COLUMNAS E-I
-        ================================================== -->
-
-        <section
-            id="mod-posts"
-            class="modulo-seccion hidden space-y-6"
-        >
-
-            <h3 class="text-lg font-bold">
-                Publicaciones Promocionadas
-            </h3>
-
-
-            <div
-                class="bg-white rounded-xl border shadow-sm p-4 overflow-x-auto"
-            >
-
-                <table
-                    class="w-full text-sm text-left border-collapse"
-                >
-
-                    <thead
-                        class="bg-gray-50 text-xs text-gray-500 uppercase"
-                    >
-
-                        <tr>
-
-                            <th class="p-3">
-                                Vista Previa
-                            </th>
-
-                            <th class="p-3">
-                                Año / Mes
-                            </th>
-
-                            <th class="p-3">
-                                Publicación
-                            </th>
-
-                            <th class="p-3">
-                                Red Social
-                            </th>
-
-                            <th class="p-3">
-                                Reproducciones
-                            </th>
-
-                            <th class="p-3">
-                                Alcance
-                            </th>
-
-                            <th class="p-3">
-                                Conversaciones
-                            </th>
-
-                            <th class="p-3">
-                                Inversión (Q)
-                            </th>
-
-                            <th class="p-3">
-                                CPC (Q)
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody
-                        id="tabla-posts-body"
-                        class="divide-y"
-                    ></tbody>
-
-                </table>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             MÓDULO 3: CAMPAÑAS
-             SIN MODIFICACIONES
-        ================================================== -->
-
-        <section
-            id="mod-campanas"
-            class="modulo-seccion hidden space-y-6"
-        >
-
-            <div>
-
-                <h3 class="text-lg font-bold">
-                    Gestión de Campañas
-                </h3>
-
-                <p class="text-sm text-gray-500 mt-1">
-                    Selecciona una campaña para ver sus posts,
-                    artes y métricas.
-                </p>
-
-            </div>
-
-
-            <div
-                id="contenedor-campanas"
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            ></div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             MÓDULO 4: PRESUPUESTO
-        ================================================== -->
-
-        <section
-            id="mod-presupuesto"
-            class="modulo-seccion hidden space-y-6"
-        >
-
-            <h3 class="text-lg font-bold mb-4">
-                Consolidado de Presupuesto
-            </h3>
-
-
-            <div
-                class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4"
-            >
-
-                <div
-                    class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-blue-500"
-                >
-
-                    <p class="text-xs text-gray-500 font-bold uppercase">
-                        Asignado Total
-                    </p>
-
-                    <p
-                        id="pres-asignado"
-                        class="text-xl font-extrabold text-gray-800 mt-2"
-                    >
-                        Q 0.00
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-green-500"
-                >
-
-                    <p class="text-xs text-gray-500 font-bold uppercase">
-                        Ejecutado Total
-                    </p>
-
-                    <p
-                        id="pres-ejecutado"
-                        class="text-xl font-extrabold text-gray-800 mt-2"
-                    >
-                        Q 0.00
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-red-500"
-                >
-
-                    <p class="text-xs text-gray-500 font-bold uppercase">
-                        Repuestos Acquaroni
-                    </p>
-
-                    <p
-                        id="pres-acquaroni"
-                        class="text-xl font-extrabold text-gray-800 mt-2"
-                    >
-                        Q 0.00
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-yellow-500"
-                >
-
-                    <p class="text-xs text-gray-500 font-bold uppercase">
-                        AZtec Oils
-                    </p>
-
-                    <p
-                        id="pres-aztec"
-                        class="text-xl font-extrabold text-gray-800 mt-2"
-                    >
-                        Q 0.00
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-purple-500"
-                >
-
-                    <p class="text-xs text-gray-500 font-bold uppercase">
-                        Plataformas Externas
-                    </p>
-
-                    <p
-                        id="pres-plataformas-m4"
-                        class="text-xl font-extrabold text-gray-800 mt-2"
-                    >
-                        Q 0.00
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             MÓDULO 5: PLATAFORMAS
-        ================================================== -->
-
-        <section
-            id="mod-plataformas"
-            class="modulo-seccion hidden space-y-6"
-        >
-
-            <div
-                class="bg-white p-6 rounded-xl border shadow-sm space-y-4"
-            >
-
-                <div
-                    class="flex justify-between items-center border-b pb-3"
-                >
-
-                    <span class="font-bold text-gray-700">
-                        Facturación de Herramientas y Servicios
-                    </span>
-
-                    <span
-                        id="total-plataformas-mes"
-                        class="text-xl font-black text-blue-600"
-                    >
-                        Total: Q 0.00
-                    </span>
-
-                </div>
-
-
-                <div class="overflow-x-auto">
-
-                    <table class="w-full text-sm text-left">
-
-                        <thead
-                            class="bg-gray-50 text-xs text-gray-500 uppercase"
-                        >
-
-                            <tr>
-
-                                <th class="p-3">
-                                    Año
-                                </th>
-
-                                <th class="p-3">
-                                    Mes
-                                </th>
-
-                                <th class="p-3">
-                                    Plataforma
-                                </th>
-
-                                <th class="p-3">
-                                    Monto (Q)
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody
-                            id="tabla-plataformas-body"
-                            class="divide-y"
-                        ></tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </section>
-
+        </div>
 
     </div>
+
+</header>
+
+
+<div class="p-8 space-y-8">
+
+
+<!-- =================================================
+     MÓDULO 1: REDES SOCIALES
+================================================== -->
+
+<section
+    id="mod-redes"
+    class="modulo-seccion space-y-6"
+>
+
+    <div
+        id="tabs-redes"
+        class="flex gap-2 border-b pb-2"
+    ></div>
+
+    <div
+        id="kpis-estandar"
+        class="grid grid-cols-1 md:grid-cols-5 gap-4"
+    >
+
+        <div
+            id="card-kpi-inversion"
+            class="bg-white p-4 rounded-xl border shadow-sm"
+        >
+
+            <p class="text-xs text-gray-500 font-semibold uppercase">
+                Inversión Total
+            </p>
+
+            <p
+                id="kpi-inversion"
+                class="text-xl font-extrabold text-blue-600 mt-1"
+            >
+                Q 0.00
+            </p>
+
+        </div>
+
+        <div
+            id="card-kpi-ctr"
+            class="bg-white p-4 rounded-xl border shadow-sm"
+        >
+
+            <p class="text-xs text-gray-500 font-semibold uppercase">
+                CTR Promedio
+            </p>
+
+            <p
+                id="kpi-ctr"
+                class="text-xl font-extrabold text-green-600 mt-1"
+            >
+                0.00%
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm">
+
+            <p class="text-xs text-gray-500 font-semibold uppercase">
+                Alcance Total
+            </p>
+
+            <p
+                id="kpi-alcance"
+                class="text-xl font-extrabold text-purple-600 mt-1"
+            >
+                0
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm">
+
+            <p class="text-xs text-gray-500 font-semibold uppercase">
+                Impresiones
+            </p>
+
+            <p
+                id="kpi-impresiones"
+                class="text-xl font-extrabold text-orange-600 mt-1"
+            >
+                0
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm">
+
+            <p class="text-xs text-gray-500 font-semibold uppercase">
+                Interacciones / Seg.
+            </p>
+
+            <p
+                id="kpi-interacciones"
+                class="text-xl font-extrabold text-gray-700 mt-1"
+            >
+                0
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- TIKTOK LIVE -->
+
+    <div
+        id="kpis-tiktok-live"
+        class="grid grid-cols-1 md:grid-cols-6 gap-4 hidden"
+    >
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm">
+
+            <p class="text-xs text-gray-500 font-semibold uppercase">
+                Visualizaciones
+            </p>
+
+            <p
+                id="kpi-live-views"
+                class="text-xl font-extrabold text-blue-600 mt-1"
+            >
+                0
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm">
+
+            <p class="text-xs text-gray-500 font-semibold uppercase">
+                Donadores
+            </p>
+
+            <p
+                id="kpi-live-donadores"
+                class="text-xl font-extrabold text-purple-600 mt-1"
+            >
+                0
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm">
+
+            <p class="text-xs text-gray-500 font-semibold uppercase">
+                Diamantes
+            </p>
+
+            <p
+                id="kpi-live-diamantes"
+                class="text-xl font-extrabold text-yellow-600 mt-1"
+            >
+                0
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm">
+
+            <p class="text-xs text-gray-500 font-semibold uppercase">
+                Seguidores Nuevos
+            </p>
+
+            <p
+                id="kpi-live-seguidores"
+                class="text-xl font-extrabold text-green-600 mt-1"
+            >
+                0
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm">
+
+            <p class="text-xs text-gray-500 font-semibold uppercase">
+                Comentarios
+            </p>
+
+            <p
+                id="kpi-live-comentarios"
+                class="text-xl font-extrabold text-indigo-600 mt-1"
+            >
+                0
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm">
+
+            <p class="text-xs text-gray-500 font-semibold uppercase">
+                Me Gusta
+            </p>
+
+            <p
+                id="kpi-live-likes"
+                class="text-xl font-extrabold text-pink-600 mt-1"
+            >
+                0
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     MÓDULO 2: POST IMPULSADOS
+================================================== -->
+
+<section
+    id="mod-posts"
+    class="modulo-seccion hidden space-y-6"
+>
+
+    <h3 class="text-lg font-bold">
+        Publicaciones Promocionadas
+    </h3>
+
+    <div
+        class="bg-white rounded-xl border shadow-sm p-4 overflow-x-auto"
+    >
+
+        <table class="w-full text-sm text-left border-collapse">
+
+            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+
+                <tr>
+
+                    <th class="p-3">
+                        Vista Previa
+                    </th>
+
+                    <th class="p-3">
+                        Año / Mes
+                    </th>
+
+                    <th class="p-3">
+                        Publicación
+                    </th>
+
+                    <th class="p-3">
+                        Red Social
+                    </th>
+
+                    <th class="p-3">
+                        Reproducciones
+                    </th>
+
+                    <th class="p-3">
+                        Alcance
+                    </th>
+
+                    <th class="p-3">
+                        Conversaciones
+                    </th>
+
+                    <th class="p-3">
+                        Inversión (Q)
+                    </th>
+
+                    <th class="p-3">
+                        CPC
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody
+                id="tabla-posts-body"
+                class="divide-y"
+            ></tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     MÓDULO 3: CAMPAÑAS
+     ESTA PARTE SE MANTIENE
+================================================== -->
+
+<section
+    id="mod-campanas"
+    class="modulo-seccion hidden space-y-6"
+>
+
+    <div>
+
+        <h3 class="text-lg font-bold">
+            Gestión de Campañas
+        </h3>
+
+        <p class="text-sm text-gray-500 mt-1">
+            Selecciona una campaña para ver sus posts,
+            artes y métricas.
+        </p>
+
+    </div>
+
+    <div
+        id="contenedor-campanas"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    ></div>
+
+</section>
+
+
+<!-- =================================================
+     MÓDULO 4: PRESUPUESTO
+================================================== -->
+
+<section
+    id="mod-presupuesto"
+    class="modulo-seccion hidden space-y-6"
+>
+
+    <h3 class="text-lg font-bold mb-4">
+        Consolidado de Presupuesto
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-blue-500">
+
+            <p class="text-xs text-gray-500 font-bold uppercase">
+                Asignado Total
+            </p>
+
+            <p
+                id="pres-asignado"
+                class="text-xl font-extrabold text-gray-800 mt-2"
+            >
+                Q 0.00
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-green-500">
+
+            <p class="text-xs text-gray-500 font-bold uppercase">
+                Ejecutado Total
+            </p>
+
+            <p
+                id="pres-ejecutado"
+                class="text-xl font-extrabold text-gray-800 mt-2"
+            >
+                Q 0.00
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-red-500">
+
+            <p class="text-xs text-gray-500 font-bold uppercase">
+                Repuestos Acquaroni
+            </p>
+
+            <p
+                id="pres-acquaroni"
+                class="text-xl font-extrabold text-gray-800 mt-2"
+            >
+                Q 0.00
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-yellow-500">
+
+            <p class="text-xs text-gray-500 font-bold uppercase">
+                AZtec Oils
+            </p>
+
+            <p
+                id="pres-aztec"
+                class="text-xl font-extrabold text-gray-800 mt-2"
+            >
+                Q 0.00
+            </p>
+
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-purple-500">
+
+            <p class="text-xs text-gray-500 font-bold uppercase">
+                Plataformas Externas
+            </p>
+
+            <p
+                id="pres-plataformas-m4"
+                class="text-xl font-extrabold text-gray-800 mt-2"
+            >
+                Q 0.00
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     MÓDULO 5: PLATAFORMAS
+================================================== -->
+
+<section
+    id="mod-plataformas"
+    class="modulo-seccion hidden space-y-6"
+>
+
+    <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+
+        <div class="flex justify-between items-center border-b pb-3">
+
+            <span class="font-bold text-gray-700">
+                Facturación de Herramientas y Servicios
+            </span>
+
+            <span
+                id="total-plataformas-mes"
+                class="text-xl font-black text-blue-600"
+            >
+                Total: Q 0.00
+            </span>
+
+        </div>
+
+        <div class="overflow-x-auto">
+
+            <table class="w-full text-sm text-left">
+
+                <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+
+                    <tr>
+
+                        <th class="p-3">Año</th>
+                        <th class="p-3">Mes</th>
+                        <th class="p-3">Plataforma</th>
+                        <th class="p-3">Monto (Q)</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody
+                    id="tabla-plataformas-body"
+                    class="divide-y"
+                ></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+</div>
 
 </main>
 
 </div>
 
 
-
 <!-- =============================================================
-     MODAL DE DESGLOSE DE CAMPAÑA
+     MODAL CAMPAÑA
 ============================================================== -->
 
 <div
@@ -860,14 +689,9 @@
     class="bg-white rounded-2xl max-w-6xl w-full max-h-[92vh] overflow-y-auto shadow-2xl"
 >
 
+    <div class="sticky top-0 z-20 bg-white border-b px-6 py-5">
 
-    <div
-        class="sticky top-0 z-20 bg-white border-b px-6 py-5"
-    >
-
-        <div
-            class="flex justify-between items-start gap-4"
-        >
+        <div class="flex justify-between items-start gap-4">
 
             <div>
 
@@ -883,15 +707,12 @@
 
             </div>
 
-
             <button
                 onclick="cerrarModalCampana()"
                 class="text-gray-400 hover:text-gray-700 transition"
             >
 
-                <i
-                    class="fa-solid fa-xmark text-2xl"
-                ></i>
+                <i class="fa-solid fa-xmark text-2xl"></i>
 
             </button>
 
@@ -899,17 +720,14 @@
 
     </div>
 
-
     <div
         id="modal-campana-contenido"
         class="p-6 space-y-6"
     ></div>
 
-
 </div>
 
 </div>
-
 
 
 <!-- =============================================================
@@ -918,19 +736,11 @@
 
 <script>
 
-
-/* =============================================================
-   URL DEL GOOGLE APPS SCRIPT
-============================================================= */
-
 const SCRIPT_URL =
     'https://script.google.com/macros/s/AKfycbxIZexYXWgwBTI4bRWF-z-NReaah6uvbOagcFjsw81nDW7x7Wiqj27pZLjYTljW3mto/exec';
 
-
 let rawData = {};
-
 let redActiva = '';
-
 
 
 /* =============================================================
@@ -942,11 +752,8 @@ function cambiarModulo(moduloId) {
     document
         .querySelectorAll('.modulo-seccion')
         .forEach(sec => {
-
             sec.classList.add('hidden');
-
         });
-
 
     document
         .querySelectorAll('.btn-nav')
@@ -964,17 +771,14 @@ function cambiarModulo(moduloId) {
 
         });
 
-
     document
         .getElementById(`mod-${moduloId}`)
         .classList.remove('hidden');
-
 
     const btnActivo =
         document.getElementById(
             `btn-nav-${moduloId}`
         );
-
 
     if (btnActivo) {
 
@@ -984,7 +788,6 @@ function cambiarModulo(moduloId) {
         );
 
     }
-
 
     const titulos = {
 
@@ -996,14 +799,12 @@ function cambiarModulo(moduloId) {
 
     };
 
-
     document
         .getElementById('titulo-seccion')
         .innerText =
-            titulos[moduloId];
+        titulos[moduloId];
 
 }
-
 
 
 /* =============================================================
@@ -1017,18 +818,13 @@ function cambiarCuentaPrincipal() {
             .getElementById('filtro-cuenta')
             .value;
 
-
     const btnPlataformas =
         document
             .getElementById('btn-nav-plataformas');
 
-
     if (cuenta === 'aztec') {
 
-        btnPlataformas
-            .classList
-            .add('hidden');
-
+        btnPlataformas.classList.add('hidden');
 
         if (
             !document
@@ -1041,26 +837,20 @@ function cambiarCuentaPrincipal() {
 
         }
 
-
     } else {
 
-        btnPlataformas
-            .classList
-            .remove('hidden');
+        btnPlataformas.classList.remove('hidden');
 
     }
 
-
     renderizarTabsRedes();
-
     actualizarTodo();
 
 }
 
 
-
 /* =============================================================
-   TABS DE REDES
+   TABS REDES
 ============================================================= */
 
 function renderizarTabsRedes() {
@@ -1070,18 +860,14 @@ function renderizarTabsRedes() {
             .getElementById('filtro-cuenta')
             .value;
 
-
     const contenedorTabs =
         document
             .getElementById('tabs-redes');
 
-
     contenedorTabs.innerHTML = '';
-
 
     const redes =
         cuenta === 'acquaroni'
-
             ? [
                 'Facebook',
                 'Instagram',
@@ -1089,23 +875,18 @@ function renderizarTabsRedes() {
                 'TikTok',
                 'YouTube'
             ]
-
             : [
                 'Facebook',
                 'Instagram',
                 'TikTok'
             ];
 
-
-    redActiva =
-        redes[0];
-
+    redActiva = redes[0];
 
     redes.forEach(red => {
 
         const button =
             document.createElement('button');
-
 
         button.className =
             `px-4 py-2 text-sm font-semibold rounded-lg transition ${
@@ -1114,16 +895,11 @@ function renderizarTabsRedes() {
                     : 'text-gray-500 hover:bg-gray-100'
             }`;
 
-
-        button.innerText =
-            red;
-
+        button.innerText = red;
 
         button.onclick = () => {
 
-            redActiva =
-                red;
-
+            redActiva = red;
 
             document
                 .querySelectorAll(
@@ -1136,27 +912,22 @@ function renderizarTabsRedes() {
 
                 });
 
-
             button.className =
                 'px-4 py-2 text-sm font-semibold rounded-lg transition bg-blue-100 text-blue-700';
-
 
             renderizarModuloRedes();
 
         };
 
-
-        contenedorTabs
-            .appendChild(button);
+        contenedorTabs.appendChild(button);
 
     });
 
 }
 
 
-
 /* =============================================================
-   OBTENER HOJA SIN IMPORTAR MAYÚSCULAS / ESPACIOS
+   OBTENER HOJA
 ============================================================= */
 
 function obtenerHojaInsensible(busqueda) {
@@ -1164,32 +935,26 @@ function obtenerHojaInsensible(busqueda) {
     if (!rawData)
         return [];
 
-
     const keyLimpia =
         busqueda
             .toLowerCase()
             .replace(/\s+/g, '');
 
-
     const claveEncontrada =
         Object
             .keys(rawData)
             .find(k =>
-
                 k
                     .toLowerCase()
                     .replace(/\s+/g, '') ===
                 keyLimpia
-
             );
-
 
     return claveEncontrada
         ? rawData[claveEncontrada]
         : [];
 
 }
-
 
 
 /* =============================================================
@@ -1202,32 +967,22 @@ async function cargarDatosSheets() {
         document
             .getElementById('loader-status');
 
-
-    loader
-        .classList
-        .remove('hidden');
-
+    loader.classList.remove('hidden');
 
     try {
 
         const res =
-            await fetch(
-                SCRIPT_URL
-            );
-
+            await fetch(SCRIPT_URL);
 
         rawData =
             await res.json();
-
 
         console.log(
             'Datos recibidos:',
             rawData
         );
 
-
         actualizarTodo();
-
 
     } catch (error) {
 
@@ -1236,17 +991,13 @@ async function cargarDatosSheets() {
             error
         );
 
-
     } finally {
 
-        loader
-            .classList
-            .add('hidden');
+        loader.classList.add('hidden');
 
     }
 
 }
-
 
 
 /* =============================================================
@@ -1263,23 +1014,18 @@ function filtrarFilas(
         !filas ||
         filas.length <= 1
     ) {
-
         return [];
-
     }
-
 
     const anioSel =
         document
             .getElementById('filtro-anio')
             .value;
 
-
     const mesSel =
         document
             .getElementById('filtro-mes')
             .value;
-
 
     return filas
         .slice(1)
@@ -1292,7 +1038,6 @@ function filtrarFilas(
                     .trim() ===
                 anioSel;
 
-
             const mesMatch =
                 mesSel === 'todos' ||
                 (
@@ -1304,7 +1049,6 @@ function filtrarFilas(
                     mesSel.toLowerCase()
                 );
 
-
             return (
                 anioMatch &&
                 mesMatch
@@ -1313,7 +1057,6 @@ function filtrarFilas(
         });
 
 }
-
 
 
 /* =============================================================
@@ -1327,11 +1070,8 @@ function limpiarValorNum(val) {
         val === undefined ||
         val === ''
     ) {
-
         return 0;
-
     }
-
 
     const num =
         parseFloat(
@@ -1340,13 +1080,11 @@ function limpiarValorNum(val) {
                 .replace(/[^0-9.-]+/g, '')
         );
 
-
     return isNaN(num)
         ? 0
         : num;
 
 }
-
 
 
 /* =============================================================
@@ -1359,11 +1097,8 @@ function actualizarTodo() {
         !rawData ||
         Object.keys(rawData).length === 0
     ) {
-
         return;
-
     }
-
 
     renderizarModuloRedes();
 
@@ -1378,9 +1113,8 @@ function actualizarTodo() {
 }
 
 
-
 /* =============================================================
-   MÓDULO REDES SOCIALES
+   REDES SOCIALES
 ============================================================= */
 
 function renderizarModuloRedes() {
@@ -1390,138 +1124,68 @@ function renderizarModuloRedes() {
             .getElementById('filtro-cuenta')
             .value;
 
-
     let nombreHoja = '';
 
+    if (cuenta === 'acquaroni') {
 
-    if (
-        cuenta === 'acquaroni'
-    ) {
-
-        if (
-            redActiva === 'Facebook'
-        )
-
+        if (redActiva === 'Facebook')
             nombreHoja =
                 'Facebook Repuestos Acquaroni';
 
-
-        else if (
-            redActiva === 'Instagram'
-        )
-
+        else if (redActiva === 'Instagram')
             nombreHoja =
                 'Instagram Repuestos Acquaroni';
 
-
-        else if (
-            redActiva === 'TikTok Live'
-        )
-
+        else if (redActiva === 'TikTok Live')
             nombreHoja =
                 'Tiktok live Repuestos Acquaroni';
 
-
-        else if (
-            redActiva === 'TikTok'
-        )
-
+        else if (redActiva === 'TikTok')
             nombreHoja =
                 'Tiktok Repuestos Acquaroni';
 
-
-        else if (
-            redActiva === 'YouTube'
-        )
-
+        else if (redActiva === 'YouTube')
             nombreHoja =
                 'Youtube Repuestos Acquaroni';
 
-
     } else {
 
-        if (
-            redActiva === 'Facebook'
-        )
-
+        if (redActiva === 'Facebook')
             nombreHoja =
                 'Facebook de AZtec Oils';
 
-
-        else if (
-            redActiva === 'Instagram'
-        )
-
+        else if (redActiva === 'Instagram')
             nombreHoja =
                 'Instagram de AZtec Oils';
 
-
-        else if (
-            redActiva === 'TikTok'
-        )
-
+        else if (redActiva === 'TikTok')
             nombreHoja =
                 'Tiktok de AZtec Oils';
 
     }
 
-
     const filas =
-        obtenerHojaInsensible(
-            nombreHoja
-        );
-
+        obtenerHojaInsensible(nombreHoja);
 
     const filasFiltradas =
-        filtrarFilas(
-            filas,
-            0,
-            1
-        );
-
+        filtrarFilas(filas, 0, 1);
 
     const kpisEstandar =
-        document
-            .getElementById(
-                'kpis-estandar'
-            );
-
+        document.getElementById('kpis-estandar');
 
     const kpisLive =
-        document
-            .getElementById(
-                'kpis-tiktok-live'
-            );
-
+        document.getElementById('kpis-tiktok-live');
 
     const cardInversion =
-        document
-            .getElementById(
-                'card-kpi-inversion'
-            );
-
+        document.getElementById('card-kpi-inversion');
 
     const cardCtr =
-        document
-            .getElementById(
-                'card-kpi-ctr'
-            );
+        document.getElementById('card-kpi-ctr');
 
+    if (redActiva === 'TikTok Live') {
 
-    if (
-        redActiva ===
-        'TikTok Live'
-    ) {
-
-        kpisEstandar
-            .classList
-            .add('hidden');
-
-
-        kpisLive
-            .classList
-            .remove('hidden');
-
+        kpisEstandar.classList.add('hidden');
+        kpisLive.classList.remove('hidden');
 
         let tViews = 0;
         let tDon = 0;
@@ -1530,106 +1194,54 @@ function renderizarModuloRedes() {
         let tCom = 0;
         let tLikes = 0;
 
-
         filasFiltradas.forEach(f => {
 
-            tViews +=
-                limpiarValorNum(f[2]);
-
-            tDon +=
-                limpiarValorNum(f[3]);
-
-            tDiam +=
-                limpiarValorNum(f[4]);
-
-            tSeg +=
-                limpiarValorNum(f[5]);
-
-            tCom +=
-                limpiarValorNum(f[6]);
-
-            tLikes +=
-                limpiarValorNum(f[7]);
+            tViews += limpiarValorNum(f[2]);
+            tDon += limpiarValorNum(f[3]);
+            tDiam += limpiarValorNum(f[4]);
+            tSeg += limpiarValorNum(f[5]);
+            tCom += limpiarValorNum(f[6]);
+            tLikes += limpiarValorNum(f[7]);
 
         });
 
-
-        document
-            .getElementById('kpi-live-views')
-            .innerText =
+        document.getElementById('kpi-live-views').innerText =
             tViews.toLocaleString();
 
-
-        document
-            .getElementById('kpi-live-donadores')
-            .innerText =
+        document.getElementById('kpi-live-donadores').innerText =
             tDon.toLocaleString();
 
-
-        document
-            .getElementById('kpi-live-diamantes')
-            .innerText =
+        document.getElementById('kpi-live-diamantes').innerText =
             tDiam.toLocaleString();
 
-
-        document
-            .getElementById('kpi-live-seguidores')
-            .innerText =
+        document.getElementById('kpi-live-seguidores').innerText =
             tSeg.toLocaleString();
 
-
-        document
-            .getElementById('kpi-live-comentarios')
-            .innerText =
+        document.getElementById('kpi-live-comentarios').innerText =
             tCom.toLocaleString();
 
-
-        document
-            .getElementById('kpi-live-likes')
-            .innerText =
+        document.getElementById('kpi-live-likes').innerText =
             tLikes.toLocaleString();
-
 
     } else {
 
-        kpisLive
-            .classList
-            .add('hidden');
-
-
-        kpisEstandar
-            .classList
-            .remove('hidden');
-
+        kpisLive.classList.add('hidden');
+        kpisEstandar.classList.remove('hidden');
 
         if (
             redActiva === 'Instagram' ||
             redActiva === 'TikTok'
         ) {
 
-            cardInversion
-                .classList
-                .add('hidden');
-
-
-            cardCtr
-                .classList
-                .add('hidden');
-
+            cardInversion.classList.add('hidden');
+            cardCtr.classList.add('hidden');
 
         } else {
 
-            cardInversion
-                .classList
-                .remove('hidden');
-
-
-            cardCtr
-                .classList
-                .remove('hidden');
+            cardInversion.classList.remove('hidden');
+            cardCtr.classList.remove('hidden');
 
         }
-
 
         let totalInv = 0;
         let totalAlc = 0;
@@ -1638,36 +1250,23 @@ function renderizarModuloRedes() {
         let countCtr = 0;
         let sumCtr = 0;
 
-
         filasFiltradas.forEach(f => {
 
             if (
                 redActiva === 'TikTok'
             ) {
 
-                totalAlc +=
-                    limpiarValorNum(f[2]);
-
-                totalImp +=
-                    limpiarValorNum(f[3]);
-
-                totalInt +=
-                    limpiarValorNum(f[4]);
-
+                totalAlc += limpiarValorNum(f[2]);
+                totalImp += limpiarValorNum(f[3]);
+                totalInt += limpiarValorNum(f[4]);
 
             } else if (
                 redActiva === 'Instagram'
             ) {
 
-                totalAlc +=
-                    limpiarValorNum(f[2]);
-
-                totalImp +=
-                    limpiarValorNum(f[3]);
-
-                totalInt +=
-                    limpiarValorNum(f[4]);
-
+                totalAlc += limpiarValorNum(f[2]);
+                totalImp += limpiarValorNum(f[3]);
+                totalInt += limpiarValorNum(f[4]);
 
             } else {
 
@@ -1686,16 +1285,12 @@ function renderizarModuloRedes() {
                 const inter =
                     limpiarValorNum(f[6]);
 
-
                 totalInv += inv;
                 totalAlc += alc;
                 totalImp += imp;
                 totalInt += inter;
 
-
-                if (
-                    ctr > 0
-                ) {
+                if (ctr > 0) {
 
                     sumCtr += ctr;
                     countCtr++;
@@ -1706,38 +1301,23 @@ function renderizarModuloRedes() {
 
         });
 
-
-        document
-            .getElementById('kpi-inversion')
-            .innerText =
+        document.getElementById('kpi-inversion').innerText =
             `Q ${totalInv.toFixed(2)}`;
 
-
-        document
-            .getElementById('kpi-ctr')
-            .innerText =
+        document.getElementById('kpi-ctr').innerText =
             `${(
                 countCtr
                     ? sumCtr / countCtr
                     : 0
             ).toFixed(2)}%`;
 
-
-        document
-            .getElementById('kpi-alcance')
-            .innerText =
+        document.getElementById('kpi-alcance').innerText =
             totalAlc.toLocaleString();
 
-
-        document
-            .getElementById('kpi-impresiones')
-            .innerText =
+        document.getElementById('kpi-impresiones').innerText =
             totalImp.toLocaleString();
 
-
-        document
-            .getElementById('kpi-interacciones')
-            .innerText =
+        document.getElementById('kpi-interacciones').innerText =
             totalInt.toLocaleString();
 
     }
@@ -1745,35 +1325,38 @@ function renderizarModuloRedes() {
 }
 
 
-
 /* =============================================================
-   MÓDULO POST IMPULSADOS
-   ÚNICO CAMBIO REALIZADO
-============================================================= */
+   POST IMPULSADOS
+   =============================================================
+   
+   ESTRUCTURA ACTUAL:
+
+   A = Año
+   B = Mes
+   C = Publicación
+   D = Red Social
+   E = Reproducciones
+   F = Alcance
+   G = Conversaciones
+   H = Inversión
+   I = CPC
+
+   ============================================================= */
 
 function renderizarModuloPosts() {
 
     const cuenta =
         document
-            .getElementById(
-                'filtro-cuenta'
-            )
+            .getElementById('filtro-cuenta')
             .value;
-
 
     const nombreHoja =
         cuenta === 'acquaroni'
-
             ? 'Post impulsados Repuestos Acquaroni'
-
             : 'Post impulsados AZtec Oils';
 
-
     const filas =
-        obtenerHojaInsensible(
-            nombreHoja
-        );
-
+        obtenerHojaInsensible(nombreHoja);
 
     const filasFiltradas =
         filtrarFilas(
@@ -1782,217 +1365,174 @@ function renderizarModuloPosts() {
             1
         );
 
-
     const tbody =
         document
-            .getElementById(
-                'tabla-posts-body'
-            );
-
+            .getElementById('tabla-posts-body');
 
     tbody.innerHTML = '';
 
+    filasFiltradas.forEach(
+        (f, idx) => {
 
-    filasFiltradas
-        .forEach(
-            (f, idx) => {
+            /*
+             * E = Reproducciones
+             * F = Alcance
+             * G = Conversaciones
+             * H = Inversión
+             * I = CPC
+             */
 
+            const reproducciones =
+                limpiarValorNum(f[4]);
 
-                /*
-                 * ESTRUCTURA DE LA HOJA:
-                 *
-                 * A = Año
-                 * B = Mes
-                 * C = Publicación
-                 * D = Red Social
-                 * E = Reproducciones
-                 * F = Alcance
-                 * G = Conversaciones
-                 * H = Inversión
-                 * I = CPC
-                 */
+            const alcance =
+                limpiarValorNum(f[5]);
 
+            const conversaciones =
+                limpiarValorNum(f[6]);
 
-                const reproducciones =
-                    limpiarValorNum(
-                        f[4]
-                    );
+            const inversion =
+                limpiarValorNum(f[7]);
 
+            /*
+             * IMPORTANTE:
+             * El CPC YA VIENE CALCULADO
+             * EN LA COLUMNA I.
+             *
+             * NO lo volvemos a calcular.
+             */
 
-                const alcance =
-                    limpiarValorNum(
-                        f[5]
-                    );
+            const cpc =
+                f[8] !== undefined &&
+                f[8] !== null &&
+                f[8] !== ''
+                    ? limpiarValorNum(f[8])
+                    : 0;
 
+            tbody.innerHTML += `
 
-                const conversaciones =
-                    limpiarValorNum(
-                        f[6]
-                    );
+                <tr>
 
+                    <td class="p-3">
 
-                const inversion =
-                    limpiarValorNum(
-                        f[7]
-                    );
+                        <label
+                            class="cursor-pointer text-blue-500 hover:text-blue-700 font-semibold text-xs flex items-center gap-1"
+                        >
 
+                            <i class="fa-solid fa-image"></i>
 
-                const cpc =
-                    limpiarValorNum(
-                        f[8]
-                    );
+                            Cargar Imagen
 
-
-                tbody.innerHTML += `
-
-                    <tr>
-
-                        <td class="p-3">
-
-                            <label
-                                class="cursor-pointer text-blue-500 hover:text-blue-700 font-semibold text-xs flex items-center gap-1"
+                            <input
+                                type="file"
+                                class="hidden"
+                                accept="image/*"
+                                onchange="previewImagenPost(
+                                    event,
+                                    'img-post-${idx}'
+                                )"
                             >
 
-                                <i
-                                    class="fa-solid fa-image"
-                                ></i>
+                        </label>
 
-                                Cargar Imagen
+                        <img
+                            id="img-post-${idx}"
+                            class="w-12 h-12 object-cover rounded shadow-sm hidden mt-1"
+                        >
 
-                                <input
-                                    type="file"
-                                    class="hidden"
-                                    accept="image/*"
-                                    onchange="previewImagenPost(
-                                        event,
-                                        'img-post-${idx}'
-                                    )"
-                                >
-
-                            </label>
+                    </td>
 
 
-                            <img
-                                id="img-post-${idx}"
-                                class="w-12 h-12 object-cover rounded shadow-sm hidden mt-1"
-                            >
+                    <td class="p-3">
 
-                        </td>
+                        ${f[0]} / ${f[1] || '-'}
 
-
-                        <td class="p-3">
-
-                            ${f[0] || '-'} / ${f[1] || '-'}
-
-                        </td>
+                    </td>
 
 
-                        <td class="p-3 font-medium">
+                    <td class="p-3 font-medium">
 
-                            ${f[2] || '-'}
+                        ${escapeHtml(f[2] || '-')}
 
-                        </td>
-
-
-                        <td class="p-3">
-
-                            ${f[3] || '-'}
-
-                        </td>
+                    </td>
 
 
-                        <td class="p-3">
+                    <td class="p-3">
 
-                            ${reproducciones.toLocaleString()}
+                        ${escapeHtml(f[3] || '-')}
 
-                        </td>
-
-
-                        <td class="p-3">
-
-                            ${alcance.toLocaleString()}
-
-                        </td>
+                    </td>
 
 
-                        <td class="p-3">
+                    <td class="p-3">
 
-                            ${conversaciones.toLocaleString()}
+                        ${reproducciones.toLocaleString()}
 
-                        </td>
-
-
-                        <td class="p-3">
-
-                            Q ${inversion.toFixed(2)}
-
-                        </td>
+                    </td>
 
 
-                        <td class="p-3 font-semibold text-blue-600">
+                    <td class="p-3">
 
-                            ${
-                                f[8] !== undefined &&
-                                f[8] !== null &&
-                                f[8] !== ''
-                                    ? 'Q ' + cpc.toFixed(2)
-                                    : '-'
-                            }
+                        ${alcance.toLocaleString()}
 
-                        </td>
+                    </td>
 
-                    </tr>
 
-                `;
+                    <td class="p-3">
 
-            }
-        );
+                        ${conversaciones.toLocaleString()}
+
+                    </td>
+
+
+                    <td class="p-3">
+
+                        Q ${inversion.toFixed(2)}
+
+                    </td>
+
+
+                    <td class="p-3 font-bold text-blue-600">
+
+                        Q ${cpc.toFixed(2)}
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
 
 }
 
 
-
-function previewImagenPost(
-    e,
-    id
-) {
+function previewImagenPost(e, id) {
 
     const file =
         e.target.files[0];
 
-
     if (file) {
 
         const img =
-            document.getElementById(
-                id
-            );
-
+            document.getElementById(id);
 
         img.src =
-            URL.createObjectURL(
-                file
-            );
+            URL.createObjectURL(file);
 
-
-        img.classList.remove(
-            'hidden'
-        );
+        img.classList.remove('hidden');
 
     }
 
 }
 
 
-
 /* =============================================================
-   MÓDULO CAMPAÑAS
-   SE MANTIENE SIN CAMBIOS
-============================================================= */
+   CAMPAÑAS
+   ============================================================= */
 
-function normalizarCampana(
-    valor
-) {
+function normalizarCampana(valor) {
 
     return (
         valor || ''
@@ -2009,10 +1549,7 @@ function normalizarCampana(
 }
 
 
-
-function prepararFilasCampanas(
-    filas
-) {
+function prepararFilasCampanas(filas) {
 
     if (
         !filas ||
@@ -2023,198 +1560,151 @@ function prepararFilasCampanas(
 
     }
 
-
     const anioSeleccionado =
         document
-            .getElementById(
-                'filtro-anio'
-            )
+            .getElementById('filtro-anio')
             .value;
-
 
     const mesSeleccionado =
         document
-            .getElementById(
-                'filtro-mes'
-            )
+            .getElementById('filtro-mes')
             .value;
 
-
     let campanaActual = '';
-
     let anioActual = '';
-
     let mesActual = '';
-
 
     const resultado = [];
 
-
     filas
         .slice(1)
-        .forEach(
-            filaOriginal => {
+        .forEach(filaOriginal => {
 
+            const fila =
+                [...filaOriginal];
 
-                const fila =
-                    [...filaOriginal];
+            if (
+                fila[0] !== undefined &&
+                fila[0] !== null &&
+                fila[0]
+                    .toString()
+                    .trim() !== ''
+            ) {
 
-
-                if (
-                    fila[0] !== undefined &&
-                    fila[0] !== null &&
+                anioActual =
                     fila[0]
                         .toString()
-                        .trim() !== ''
-                ) {
-
-                    anioActual =
-                        fila[0]
-                            .toString()
-                            .trim();
-
-                }
-
-
-                if (
-                    fila[1] !== undefined &&
-                    fila[1] !== null &&
-                    fila[1]
-                        .toString()
-                        .trim() !== ''
-                ) {
-
-                    mesActual =
-                        fila[1]
-                            .toString()
-                            .trim();
-
-                }
-
-
-                if (
-                    fila[2] !== undefined &&
-                    fila[2] !== null &&
-                    fila[2]
-                        .toString()
-                        .trim() !== ''
-                ) {
-
-                    campanaActual =
-                        fila[2]
-                            .toString()
-                            .trim();
-
-                }
-
-
-                fila[0] =
-                    fila[0] ||
-                    anioActual;
-
-
-                fila[1] =
-                    fila[1] ||
-                    mesActual;
-
-
-                fila[2] =
-                    fila[2] ||
-                    campanaActual;
-
-
-                const coincideAnio =
-                    fila[0]
-                        .toString()
-                        .trim() ===
-                    anioSeleccionado;
-
-
-                const coincideMes =
-                    mesSeleccionado ===
-                        'todos' ||
-
-                    fila[1]
-                        .toString()
-                        .trim()
-                        .toLowerCase() ===
-                    mesSeleccionado
-                        .toLowerCase();
-
-
-                const tienePost =
-                    fila[3] !== undefined &&
-                    fila[3] !== null &&
-                    fila[3]
-                        .toString()
-                        .trim() !== '';
-
-
-                if (
-                    coincideAnio &&
-                    coincideMes &&
-                    tienePost
-                ) {
-
-                    resultado.push(
-                        fila
-                    );
-
-                }
+                        .trim();
 
             }
-        );
 
+            if (
+                fila[1] !== undefined &&
+                fila[1] !== null &&
+                fila[1]
+                    .toString()
+                    .trim() !== ''
+            ) {
+
+                mesActual =
+                    fila[1]
+                        .toString()
+                        .trim();
+
+            }
+
+            if (
+                fila[2] !== undefined &&
+                fila[2] !== null &&
+                fila[2]
+                    .toString()
+                    .trim() !== ''
+            ) {
+
+                campanaActual =
+                    fila[2]
+                        .toString()
+                        .trim();
+
+            }
+
+            fila[0] =
+                fila[0] ||
+                anioActual;
+
+            fila[1] =
+                fila[1] ||
+                mesActual;
+
+            fila[2] =
+                fila[2] ||
+                campanaActual;
+
+            const coincideAnio =
+                fila[0]
+                    .toString()
+                    .trim() ===
+                anioSeleccionado;
+
+            const coincideMes =
+                mesSeleccionado ===
+                    'todos' ||
+                fila[1]
+                    .toString()
+                    .trim()
+                    .toLowerCase() ===
+                mesSeleccionado
+                    .toLowerCase();
+
+            const tienePost =
+                fila[3] !== undefined &&
+                fila[3] !== null &&
+                fila[3]
+                    .toString()
+                    .trim() !== '';
+
+            if (
+                coincideAnio &&
+                coincideMes &&
+                tienePost
+            ) {
+
+                resultado.push(fila);
+
+            }
+
+        });
 
     return resultado;
 
 }
 
 
-
 function renderizarModuloCampanas() {
 
     const cuenta =
         document
-            .getElementById(
-                'filtro-cuenta'
-            )
+            .getElementById('filtro-cuenta')
             .value;
-
 
     const nombreHoja =
         cuenta === 'acquaroni'
-
             ? 'Campañas Repuestos Acquaroni'
-
             : 'Campañas AZtec Oils';
 
-
     const filas =
-        obtenerHojaInsensible(
-            nombreHoja
-        );
-
+        obtenerHojaInsensible(nombreHoja);
 
     const filasCampanas =
-        prepararFilasCampanas(
-            filas
-        );
-
+        prepararFilasCampanas(filas);
 
     const container =
         document
-            .getElementById(
-                'contenedor-campanas'
-            );
-
+            .getElementById('contenedor-campanas');
 
     container.innerHTML = '';
 
-
-    if (
-        !filasCampanas.length
-    ) {
+    if (!filasCampanas.length) {
 
         container.innerHTML = `
 
@@ -2226,383 +1716,287 @@ function renderizarModuloCampanas() {
                     class="fa-solid fa-bullhorn text-4xl text-gray-300 mb-4"
                 ></i>
 
-                <p
-                    class="font-semibold text-gray-600"
-                >
-
+                <p class="font-semibold text-gray-600">
                     No hay campañas disponibles.
-
                 </p>
 
-                <p
-                    class="text-sm text-gray-400 mt-1"
-                >
-
+                <p class="text-sm text-gray-400 mt-1">
                     Revisa el año, mes o la cuenta seleccionada.
-
                 </p>
 
             </div>
 
         `;
 
-
         return;
 
     }
 
-
     const campanas = {};
 
+    filasCampanas.forEach(fila => {
 
-    filasCampanas
-        .forEach(
-            fila => {
+        const nombreCampana =
+            fila[2]
+                .toString()
+                .trim();
 
+        const clave =
+            normalizarCampana(nombreCampana);
 
-                const nombreCampana =
-                    fila[2]
-                        .toString()
-                        .trim();
+        if (!campanas[clave]) {
 
+            campanas[clave] = {
 
-                const clave =
-                    normalizarCampana(
-                        nombreCampana
-                    );
+                nombre:
+                    nombreCampana,
 
+                anio:
+                    fila[0],
 
-                if (
-                    !campanas[clave]
-                ) {
+                mes:
+                    fila[1],
 
-                    campanas[clave] = {
+                posts: []
 
-                        nombre:
-                            nombreCampana,
+            };
 
-                        anio:
-                            fila[0],
+        }
 
-                        mes:
-                            fila[1],
+        campanas[clave]
+            .posts
+            .push(fila);
 
-                        posts: []
-
-                    };
-
-                }
-
-
-                campanas[clave]
-                    .posts
-                    .push(
-                        fila
-                    );
-
-            }
-        );
-
+    });
 
     Object
         .keys(campanas)
-        .forEach(
-            (clave, index) => {
+        .forEach((clave, index) => {
 
+            const campana =
+                campanas[clave];
 
-                const campana =
-                    campanas[clave];
+            const presupuestoTotal =
+                campana.posts.reduce(
+                    (total, fila) => {
 
-
-                const presupuestoTotal =
-                    campana
-                        .posts
-                        .reduce(
-                            (
-                                total,
-                                fila
-                            ) => {
-
-                                return (
-                                    total +
-                                    limpiarValorNum(
-                                        fila[7]
-                                    )
-                                );
-
-                            },
-                            0
+                        return (
+                            total +
+                            limpiarValorNum(
+                                fila[7]
+                            )
                         );
 
+                    },
+                    0
+                );
 
-                const cantidadPosts =
-                    campana
-                        .posts
-                        .length;
+            const cantidadPosts =
+                campana.posts.length;
 
+            const idPortada =
+                `cover-campana-${index}`;
 
-                const idPortada =
-                    `cover-campana-${index}`;
+            container.innerHTML += `
 
-
-                container
-                    .innerHTML += `
+                <div
+                    class="bg-white rounded-xl border shadow-sm hover:shadow-lg transition overflow-hidden"
+                >
 
                     <div
-                        class="bg-white rounded-xl border shadow-sm hover:shadow-lg transition overflow-hidden"
+                        class="h-40 bg-gradient-to-br from-slate-100 to-gray-200 relative flex items-center justify-center overflow-hidden"
                     >
 
-                        <div
-                            class="h-40 bg-gradient-to-br from-slate-100 to-gray-200 relative flex items-center justify-center overflow-hidden"
+                        <img
+                            id="${idPortada}"
+                            class="absolute inset-0 w-full h-full object-cover hidden"
                         >
 
-                            <img
-                                id="${idPortada}"
-                                class="absolute inset-0 w-full h-full object-cover hidden"
-                            >
+                        <div
+                            class="flex flex-col items-center justify-center text-gray-400"
+                        >
 
-                            <div
-                                class="flex flex-col items-center justify-center text-gray-400"
-                            >
+                            <i
+                                class="fa-solid fa-bullhorn text-4xl mb-2"
+                            ></i>
 
-                                <i
-                                    class="fa-solid fa-bullhorn text-4xl mb-2"
-                                ></i>
-
-                                <span
-                                    class="text-xs font-medium"
-                                >
-
-                                    Portada de campaña
-
-                                </span>
-
-                            </div>
-
-
-                            <label
-                                onclick="event.stopPropagation()"
-                                class="absolute bottom-3 right-3 z-10 cursor-pointer bg-white/95 hover:bg-white text-gray-700 px-3 py-2 rounded-lg text-xs font-bold shadow"
-                            >
-
-                                <i
-                                    class="fa-solid fa-camera mr-1"
-                                ></i>
-
-                                Subir portada
-
-                                <input
-                                    type="file"
-                                    class="hidden"
-                                    accept="image/*"
-                                    onchange="previewImagenCampana(
-                                        event,
-                                        '${idPortada}'
-                                    )"
-                                >
-
-                            </label>
+                            <span class="text-xs font-medium">
+                                Portada de campaña
+                            </span>
 
                         </div>
 
+                        <label
+                            onclick="event.stopPropagation()"
+                            class="absolute bottom-3 right-3 z-10 cursor-pointer bg-white/95 hover:bg-white text-gray-700 px-3 py-2 rounded-lg text-xs font-bold shadow"
+                        >
 
-                        <div class="p-5">
+                            <i class="fa-solid fa-camera mr-1"></i>
 
-                            <div
-                                class="flex justify-between items-start gap-3"
-                            >
+                            Subir portada
 
-                                <div>
-
-                                    <h4
-                                        class="font-bold text-gray-800 text-base leading-tight"
-                                    >
-
-                                        ${escapeHtml(
-                                            campana.nombre
-                                        )}
-
-                                    </h4>
-
-
-                                    <p
-                                        class="text-xs text-gray-500 mt-2"
-                                    >
-
-                                        ${escapeHtml(
-                                            campana.anio
-                                        )}
-
-                                        -
-
-                                        ${escapeHtml(
-                                            campana.mes
-                                        )}
-
-                                    </p>
-
-                                </div>
-
-
-                                <span
-                                    class="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap"
-                                >
-
-                                    ${cantidadPosts}
-
-                                    ${
-                                        cantidadPosts === 1
-                                            ? 'Post'
-                                            : 'Posts'
-                                    }
-
-                                </span>
-
-                            </div>
-
-
-                            <div
-                                class="mt-4 pt-3 border-t flex justify-between items-center"
-                            >
-
-                                <span
-                                    class="text-xs font-semibold text-gray-500"
-                                >
-
-                                    Presupuesto total
-
-                                </span>
-
-
-                                <span
-                                    class="text-lg font-black text-blue-600"
-                                >
-
-                                    Q ${presupuestoTotal.toFixed(2)}
-
-                                </span>
-
-                            </div>
-
-
-                            <button
-                                type="button"
-                                onclick="abrirDesgloseCampana(
-                                    ${JSON.stringify(
-                                        campana.nombre
-                                    )}
+                            <input
+                                type="file"
+                                class="hidden"
+                                accept="image/*"
+                                onchange="previewImagenCampana(
+                                    event,
+                                    '${idPortada}'
                                 )"
-                                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-lg text-sm font-bold transition"
                             >
 
-                                <i
-                                    class="fa-solid fa-eye mr-2"
-                                ></i>
-
-                                Ver campaña
-
-                            </button>
-
-
-                        </div>
+                        </label>
 
                     </div>
 
-                `;
+                    <div class="p-5">
 
-            }
-        );
+                        <div
+                            class="flex justify-between items-start gap-3"
+                        >
+
+                            <div>
+
+                                <h4
+                                    class="font-bold text-gray-800 text-base leading-tight"
+                                >
+
+                                    ${escapeHtml(
+                                        campana.nombre
+                                    )}
+
+                                </h4>
+
+                                <p
+                                    class="text-xs text-gray-500 mt-2"
+                                >
+
+                                    ${escapeHtml(
+                                        campana.anio
+                                    )}
+
+                                    -
+
+                                    ${escapeHtml(
+                                        campana.mes
+                                    )}
+
+                                </p>
+
+                            </div>
+
+                            <span
+                                class="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap"
+                            >
+
+                                ${cantidadPosts}
+
+                                ${
+                                    cantidadPosts === 1
+                                        ? 'Post'
+                                        : 'Posts'
+                                }
+
+                            </span>
+
+                        </div>
+
+                        <div
+                            class="mt-4 pt-3 border-t flex justify-between items-center"
+                        >
+
+                            <span
+                                class="text-xs font-semibold text-gray-500"
+                            >
+                                Presupuesto total
+                            </span>
+
+                            <span
+                                class="text-lg font-black text-blue-600"
+                            >
+                                Q ${presupuestoTotal.toFixed(2)}
+                            </span>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            onclick="abrirDesgloseCampana(
+                                ${JSON.stringify(
+                                    campana.nombre
+                                )}
+                            )"
+                            class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-lg text-sm font-bold transition"
+                        >
+
+                            <i class="fa-solid fa-eye mr-2"></i>
+
+                            Ver campaña
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
 
 }
 
 
-
-function abrirDesgloseCampana(
-    nombreCampana
-) {
+function abrirDesgloseCampana(nombreCampana) {
 
     const cuenta =
         document
-            .getElementById(
-                'filtro-cuenta'
-            )
+            .getElementById('filtro-cuenta')
             .value;
-
 
     const nombreHoja =
         cuenta === 'acquaroni'
-
             ? 'Campañas Repuestos Acquaroni'
-
             : 'Campañas AZtec Oils';
 
-
     const filas =
-        obtenerHojaInsensible(
-            nombreHoja
-        );
-
+        obtenerHojaInsensible(nombreHoja);
 
     const filasCampanas =
-        prepararFilasCampanas(
-            filas
-        );
-
+        prepararFilasCampanas(filas);
 
     const postsCampana =
-        filasCampanas
-            .filter(
-                fila =>
-
-                    normalizarCampana(
-                        fila[2]
-                    ) ===
-                    normalizarCampana(
-                        nombreCampana
-                    )
-            );
-
+        filasCampanas.filter(
+            fila =>
+                normalizarCampana(fila[2]) ===
+                normalizarCampana(nombreCampana)
+        );
 
     const presupuestoTotal =
-        postsCampana
-            .reduce(
-                (
-                    total,
-                    fila
-                ) => {
+        postsCampana.reduce(
+            (total, fila) => {
 
-                    return (
-                        total +
-                        limpiarValorNum(
-                            fila[7]
-                        )
-                    );
+                return (
+                    total +
+                    limpiarValorNum(fila[7])
+                );
 
-                },
-                0
-            );
-
+            },
+            0
+        );
 
     document
-        .getElementById(
-            'modal-campana-titulo'
-        )
+        .getElementById('modal-campana-titulo')
         .innerText =
-            `Campaña: ${nombreCampana}`;
-
+        `Campaña: ${nombreCampana}`;
 
     document
-        .getElementById(
-            'modal-campana-subtitulo'
-        )
+        .getElementById('modal-campana-subtitulo')
         .innerText =
-
-            `${postsCampana.length} ${
-                postsCampana.length === 1
-                    ? 'post'
-                    : 'posts'
-            } · Presupuesto total: Q ${presupuestoTotal.toFixed(2)}`;
-
+        `${postsCampana.length} ${
+            postsCampana.length === 1
+                ? 'post'
+                : 'posts'
+        } · Presupuesto total: Q ${presupuestoTotal.toFixed(2)}`;
 
     const container =
         document
@@ -2610,13 +2004,9 @@ function abrirDesgloseCampana(
                 'modal-campana-contenido'
             );
 
-
     container.innerHTML = '';
 
-
-    if (
-        !postsCampana.length
-    ) {
+    if (!postsCampana.length) {
 
         container.innerHTML = `
 
@@ -2628,18 +2018,13 @@ function abrirDesgloseCampana(
                     class="fa-solid fa-circle-exclamation text-3xl text-gray-300 mb-3"
                 ></i>
 
-                <p
-                    class="font-semibold text-gray-600"
-                >
-
+                <p class="font-semibold text-gray-600">
                     No se encontraron posts para esta campaña.
-
                 </p>
 
             </div>
 
         `;
-
 
         abrirModalCampana();
 
@@ -2647,50 +2032,34 @@ function abrirDesgloseCampana(
 
     }
 
+    postsCampana.forEach(
+        (fila, index) => {
 
-    postsCampana
-        .forEach(
-            (
+            crearFichaPostCampana(
                 fila,
-                index
-            ) => {
+                index,
+                container
+            );
 
-                crearFichaPostCampana(
-                    fila,
-                    index,
-                    container
-                );
-
-            }
-        );
-
+        }
+    );
 
     abrirModalCampana();
 
 }
 
 
-
 function abrirModalCampana() {
 
     const modal =
-        document
-            .getElementById(
-                'modal-campana'
-            );
+        document.getElementById(
+            'modal-campana'
+        );
 
-
-    modal
-        .classList
-        .remove('hidden');
-
-
-    modal
-        .classList
-        .add('flex');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
 
 }
-
 
 
 function crearFichaPostCampana(
@@ -2704,40 +2073,24 @@ function crearFichaPostCampana(
             ? fila[3]
                 .toString()
                 .trim()
-
             : `Post ${index + 1}`;
 
-
     const reproducciones =
-        limpiarValorNum(
-            fila[4]
-        );
-
+        limpiarValorNum(fila[4]);
 
     const alcance =
-        limpiarValorNum(
-            fila[5]
-        );
-
+        limpiarValorNum(fila[5]);
 
     const conversaciones =
-        limpiarValorNum(
-            fila[6]
-        );
-
+        limpiarValorNum(fila[6]);
 
     const presupuesto =
-        limpiarValorNum(
-            fila[7]
-        );
-
+        limpiarValorNum(fila[7]);
 
     const postId =
         `campana-post-${Date.now()}-${index}`;
 
-
-    container
-        .innerHTML += `
+    container.innerHTML += `
 
         <article
             class="bg-white border rounded-2xl shadow-sm overflow-hidden"
@@ -2747,88 +2100,49 @@ function crearFichaPostCampana(
                 class="px-5 py-4 border-b bg-gray-50 flex justify-between items-center"
             >
 
-                <div
-                    class="flex items-center gap-3"
-                >
+                <div class="flex items-center gap-3">
 
                     <div
                         class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-black"
                     >
-
                         ${index + 1}
-
                     </div>
-
 
                     <div>
 
-                        <h4
-                            class="font-bold text-gray-800"
-                        >
-
-                            ${escapeHtml(
-                                nombrePost
-                            )}
-
+                        <h4 class="font-bold text-gray-800">
+                            ${escapeHtml(nombrePost)}
                         </h4>
 
-
-                        <p
-                            class="text-xs text-gray-500"
-                        >
-
-                            ${escapeHtml(
-                                fila[1] || ''
-                            )}
-
+                        <p class="text-xs text-gray-500">
+                            ${escapeHtml(fila[1] || '')}
                         </p>
 
                     </div>
 
                 </div>
 
+                <div class="text-right">
 
-                <div
-                    class="text-right"
-                >
-
-                    <p
-                        class="text-xs text-gray-500"
-                    >
-
+                    <p class="text-xs text-gray-500">
                         Presupuesto
-
                     </p>
 
-
-                    <p
-                        class="text-lg font-black text-blue-600"
-                    >
-
+                    <p class="text-lg font-black text-blue-600">
                         Q ${presupuesto.toFixed(2)}
-
                     </p>
 
                 </div>
 
             </div>
 
-
             <div class="p-5">
-
 
                 <div>
 
-                    <p
-                        class="text-sm font-bold text-gray-700 mb-3"
-                    >
-
-                        Arte de ${escapeHtml(
-                            nombrePost
-                        )}
-
+                    <p class="text-sm font-bold text-gray-700 mb-3">
+                        Arte de ${escapeHtml(nombrePost)}
                     </p>
-
 
                     <div
                         id="${postId}-dropzone"
@@ -2850,35 +2164,21 @@ function crearFichaPostCampana(
 
                             </div>
 
-
-                            <p
-                                class="font-semibold text-gray-700"
-                            >
-
+                            <p class="font-semibold text-gray-700">
                                 Sube el arte de este post
-
                             </p>
 
-
-                            <p
-                                class="text-xs text-gray-400 mt-1 mb-4"
-                            >
-
+                            <p class="text-xs text-gray-400 mt-1 mb-4">
                                 JPG, PNG o WEBP
-
                             </p>
-
 
                             <label
                                 class="inline-flex items-center gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow"
                             >
 
-                                <i
-                                    class="fa-solid fa-image"
-                                ></i>
+                                <i class="fa-solid fa-image"></i>
 
                                 Seleccionar arte
-
 
                                 <input
                                     type="file"
@@ -2894,24 +2194,19 @@ function crearFichaPostCampana(
 
                         </div>
 
-
                         <img
                             id="${postId}-image"
                             class="hidden absolute inset-0 w-full h-full object-contain bg-white"
                         >
-
 
                         <label
                             id="${postId}-change"
                             class="hidden absolute bottom-3 right-3 cursor-pointer bg-white/95 hover:bg-white text-gray-700 px-3 py-2 rounded-lg text-xs font-bold shadow"
                         >
 
-                            <i
-                                class="fa-solid fa-pen mr-1"
-                            ></i>
+                            <i class="fa-solid fa-pen mr-1"></i>
 
                             Cambiar arte
-
 
                             <input
                                 type="file"
@@ -2925,11 +2220,9 @@ function crearFichaPostCampana(
 
                         </label>
 
-
                     </div>
 
                 </div>
-
 
                 <div class="mt-6">
 
@@ -2939,34 +2232,21 @@ function crearFichaPostCampana(
 
                         <div>
 
-                            <p
-                                class="text-sm font-bold text-gray-700"
-                            >
-
-                                Métricas de ${escapeHtml(
-                                    nombrePost
-                                )}
-
+                            <p class="text-sm font-bold text-gray-700">
+                                Métricas de ${escapeHtml(nombrePost)}
                             </p>
 
-
-                            <p
-                                class="text-xs text-gray-400"
-                            >
-
+                            <p class="text-xs text-gray-400">
                                 Datos registrados en la pestaña Campañas
-
                             </p>
 
                         </div>
-
 
                         <i
                             class="fa-solid fa-chart-line text-blue-500"
                         ></i>
 
                     </div>
-
 
                     <div
                         class="grid grid-cols-1 md:grid-cols-4 gap-3"
@@ -2979,22 +2259,16 @@ function crearFichaPostCampana(
                             <p
                                 class="text-xs text-gray-500 font-semibold uppercase"
                             >
-
                                 Reproducciones
-
                             </p>
-
 
                             <p
                                 class="text-xl font-black text-gray-800 mt-1"
                             >
-
                                 ${reproducciones.toLocaleString()}
-
                             </p>
 
                         </div>
-
 
                         <div
                             class="bg-gray-50 border rounded-xl p-4"
@@ -3003,22 +2277,16 @@ function crearFichaPostCampana(
                             <p
                                 class="text-xs text-gray-500 font-semibold uppercase"
                             >
-
                                 Alcance
-
                             </p>
-
 
                             <p
                                 class="text-xl font-black text-purple-600 mt-1"
                             >
-
                                 ${alcance.toLocaleString()}
-
                             </p>
 
                         </div>
-
 
                         <div
                             class="bg-gray-50 border rounded-xl p-4"
@@ -3027,22 +2295,16 @@ function crearFichaPostCampana(
                             <p
                                 class="text-xs text-gray-500 font-semibold uppercase"
                             >
-
                                 Conversaciones
-
                             </p>
-
 
                             <p
                                 class="text-xl font-black text-green-600 mt-1"
                             >
-
                                 ${conversaciones.toLocaleString()}
-
                             </p>
 
                         </div>
-
 
                         <div
                             class="bg-gray-50 border rounded-xl p-4"
@@ -3051,18 +2313,13 @@ function crearFichaPostCampana(
                             <p
                                 class="text-xs text-gray-500 font-semibold uppercase"
                             >
-
                                 Presupuesto
-
                             </p>
-
 
                             <p
                                 class="text-xl font-black text-blue-600 mt-1"
                             >
-
                                 Q ${presupuesto.toFixed(2)}
-
                             </p>
 
                         </div>
@@ -3080,148 +2337,93 @@ function crearFichaPostCampana(
 }
 
 
-
-function previewArteCampana(
-    event,
-    postId
-) {
+function previewArteCampana(event, postId) {
 
     const file =
         event.target.files[0];
 
-
     if (!file)
         return;
 
-
     if (
-        !file.type.startsWith(
-            'image/'
-        )
+        !file.type.startsWith('image/')
     ) {
 
         alert(
             'Por favor selecciona un archivo de imagen.'
         );
 
-
         return;
 
     }
 
-
     const image =
-        document
-            .getElementById(
-                `${postId}-image`
-            );
-
-
-    const placeholder =
-        document
-            .getElementById(
-                `${postId}-placeholder`
-            );
-
-
-    const changeButton =
-        document
-            .getElementById(
-                `${postId}-change`
-            );
-
-
-    image.src =
-        URL.createObjectURL(
-            file
+        document.getElementById(
+            `${postId}-image`
         );
 
+    const placeholder =
+        document.getElementById(
+            `${postId}-placeholder`
+        );
 
-    image
-        .classList
-        .remove('hidden');
+    const changeButton =
+        document.getElementById(
+            `${postId}-change`
+        );
 
+    image.src =
+        URL.createObjectURL(file);
 
-    placeholder
-        .classList
-        .add('hidden');
+    image.classList.remove('hidden');
 
+    placeholder.classList.add('hidden');
 
-    changeButton
-        .classList
-        .remove('hidden');
+    changeButton.classList.remove('hidden');
 
 }
 
 
-
-function previewImagenCampana(
-    event,
-    id
-) {
+function previewImagenCampana(event, id) {
 
     const file =
         event.target.files[0];
 
-
     if (!file)
         return;
 
-
     const img =
-        document
-            .getElementById(
-                id
-            );
-
+        document.getElementById(id);
 
     img.src =
-        URL.createObjectURL(
-            file
-        );
+        URL.createObjectURL(file);
 
-
-    img
-        .classList
-        .remove('hidden');
+    img.classList.remove('hidden');
 
 }
-
 
 
 function cerrarModalCampana() {
 
     const modal =
-        document
-            .getElementById(
-                'modal-campana'
-            );
+        document.getElementById(
+            'modal-campana'
+        );
 
-
-    modal
-        .classList
-        .add('hidden');
-
-
-    modal
-        .classList
-        .remove('flex');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
 
 }
 
 
-
 document
-    .getElementById(
-        'modal-campana'
-    )
+    .getElementById('modal-campana')
     .addEventListener(
         'click',
         function(event) {
 
             if (
-                event.target ===
-                this
+                event.target === this
             ) {
 
                 cerrarModalCampana();
@@ -3232,14 +2434,12 @@ document
     );
 
 
-
 document.addEventListener(
     'keydown',
     function(event) {
 
         if (
-            event.key ===
-            'Escape'
+            event.key === 'Escape'
         ) {
 
             cerrarModalCampana();
@@ -3250,10 +2450,7 @@ document.addEventListener(
 );
 
 
-
-function escapeHtml(
-    valor
-) {
+function escapeHtml(valor) {
 
     return (
         valor || ''
@@ -3283,9 +2480,8 @@ function escapeHtml(
 }
 
 
-
 /* =============================================================
-   MÓDULO PRESUPUESTO
+   PRESUPUESTO
 ============================================================= */
 
 function renderizarModuloPresupuesto() {
@@ -3295,7 +2491,6 @@ function renderizarModuloPresupuesto() {
             'Presupuesto'
         );
 
-
     const filasFiltradas =
         filtrarFilas(
             filasPres,
@@ -3303,96 +2498,52 @@ function renderizarModuloPresupuesto() {
             1
         );
 
-
     let asig = 0;
     let ejec = 0;
     let acq = 0;
     let azt = 0;
     let plat = 0;
 
+    filasFiltradas.forEach(f => {
 
-    filasFiltradas
-        .forEach(
-            f => {
+        asig += limpiarValorNum(f[2]);
+        ejec += limpiarValorNum(f[3]);
+        acq += limpiarValorNum(f[4]);
+        azt += limpiarValorNum(f[5]);
+        plat += limpiarValorNum(f[6]);
 
-                asig +=
-                    limpiarValorNum(
-                        f[2]
-                    );
-
-
-                ejec +=
-                    limpiarValorNum(
-                        f[3]
-                    );
-
-
-                acq +=
-                    limpiarValorNum(
-                        f[4]
-                    );
-
-
-                azt +=
-                    limpiarValorNum(
-                        f[5]
-                    );
-
-
-                plat +=
-                    limpiarValorNum(
-                        f[6]
-                    );
-
-            }
-        );
-
+    });
 
     document
-        .getElementById(
-            'pres-asignado'
-        )
+        .getElementById('pres-asignado')
         .innerText =
         `Q ${asig.toFixed(2)}`;
 
-
     document
-        .getElementById(
-            'pres-ejecutado'
-        )
+        .getElementById('pres-ejecutado')
         .innerText =
         `Q ${ejec.toFixed(2)}`;
 
-
     document
-        .getElementById(
-            'pres-acquaroni'
-        )
+        .getElementById('pres-acquaroni')
         .innerText =
         `Q ${acq.toFixed(2)}`;
 
-
     document
-        .getElementById(
-            'pres-aztec'
-        )
+        .getElementById('pres-aztec')
         .innerText =
         `Q ${azt.toFixed(2)}`;
 
-
     document
-        .getElementById(
-            'pres-plataformas-m4'
-        )
+        .getElementById('pres-plataformas-m4')
         .innerText =
         `Q ${plat.toFixed(2)}`;
 
 }
 
 
-
 /* =============================================================
-   MÓDULO PLATAFORMAS
+   PLATAFORMAS
 ============================================================= */
 
 function renderizarModuloPlataformas() {
@@ -3402,7 +2553,6 @@ function renderizarModuloPlataformas() {
             'Plataformas'
         );
 
-
     const filasFiltradas =
         filtrarFilas(
             filasPlat,
@@ -3410,62 +2560,48 @@ function renderizarModuloPlataformas() {
             1
         );
 
-
     const tbody =
         document
             .getElementById(
                 'tabla-plataformas-body'
             );
 
-
     tbody.innerHTML = '';
-
 
     let totalMes = 0;
 
+    filasFiltradas.forEach(f => {
 
-    filasFiltradas
-        .forEach(
-            f => {
+        const monto =
+            limpiarValorNum(f[3]);
 
-                const monto =
-                    limpiarValorNum(
-                        f[3]
-                    );
+        totalMes += monto;
 
+        tbody.innerHTML += `
 
-                totalMes +=
-                    monto;
+            <tr>
 
+                <td class="p-3">
+                    ${f[0]}
+                </td>
 
-                tbody
-                    .innerHTML += `
+                <td class="p-3">
+                    ${f[1]}
+                </td>
 
-                    <tr>
+                <td class="p-3 font-medium">
+                    ${f[2] || '-'}
+                </td>
 
-                        <td class="p-3">
-                            ${f[0]}
-                        </td>
+                <td class="p-3 font-bold text-gray-800">
+                    Q ${monto.toFixed(2)}
+                </td>
 
-                        <td class="p-3">
-                            ${f[1]}
-                        </td>
+            </tr>
 
-                        <td class="p-3 font-medium">
-                            ${f[2] || '-'}
-                        </td>
+        `;
 
-                        <td class="p-3 font-bold text-gray-800">
-                            Q ${monto.toFixed(2)}
-                        </td>
-
-                    </tr>
-
-                `;
-
-            }
-        );
-
+    });
 
     document
         .getElementById(
@@ -3475,7 +2611,6 @@ function renderizarModuloPlataformas() {
         `Total: Q ${totalMes.toFixed(2)}`;
 
 }
-
 
 
 /* =============================================================
@@ -3493,9 +2628,7 @@ window.addEventListener(
     }
 );
 
-
 </script>
 
 </body>
-
 </html>
