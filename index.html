@@ -489,7 +489,6 @@
 
 <!-- =================================================
      MÓDULO 3: CAMPAÑAS
-     ESTA PARTE SE MANTIENE
 ================================================== -->
 
 <section
@@ -1327,21 +1326,7 @@ function renderizarModuloRedes() {
 
 /* =============================================================
    POST IMPULSADOS
-   =============================================================
-   
-   ESTRUCTURA ACTUAL:
-
-   A = Año
-   B = Mes
-   C = Publicación
-   D = Red Social
-   E = Reproducciones
-   F = Alcance
-   G = Conversaciones
-   H = Inversión
-   I = CPC
-
-   ============================================================= */
+============================================================= */
 
 function renderizarModuloPosts() {
 
@@ -1374,14 +1359,6 @@ function renderizarModuloPosts() {
     filasFiltradas.forEach(
         (f, idx) => {
 
-            /*
-             * E = Reproducciones
-             * F = Alcance
-             * G = Conversaciones
-             * H = Inversión
-             * I = CPC
-             */
-
             const reproducciones =
                 limpiarValorNum(f[4]);
 
@@ -1393,14 +1370,6 @@ function renderizarModuloPosts() {
 
             const inversion =
                 limpiarValorNum(f[7]);
-
-            /*
-             * IMPORTANTE:
-             * El CPC YA VIENE CALCULADO
-             * EN LA COLUMNA I.
-             *
-             * NO lo volvemos a calcular.
-             */
 
             const cpc =
                 f[8] !== undefined &&
@@ -1530,7 +1499,7 @@ function previewImagenPost(e, id) {
 
 /* =============================================================
    CAMPAÑAS
-   ============================================================= */
+============================================================= */
 
 function normalizarCampana(valor) {
 
@@ -2543,15 +2512,22 @@ function renderizarModuloPresupuesto() {
 
 
 /* =============================================================
-   PLATAFORMAS
+   PLATAFORMAS / FACTURACIÓN
 ============================================================= */
 
 function renderizarModuloPlataformas() {
 
-    const filasPlat =
-        obtenerHojaInsensible(
-            'Plataformas'
-        );
+    // Busca la pestaña por su nombre real "Plataformas Repuestos Acquaroni" o alternativas
+    let filasPlat = obtenerHojaInsensible('Plataformas Repuestos Acquaroni');
+    if (!filasPlat || filasPlat.length === 0) {
+        filasPlat = obtenerHojaInsensible('Facturación');
+    }
+    if (!filasPlat || filasPlat.length === 0) {
+        filasPlat = obtenerHojaInsensible('Facturacion');
+    }
+    if (!filasPlat || filasPlat.length === 0) {
+        filasPlat = obtenerHojaInsensible('Plataformas');
+    }
 
     const filasFiltradas =
         filtrarFilas(
@@ -2570,38 +2546,50 @@ function renderizarModuloPlataformas() {
 
     let totalMes = 0;
 
-    filasFiltradas.forEach(f => {
-
-        const monto =
-            limpiarValorNum(f[3]);
-
-        totalMes += monto;
-
-        tbody.innerHTML += `
-
+    if (!filasFiltradas || filasFiltradas.length === 0) {
+        tbody.innerHTML = `
             <tr>
-
-                <td class="p-3">
-                    ${f[0]}
+                <td colspan="4" class="p-4 text-center text-gray-400">
+                    No se encontraron registros de plataformas para el filtro seleccionado.
                 </td>
-
-                <td class="p-3">
-                    ${f[1]}
-                </td>
-
-                <td class="p-3 font-medium">
-                    ${f[2] || '-'}
-                </td>
-
-                <td class="p-3 font-bold text-gray-800">
-                    Q ${monto.toFixed(2)}
-                </td>
-
             </tr>
-
         `;
+    } else {
+        filasFiltradas.forEach(f => {
 
-    });
+            const anio = f[0] || '-';
+            const mes = f[1] || '-';
+            const plataforma = f[2] || '-';
+            const monto = limpiarValorNum(f[3]);
+
+            totalMes += monto;
+
+            tbody.innerHTML += `
+
+                <tr class="hover:bg-gray-50">
+
+                    <td class="p-3">
+                        ${escapeHtml(anio.toString())}
+                    </td>
+
+                    <td class="p-3">
+                        ${escapeHtml(mes.toString())}
+                    </td>
+
+                    <td class="p-3 font-medium text-gray-800">
+                        ${escapeHtml(plataforma.toString())}
+                    </td>
+
+                    <td class="p-3 font-bold text-gray-900">
+                        Q ${monto.toFixed(2)}
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+    }
 
     document
         .getElementById(
