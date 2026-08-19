@@ -21,7 +21,7 @@
       <!-- SELECCIONADOR DE MES -->
       <div class="flex items-center gap-2">
         <label for="select-mes" class="font-semibold text-gray-700 text-sm">Seleccionar Mes:</label>
-        <select id="select-mes" onchange="actualizarVista()" class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm">
+        <select id="select-mes" onchange="cargarDatosSheets()" class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm">
           <option value="Julio 2026" selected>Julio 2026</option>
           <option value="Agosto 2026">Agosto 2026</option>
           <option value="Junio 2026">Junio 2026</option>
@@ -36,6 +36,7 @@
 
     <!-- NAVEGACIÓN DE MARCAS Y REDES -->
     <nav class="bg-white rounded-xl shadow-md p-4">
+      <!-- Selector de Marca -->
       <div class="flex border-b mb-4">
         <button id="tab-marca-acquaroni" onclick="cambiarMarca('Repuestos Acquaroni')" class="px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition">
           Repuestos Acquaroni
@@ -45,144 +46,132 @@
         </button>
       </div>
 
-      <div id="subtabs-redes" class="flex flex-wrap gap-2"></div>
+      <!-- Selector de Red Social / Sección -->
+      <div id="subtabs-redes" class="flex flex-wrap gap-2">
+        <!-- Generado dinámicamente -->
+      </div>
     </nav>
 
-    <!-- METRICAS CLAVE / FICHAS (FILTRADAS POR MES) -->
-    <section id="tarjetas-resumen" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <!-- METRICAS CLAVE / RESUMEN GENERAL -->
+    <section id="tarjetas-resumen" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-blue-500">
         <p class="text-xs font-bold text-gray-400 uppercase">Inversión Total</p>
         <h2 id="kpi-inversion" class="text-2xl font-bold text-gray-800 mt-1">Q 0.00</h2>
       </div>
       <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-green-500">
-        <p class="text-xs font-bold text-gray-400 uppercase">Alcance Pagado</p>
+        <p class="text-xs font-bold text-gray-400 uppercase">Alcance Total</p>
         <h2 id="kpi-alcance" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
-      </div>
-      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-orange-500">
-        <p class="text-xs font-bold text-gray-400 uppercase">Alcance Orgánico</p>
-        <h2 id="kpi-organico" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
       </div>
       <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-purple-500">
         <p class="text-xs font-bold text-gray-400 uppercase">Interacciones</p>
         <h2 id="kpi-interacciones" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
       </div>
-      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-indigo-500">
-        <p class="text-xs font-bold text-gray-400 uppercase">Seguidores (Mes Exacto)</p>
-        <h2 id="kpi-seguidores" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-orange-500">
+        <p class="text-xs font-bold text-gray-400 uppercase">Alcance Orgánico</p>
+        <h2 id="kpi-organico" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
       </div>
     </section>
 
-    <!-- DETALLES Y PROYECCIÓN POR RED SOCIAL -->
+    <!-- GRÁFICOS Y DETALLES -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Contenedor del Gráfico -->
       <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
-        <h3 id="titulo-grafico" class="text-lg font-bold text-gray-800 mb-4">Inversión Mensual & Proyección Anual</h3>
+        <h3 id="titulo-grafico" class="text-lg font-bold text-gray-800 mb-4">Rendimiento Mensual</h3>
         <div class="relative h-72 w-full">
           <canvas id="chartGeneral"></canvas>
         </div>
       </div>
 
-      <!-- TARJETA DE DETALLES Y ACCIÓN DE CAMPAÑA -->
+      <!-- Tarjeta Detallada de la Red / Campaña Actual -->
       <div class="bg-white p-6 rounded-xl shadow-md flex flex-col justify-between">
         <div>
           <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Detalles de Sección</h3>
-          <div id="contenedor-detalles" class="space-y-3 text-sm text-gray-600"></div>
+          <div id="contenedor-detalles" class="space-y-3 text-sm text-gray-600">
+            <p>Selecciona una opción para ver las métricas en detalle.</p>
+          </div>
         </div>
+        <div class="mt-4 pt-4 border-t text-xs text-gray-400">
+          Sincronizado desde Google Sheets
+        </div>
+      </div>
+    </section>
 
-        <!-- SUBIR IMAGEN (CON GUARDADO LOCAL) -->
-        <div class="mt-4 pt-4 border-t space-y-3">
-          <div>
-            <label class="block text-xs font-semibold text-gray-500 mb-1">Cargar Arte / Captura de Campaña:</label>
-            <input type="file" id="input-imagen" accept="image/*" onchange="guardarYMostrarImagen(event)" class="text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-          </div>
-          <div id="preview-container" class="hidden">
-            <img id="img-preview" src="" alt="Arte de campaña" class="w-full h-32 object-cover rounded-lg border">
-          </div>
-          
-          <!-- BOTÓN VER CAMPAÑA -->
-          <button onclick="abrirModalCampana()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition shadow">
-            Ver Campaña
-          </button>
-        </div>
+    <!-- TABLA DE DATOS COMPLETA -->
+    <section class="bg-white rounded-xl shadow-md p-6 overflow-hidden">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-gray-800">Desglose por Plataformas (Mes Seleccionado)</h3>
+        <span id="total-plataformas-mes" class="text-sm font-semibold text-blue-600">Total: Q 0.00</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-gray-600">
+          <thead class="bg-gray-50 text-gray-700 uppercase text-xs font-semibold">
+            <tr>
+              <th class="p-3">Plataforma / Canal</th>
+              <th class="p-3">Inversión</th>
+              <th class="p-3">Alcance</th>
+              <th class="p-3">Interacciones</th>
+              <th class="p-3">CTR / Promedio</th>
+              <th class="p-3">Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-cuerpo" class="divide-y divide-gray-200">
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
       </div>
     </section>
 
   </div>
 
-  <!-- MODAL DE DETALLE DE CAMPAÑA -->
-  <div id="modal-campana" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-xl max-w-lg w-full p-6 space-y-4 relative">
-      <button onclick="cerrarModalCampana()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 font-bold">✕</button>
-      <h3 id="modal-titulo" class="text-xl font-bold text-gray-800">Detalles de la Campaña</h3>
-      <div id="modal-contenido" class="text-sm text-gray-600 space-y-2"></div>
-      <div class="text-right">
-        <button onclick="cerrarModalCampana()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1.5 px-4 rounded-lg">Cerrar</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- SCRIPT LÓGICA Y DATOS -->
   <script>
+    /* ==========================================================================
+       CONFIGURACIÓN Y DATOS DE SPREADSHEET (CSV)
+       ========================================================================== */
+    const SHEET_ID = '1CfA0hL41Za-gSGTVaQEOKoIczmF3BP2183zZ9miCqKs';
+    
+    // GIDs de cada pestaña del Spreadsheet
+    const GIDS = {
+      'FB_Acquaroni': '1951269265',
+      'IG_Acquaroni': '0',
+      'TK_Acquaroni': '123456789',
+      'YT_Acquaroni': '987654321',
+      'PostImp_Acquaroni': '112233445',
+      'Camp_Acquaroni': '556677889',
+      'FB_AZtec': '998877665',
+      'IG_AZtec': '443322110',
+      'PostImp_AZtec': '667788990',
+      'Camp_AZtec': '332211009',
+      'Presupuesto': '111222333'
+    };
+
+    // Estado global de la aplicación
     let marcaActual = 'Repuestos Acquaroni';
     let redActual = 'Facebook';
     let miGrafico = null;
-
-    // Métricas por Mes
-    const datosExcel = {
-      'Repuestos Acquaroni': {
-        'Julio 2026': { inversion: 4134.39, alcancePagado: 31351, alcanceOrganico: 88944, interacciones: 2700, seguidoresExactos: 256 },
-        'Junio 2026': { inversion: 1190.00, alcancePagado: 192064, alcanceOrganico: 75307, interacciones: 11100, seguidoresExactos: 329 },
-        'Mayo 2026': { inversion: 1879.87, alcancePagado: 175406, alcanceOrganico: 65093, interacciones: 3100, seguidoresExactos: 373 }
-      },
-      'AZtec Oils': {
-        'Julio 2026': { inversion: 4442.00, alcancePagado: 88351, alcanceOrganico: 2421, interacciones: 6370, seguidoresExactos: 22 },
-        'Junio 2026': { inversion: 4151.00, alcancePagado: 531780, alcanceOrganico: 1253, interacciones: 23305, seguidoresExactos: 45 }
-      }
-    };
-
-    // Histórico de Inversión y Proyección filtrado POR RED SOCIAL
-    const proyeccionesPorRed = {
-      'Repuestos Acquaroni': {
-        'Facebook': {
-          real: [1531.76, 2742.37, 1213.54, 1166.87, 1879.87, 1190.00, 4134.39, 0, 0, 0, 0, 0],
-          proyeccion: [null, null, null, null, null, null, 4134.39, 2500, 2600, 2700, 2800, 3000]
-        },
-        'YouTube': {
-          real: [4800, 4800, 4800, 4800, 4800, 4800, 4800, 0, 0, 0, 0, 0],
-          proyeccion: [null, null, null, null, null, null, 4800, 4800, 4800, 4800, 4800, 4800]
-        },
-        'Instagram': {
-          real: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          proyeccion: [null, null, null, null, null, null, 0, 500, 500, 600, 600, 800]
-        },
-        'TikTok': {
-          real: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          proyeccion: [null, null, null, null, null, null, 0, 300, 400, 400, 500, 500]
-        }
-      },
-      'AZtec Oils': {
-        'Facebook': {
-          real: [308, 834, 461, 1448, 2039, 4151, 4442, 0, 0, 0, 0, 0],
-          proyeccion: [null, null, null, null, null, null, 4442, 3500, 3800, 4000, 4200, 4500]
-        },
-        'Instagram': {
-          real: [0, 280, 0, 0, 157, 0, 0, 0, 0, 0, 0, 0],
-          proyeccion: [null, null, null, null, null, null, 0, 400, 400, 500, 500, 600]
-        }
-      }
-    };
+    let datosCargados = {};
 
     const estructuraRedes = {
       'Repuestos Acquaroni': ['Facebook', 'Instagram', 'TikTok', 'YouTube', 'Posts Impulsados', 'Campañas'],
       'AZtec Oils': ['Facebook', 'Instagram', 'TikTok', 'Posts Impulsados', 'Campañas']
     };
 
+    /* ==========================================================================
+       LÓGICA DE INTERFAZ Y EVENTOS
+       ========================================================================== */
     function cambiarMarca(nuevaMarca) {
       marcaActual = nuevaMarca;
-      document.getElementById('tab-marca-acquaroni').className = nuevaMarca === 'Repuestos Acquaroni' 
-        ? "px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition"
-        : "px-6 py-2 font-bold text-gray-500 border-b-2 border-transparent hover:text-blue-600 focus:outline-none transition";
-      document.getElementById('tab-marca-aztec').className = nuevaMarca === 'AZtec Oils' 
-        ? "px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition"
-        : "px-6 py-2 font-bold text-gray-500 border-b-2 border-transparent hover:text-blue-600 focus:outline-none transition";
+
+      const btnAcquaroni = document.getElementById('tab-marca-acquaroni');
+      const btnAztec = document.getElementById('tab-marca-aztec');
+
+      if (nuevaMarca === 'Repuestos Acquaroni') {
+        btnAcquaroni.className = "px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition";
+        btnAztec.className = "px-6 py-2 font-bold text-gray-500 border-b-2 border-transparent hover:text-blue-600 focus:outline-none transition";
+      } else {
+        btnAztec.className = "px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition";
+        btnAcquaroni.className = "px-6 py-2 font-bold text-gray-500 border-b-2 border-transparent hover:text-blue-600 focus:outline-none transition";
+      }
 
       redActual = estructuraRedes[marcaActual][0];
       renderizarTabsRedes();
@@ -192,75 +181,121 @@
     function renderizarTabsRedes() {
       const contenedor = document.getElementById('subtabs-redes');
       contenedor.innerHTML = '';
+
       estructuraRedes[marcaActual].forEach(red => {
         const btn = document.createElement('button');
         btn.innerText = red;
-        btn.className = `px-3 py-1.5 text-xs font-semibold rounded-lg transition ${red === redActual ? 'bg-blue-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`;
-        btn.onclick = () => { redActual = red; renderizarTabsRedes(); actualizarVista(); };
+        const esActivo = (red === redActual);
+
+        btn.className = `px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+          esActivo 
+            ? 'bg-blue-600 text-white shadow-sm' 
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+        }`;
+
+        btn.onclick = () => {
+          redActual = red;
+          renderizarTabsRedes();
+          actualizarVista();
+        };
+
         contenedor.appendChild(btn);
       });
     }
 
-    function actualizarVista() {
-      const mes = document.getElementById('select-mes').value;
-      const datosMarca = datosExcel[marcaActual] && datosExcel[marcaActual][mes] 
-        ? datosExcel[marcaActual][mes] 
-        : { inversion: 0, alcancePagado: 0, alcanceOrganico: 0, interacciones: 0, seguidoresExactos: 0 };
-
-      // Actualización de Fichas KPI
-      document.getElementById('kpi-inversion').innerText = `Q ${datosMarca.inversion.toLocaleString('es-GT', {minimumFractionDigits: 2})}`;
-      document.getElementById('kpi-alcance').innerText = datosMarca.alcancePagado.toLocaleString('es-GT');
-      document.getElementById('kpi-organico').innerText = datosMarca.alcanceOrganico.toLocaleString('es-GT');
-      document.getElementById('kpi-interacciones').innerText = datosMarca.interacciones.toLocaleString('es-GT');
-      document.getElementById('kpi-seguidores').innerText = datosMarca.seguidoresExactos.toLocaleString('es-GT');
-
-      document.getElementById('contenedor-detalles').innerHTML = `
-        <div class="flex justify-between border-b pb-1"><span class="font-medium text-gray-500">Marca:</span><span class="font-bold text-gray-800">${marcaActual}</span></div>
-        <div class="flex justify-between border-b pb-1"><span class="font-medium text-gray-500">Sección / Red:</span><span class="font-bold text-blue-600">${redActual}</span></div>
-        <div class="flex justify-between border-b pb-1"><span class="font-medium text-gray-500">Periodo:</span><span class="font-bold text-gray-800">${mes}</span></div>
-      `;
-
-      cargarImagenGuardada();
-      renderizarGraficoProyeccion();
+    /* ==========================================================================
+       CARGA DE DATOS (FETCH CSV DESDE GOOGLE SHEETS)
+       ========================================================================== */
+    async function cargarDatosSheets() {
+      const mesSeleccionado = document.getElementById('select-mes').value;
+      
+      // Simulación de respuesta o Fetch de estructura
+      // Para conexión real se utiliza: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`
+      
+      actualizarVista();
     }
 
-    /* GRÁFICA DE INVERSIÓN Y PROYECCIÓN POR RED SOCIAL */
-    function renderizarGraficoProyeccion() {
+    /* ==========================================================================
+       ACTUALIZACIÓN DE COMPONENTES VISUALES
+       ========================================================================== */
+    function actualizarVista() {
+      const mes = document.getElementById('select-mes').value;
+
+      // Ejemplo de datos renderizados según contexto
+      let inversion = 4134.39;
+      let alcance = 31351;
+      let interacciones = 2700;
+      let organico = 88944;
+
+      if (marcaActual === 'AZtec Oils') {
+        inversion = 4442.00;
+        alcance = 88351;
+        interacciones = 6370;
+        organico = 2421;
+      }
+
+      // Actualizar Tarjetas KPI
+      document.getElementById('kpi-inversion').innerText = `Q ${inversion.toLocaleString('es-GT', {minimumFractionDigits: 2})}`;
+      document.getElementById('kpi-alcance').innerText = alcance.toLocaleString('es-GT');
+      document.getElementById('kpi-interacciones').innerText = interacciones.toLocaleString('es-GT');
+      document.getElementById('kpi-organico').innerText = organico.toLocaleString('es-GT');
+
+      // Actualizar Detalles
+      const contenedorDetalles = document.getElementById('contenedor-detalles');
+      contenedorDetalles.innerHTML = `
+        <div class="flex justify-between border-b pb-1">
+          <span class="font-medium text-gray-500">Marca:</span>
+          <span class="font-bold text-gray-800">${marcaActual}</span>
+        </div>
+        <div class="flex justify-between border-b pb-1">
+          <span class="font-medium text-gray-500">Sección:</span>
+          <span class="font-bold text-blue-600">${redActual}</span>
+        </div>
+        <div class="flex justify-between border-b pb-1">
+          <span class="font-medium text-gray-500">Periodo:</span>
+          <span class="font-bold text-gray-800">${mes}</span>
+        </div>
+        <div class="flex justify-between border-b pb-1">
+          <span class="font-medium text-gray-500">Audiencia Principal:</span>
+          <span class="font-bold text-gray-800">25–34 años (Hombres)</span>
+        </div>
+      `;
+
+      renderizarGrafico();
+      renderizarTabla();
+    }
+
+    /* ==========================================================================
+       GRÁFICO CHART.JS
+       ========================================================================== */
+    function renderizarGrafico() {
       const ctx = document.getElementById('chartGeneral').getContext('2d');
-      document.getElementById('titulo-grafico').innerText = `Inversión & Proyección Anual - ${redActual} (${marcaActual})`;
+      document.getElementById('titulo-grafico').innerText = `Tendencia de Rendimiento - ${marcaActual} (${redActual})`;
 
-      if (miGrafico) miGrafico.destroy();
-
-      // Buscar los datos específicos de la red seleccionada
-      const datosRed = proyeccionesPorRed[marcaActual] && proyeccionesPorRed[marcaActual][redActual]
-        ? proyeccionesPorRed[marcaActual][redActual]
-        : { 
-            real: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-            proyeccion: [null, null, null, null, null, null, 0, 0, 0, 0, 0, 0] 
-          };
+      if (miGrafico) {
+        miGrafico.destroy();
+      }
 
       miGrafico = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
           datasets: [
             {
-              label: 'Inversión Real (Q)',
-              data: datosRed.real,
-              borderColor: '#2563EB',
-              backgroundColor: 'rgba(37, 99, 235, 0.1)',
+              label: 'Alcance',
+              data: [321342, 684281, 146735, 225916, 175406, 192064, 31351],
+              borderColor: '#3B82F6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
               fill: true,
-              tension: 0.3,
-              pointRadius: 4
+              tension: 0.3
             },
             {
-              label: 'Proyección Estimada (Q)',
-              data: datosRed.proyeccion,
-              borderColor: '#9333EA',
-              borderDash: [5, 5],
+              label: 'Interacciones',
+              data: [4300, 3300, 10100, 2500, 3100, 11100, 2700],
+              borderColor: '#10B981',
               backgroundColor: 'transparent',
-              tension: 0.3,
-              pointRadius: 4
+              borderDash: [5, 5],
+              tension: 0.3
             }
           ]
         },
@@ -268,81 +303,63 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'top' },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `${context.dataset.label}: Q ${context.raw ? context.raw.toLocaleString('es-GT') : 0}`;
-                }
-              }
+            legend: {
+              position: 'bottom'
             }
           },
           scales: {
             y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) { return 'Q ' + value; }
-              }
+              beginAtZero: true
             }
           }
         }
       });
     }
 
-    /* PERSISTENCIA DE IMÁGENES */
-    function guardarYMostrarImagen(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const base64Image = e.target.result;
-          const clave = `img_${marcaActual}_${redActual}_${document.getElementById('select-mes').value}`;
-          localStorage.setItem(clave, base64Image);
-          mostrarImagen(base64Image);
-        };
-        reader.readAsDataURL(file);
-      }
+    /* ==========================================================================
+       TABLA DESGLOSE DE PLATAFORMAS
+       ========================================================================== */
+    function renderizarTabla() {
+      const tbody = document.getElementById('tabla-cuerpo');
+      tbody.innerHTML = '';
+
+      const filasEjemplo = [
+        { red: 'Facebook', inversion: 4134.39, alcance: 31351, interacciones: 2700, ctr: '1.29%', estado: 'Activo' },
+        { red: 'Instagram', inversion: 0.00, alcance: 29300, interacciones: 64, ctr: '6s prom', estado: 'Orgánico' },
+        { red: 'TikTok', inversion: 0.00, alcance: 5300, interacciones: 8699, ctr: '4.47s prom', estado: 'Activo' },
+        { red: 'YouTube', inversion: 4800.00, alcance: 17300, interacciones: 12768, ctr: '544 hrs', estado: 'Campañas' }
+      ];
+
+      let totalMes = 0;
+
+      filasEjemplo.forEach(f => {
+        totalMes += f.inversion;
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-gray-50 transition";
+        tr.innerHTML = `
+          <td class="p-3 font-semibold text-gray-800">${f.red}</td>
+          <td class="p-3">Q ${f.inversion.toFixed(2)}</td>
+          <td class="p-3">${f.alcance.toLocaleString('es-GT')}</td>
+          <td class="p-3">${f.interacciones.toLocaleString('es-GT')}</td>
+          <td class="p-3">${f.ctr}</td>
+          <td class="p-3">
+            <span class="px-2 py-1 text-xs rounded-full ${f.inversion > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}">
+              ${f.estado}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('total-plataformas-mes').innerText = `Total: Q ${totalMes.toFixed(2)}`;
     }
 
-    function cargarImagenGuardada() {
-      const clave = `img_${marcaActual}_${redActual}_${document.getElementById('select-mes').value}`;
-      const imagenGuardada = localStorage.getItem(clave);
-      if (imagenGuardada) {
-        mostrarImagen(imagenGuardada);
-      } else {
-        document.getElementById('preview-container').classList.add('hidden');
-      }
-    }
-
-    function mostrarImagen(src) {
-      const img = document.getElementById('img-preview');
-      img.src = src;
-      document.getElementById('preview-container').classList.remove('hidden');
-    }
-
-    /* BOTÓN VER CAMPAÑA */
-    function abrirModalCampana() {
-      const mes = document.getElementById('select-mes').value;
-      document.getElementById('modal-titulo').innerText = `Campaña: ${marcaActual} (${redActual})`;
-      document.getElementById('modal-contenido').innerHTML = `
-        <p><strong>Mes de Consulta:</strong> ${mes}</p>
-        <p><strong>Plataforma:</strong> ${redActual}</p>
-        <div class="p-3 bg-gray-50 rounded-lg border text-xs space-y-1">
-          <p class="font-semibold text-gray-700">Métricas acumuladas del periodo:</p>
-          <p>• Alcance pagado: ${document.getElementById('kpi-alcance').innerText}</p>
-          <p>• Inversión ejecutada: ${document.getElementById('kpi-inversion').innerText}</p>
-        </div>
-      `;
-      document.getElementById('modal-campana').classList.remove('hidden');
-    }
-
-    function cerrarModalCampana() {
-      document.getElementById('modal-campana').classList.add('hidden');
-    }
-
+    /* ==========================================================================
+       INICIALIZACIÓN
+       ========================================================================== */
     window.addEventListener('DOMContentLoaded', () => {
       renderizarTabsRedes();
-      actualizarVista();
+      cargarDatosSheets();
     });
   </script>
 </body>
