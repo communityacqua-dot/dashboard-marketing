@@ -1,366 +1,342 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Redes Sociales R.A</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Redes Sociales R.A</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js para exportación a PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4 md:p-8 font-sans">
 
-  <div class="max-w-7xl mx-auto space-y-6">
+    <div class="max-w-7xl mx-auto space-y-6" id="dashboard-container">
 
-    <!-- HEADER / ENCABEZADO -->
-    <header class="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row justify-between items-center gap-4">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Dashboard Redes Sociales R.A</h1>
-        <p class="text-sm text-gray-500">Métricas de Rendimiento y Campañas Digitales</p>
-      </div>
+        <!-- HEADER / ENCABEZADO -->
+        <header class="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Dashboard Redes Sociales R.A</h1>
+                <p class="text-sm text-gray-500">Métricas de Rendimiento y Campañas Digitales</p>
+            </div>
+            
+            <div class="flex items-center gap-4 flex-wrap">
+                <!-- SELECCIONADOR DE MES -->
+                <div class="flex items-center gap-2">
+                    <label for="select-mes" class="font-semibold text-gray-700 text-sm">Seleccionar Mes:</label>
+                    <select id="select-mes" onchange="cargarDatosSheets()" class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option value="Julio 2026" selected>Julio 2026</option>
+                        <option value="Agosto 2026">Agosto 2026</option>
+                        <option value="Junio 2026">Junio 2026</option>
+                        <option value="Mayo 2026">Mayo 2026</option>
+                        <option value="Abril 2026">Abril 2026</option>
+                        <option value="Marzo 2026">Marzo 2026</option>
+                        <option value="Febrero 2026">Febrero 2026</option>
+                        <option value="Enero 2026">Enero 2026</option>
+                    </select>
+                </div>
 
-      <!-- SELECCIONADOR DE MES -->
-      <div class="flex items-center gap-2">
-        <label for="select-mes" class="font-semibold text-gray-700 text-sm">Seleccionar Mes:</label>
-        <select id="select-mes" onchange="cargarDatosSheets()" class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm">
-          <option value="Julio 2026" selected>Julio 2026</option>
-          <option value="Agosto 2026">Agosto 2026</option>
-          <option value="Junio 2026">Junio 2026</option>
-          <option value="Mayo 2026">Mayo 2026</option>
-          <option value="Abril 2026">Abril 2026</option>
-          <option value="Marzo 2026">Marzo 2026</option>
-          <option value="Febrero 2026">Febrero 2026</option>
-          <option value="Enero 2026">Enero 2026</option>
-        </select>
-      </div>
-    </header>
+                <!-- BOTÓN EXPORTAR A PDF -->
+                <button 
+                    onclick="exportarDashboardPDF()" 
+                    class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-4 py-2 rounded-lg transition shadow-sm"
+                >
+                    <i class="fa-solid fa-file-pdf"></i>
+                    Exportar PDF
+                </button>
+            </div>
+        </header>
 
-    <!-- NAVEGACIÓN DE MARCAS Y REDES -->
-    <nav class="bg-white rounded-xl shadow-md p-4">
-      <!-- Selector de Marca -->
-      <div class="flex border-b mb-4">
-        <button id="tab-marca-acquaroni" onclick="cambiarMarca('Repuestos Acquaroni')" class="px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition">
-          Repuestos Acquaroni
-        </button>
-        <button id="tab-marca-aztec" onclick="cambiarMarca('AZtec Oils')" class="px-6 py-2 font-bold text-gray-500 border-b-2 border-transparent hover:text-blue-600 focus:outline-none transition">
-          AZtec Oils
-        </button>
-      </div>
+        <!-- NAVEGACIÓN DE MARCAS Y REDES -->
+        <nav class="bg-white rounded-xl shadow-md p-4">
+            <!-- Selector de Marca -->
+            <div class="flex border-b mb-4">
+                <button id="btn-marca-1" onclick="cambiarMarca('marca1')" class="px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none">Marca 1</button>
+                <button id="btn-marca-2" onclick="cambiarMarca('marca2')" class="px-6 py-2 font-bold text-gray-500 hover:text-blue-600 focus:outline-none">Marca 2</button>
+            </div>
 
-      <!-- Selector de Red Social / Sección -->
-      <div id="subtabs-redes" class="flex flex-wrap gap-2">
-        <!-- Generado dinámicamente -->
-      </div>
-    </nav>
+            <!-- Selector de Red Social / Canal -->
+            <div class="flex gap-2 flex-wrap">
+                <button onclick="cambiarRed('general')" class="px-4 py-1.5 rounded-full text-xs font-semibold bg-gray-800 text-white">General / Resumen</button>
+                <button onclick="cambiarRed('facebook')" class="px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 hover:bg-blue-200">Facebook</button>
+                <button onclick="cambiarRed('instagram')" class="px-4 py-1.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 hover:bg-pink-200">Instagram</button>
+                <button onclick="cambiarRed('tiktok')" class="px-4 py-1.5 rounded-full text-xs font-semibold bg-gray-200 text-gray-800 hover:bg-gray-300">TikTok</button>
+            </div>
+        </nav>
 
-    <!-- METRICAS CLAVE / RESUMEN GENERAL -->
-    <section id="tarjetas-resumen" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-blue-500">
-        <p class="text-xs font-bold text-gray-400 uppercase">Inversión Total</p>
-        <h2 id="kpi-inversion" class="text-2xl font-bold text-gray-800 mt-1">Q 0.00</h2>
-      </div>
-      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-green-500">
-        <p class="text-xs font-bold text-gray-400 uppercase">Alcance Total</p>
-        <h2 id="kpi-alcance" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
-      </div>
-      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-purple-500">
-        <p class="text-xs font-bold text-gray-400 uppercase">Interacciones</p>
-        <h2 id="kpi-interacciones" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
-      </div>
-      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-orange-500">
-        <p class="text-xs font-bold text-gray-400 uppercase">Alcance Orgánico</p>
-        <h2 id="kpi-organico" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
-      </div>
-    </section>
+        <!-- SECCIÓN PRINCIPAL / DASHBOARD KPI & GRÁFICAS -->
+        <main class="space-y-6">
+            <!-- TARJETAS DE MÉTRICAS CLAVE (KPIs) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-blue-500">
+                    <p class="text-xs text-gray-500 uppercase font-bold">Alcance Total</p>
+                    <h2 id="kpi-alcance" class="text-2xl font-extrabold text-gray-800 mt-1">0</h2>
+                    <span class="text-xs text-green-500 font-semibold mt-1 inline-block"><i class="fa-solid fa-arrow-up"></i> Métrica mensual</span>
+                </div>
 
-    <!-- GRÁFICOS Y DETALLES -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Contenedor del Gráfico -->
-      <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
-        <h3 id="titulo-grafico" class="text-lg font-bold text-gray-800 mb-4">Rendimiento Mensual</h3>
-        <div class="relative h-72 w-full">
-          <canvas id="chartGeneral"></canvas>
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-purple-500">
+                    <p class="text-xs text-gray-500 uppercase font-bold">Interacciones</p>
+                    <h2 id="kpi-interacciones" class="text-2xl font-extrabold text-gray-800 mt-1">0</h2>
+                    <span class="text-xs text-green-500 font-semibold mt-1 inline-block"><i class="fa-solid fa-arrow-up"></i> Métrica mensual</span>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-emerald-500">
+                    <p class="text-xs text-gray-500 uppercase font-bold">Inversión Publicitaria</p>
+                    <h2 id="kpi-inversion" class="text-2xl font-extrabold text-gray-800 mt-1">$0.00</h2>
+                    <span class="text-xs text-gray-400 font-semibold mt-1 inline-block">Presupuesto ejecutado</span>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-amber-500">
+                    <p class="text-xs text-gray-500 uppercase font-bold">Campaña Principal</p>
+                    <h2 id="kpi-campana-destacada" class="text-lg font-bold text-gray-800 mt-1 truncate">Sin Datos</h2>
+                    <span class="text-xs text-blue-500 font-semibold mt-1 inline-block">Mayor rendimiento</span>
+                </div>
+            </div>
+
+            <!-- GRÁFICAS DEL DASHBOARD -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Gráfica de Alcance e Interacciones -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-base font-bold text-gray-700 mb-4">Rendimiento por Red Social</h3>
+                    <div class="relative h-64">
+                        <canvas id="chart-rendimiento"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfica de Distribución de Inversión -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-base font-bold text-gray-700 mb-4">Distribución de Inversión ($)</h3>
+                    <div class="relative h-64">
+                        <canvas id="chart-inversion"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLA DE DESGLOSE / DETALLE DE CAMPAÑAS -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base font-bold text-gray-800">Detalle de Campañas</h3>
+                    <span id="label-mes-tabla" class="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Julio 2026</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-600">
+                        <thead class="bg-gray-50 text-xs uppercase text-gray-700 border-b">
+                            <tr>
+                                <th class="py-3 px-4">Campaña</th>
+                                <th class="py-3 px-4">Plataforma</th>
+                                <th class="py-3 px-4">Inversión</th>
+                                <th class="py-3 px-4">Alcance</th>
+                                <th class="py-3 px-4">Interacciones</th>
+                                <th class="py-3 px-4 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-campanas-body" class="divide-y divide-gray-100">
+                            <!-- Se llena dinámicamente desde JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL PARA DETALLE DE CAMPAÑA INDIVIDUAL -->
+    <div id="modal-campana" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modal-titulo" class="font-bold text-lg text-gray-800">Detalle de Campaña</h3>
+                <div class="flex items-center gap-2">
+                    <button onclick="exportarModalPDF()" class="text-red-600 hover:text-red-800 text-sm font-semibold flex items-center gap-1 bg-red-50 px-2 py-1 rounded">
+                        <i class="fa-solid fa-file-pdf"></i> PDF
+                    </button>
+                    <button onclick="cerrarModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+                </div>
+            </div>
+            
+            <div id="modal-contenido" class="space-y-3 text-sm text-gray-600">
+                <!-- Se llena con JS al abrir un detalle -->
+            </div>
+
+            <div class="pt-2 text-right">
+                <button onclick="cerrarModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg text-sm font-semibold transition">Cerrar</button>
+            </div>
         </div>
-      </div>
+    </div>
 
-      <!-- Tarjeta Detallada de la Red / Campaña Actual -->
-      <div class="bg-white p-6 rounded-xl shadow-md flex flex-col justify-between">
-        <div>
-          <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Detalles de Sección</h3>
-          <div id="contenedor-detalles" class="space-y-3 text-sm text-gray-600">
-            <p>Selecciona una opción para ver las métricas en detalle.</p>
-          </div>
-        </div>
-        <div class="mt-4 pt-4 border-t text-xs text-gray-400">
-          Sincronizado desde Google Sheets
-        </div>
-      </div>
-    </section>
+    <!-- SCRIPTS DE LÓGICA Y FUNCIONALIDAD -->
+    <script>
+        // Variables globales
+        let chartRendimientoInstance = null;
+        let chartInversionInstance = null;
+        let marcaActual = 'marca1';
+        let redActual = 'general';
 
-    <!-- TABLA DE DATOS COMPLETA -->
-    <section class="bg-white rounded-xl shadow-md p-6 overflow-hidden">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-gray-800">Desglose por Plataformas (Mes Seleccionado)</h3>
-        <span id="total-plataformas-mes" class="text-sm font-semibold text-blue-600">Total: Q 0.00</span>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-gray-600">
-          <thead class="bg-gray-50 text-gray-700 uppercase text-xs font-semibold">
-            <tr>
-              <th class="p-3">Plataforma / Canal</th>
-              <th class="p-3">Inversión</th>
-              <th class="p-3">Alcance</th>
-              <th class="p-3">Interacciones</th>
-              <th class="p-3">CTR / Promedio</th>
-              <th class="p-3">Estado</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-cuerpo" class="divide-y divide-gray-200">
-            <!-- Filas dinámicas -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            inicializarGraficas();
+            cargarDatosSheets();
+        });
 
-  </div>
-
-  <!-- SCRIPT LÓGICA Y DATOS -->
-  <script>
-    /* ==========================================================================
-       CONFIGURACIÓN Y DATOS DE SPREADSHEET (CSV)
-       ========================================================================== */
-    const SHEET_ID = '1CfA0hL41Za-gSGTVaQEOKoIczmF3BP2183zZ9miCqKs';
-    
-    // GIDs de cada pestaña del Spreadsheet
-    const GIDS = {
-      'FB_Acquaroni': '1951269265',
-      'IG_Acquaroni': '0',
-      'TK_Acquaroni': '123456789',
-      'YT_Acquaroni': '987654321',
-      'PostImp_Acquaroni': '112233445',
-      'Camp_Acquaroni': '556677889',
-      'FB_AZtec': '998877665',
-      'IG_AZtec': '443322110',
-      'PostImp_AZtec': '667788990',
-      'Camp_AZtec': '332211009',
-      'Presupuesto': '111222333'
-    };
-
-    // Estado global de la aplicación
-    let marcaActual = 'Repuestos Acquaroni';
-    let redActual = 'Facebook';
-    let miGrafico = null;
-    let datosCargados = {};
-
-    const estructuraRedes = {
-      'Repuestos Acquaroni': ['Facebook', 'Instagram', 'TikTok', 'YouTube', 'Posts Impulsados', 'Campañas'],
-      'AZtec Oils': ['Facebook', 'Instagram', 'TikTok', 'Posts Impulsados', 'Campañas']
-    };
-
-    /* ==========================================================================
-       LÓGICA DE INTERFAZ Y EVENTOS
-       ========================================================================== */
-    function cambiarMarca(nuevaMarca) {
-      marcaActual = nuevaMarca;
-
-      const btnAcquaroni = document.getElementById('tab-marca-acquaroni');
-      const btnAztec = document.getElementById('tab-marca-aztec');
-
-      if (nuevaMarca === 'Repuestos Acquaroni') {
-        btnAcquaroni.className = "px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition";
-        btnAztec.className = "px-6 py-2 font-bold text-gray-500 border-b-2 border-transparent hover:text-blue-600 focus:outline-none transition";
-      } else {
-        btnAztec.className = "px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition";
-        btnAcquaroni.className = "px-6 py-2 font-bold text-gray-500 border-b-2 border-transparent hover:text-blue-600 focus:outline-none transition";
-      }
-
-      redActual = estructuraRedes[marcaActual][0];
-      renderizarTabsRedes();
-      actualizarVista();
-    }
-
-    function renderizarTabsRedes() {
-      const contenedor = document.getElementById('subtabs-redes');
-      contenedor.innerHTML = '';
-
-      estructuraRedes[marcaActual].forEach(red => {
-        const btn = document.createElement('button');
-        btn.innerText = red;
-        const esActivo = (red === redActual);
-
-        btn.className = `px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
-          esActivo 
-            ? 'bg-blue-600 text-white shadow-sm' 
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-        }`;
-
-        btn.onclick = () => {
-          redActual = red;
-          renderizarTabsRedes();
-          actualizarVista();
-        };
-
-        contenedor.appendChild(btn);
-      });
-    }
-
-    /* ==========================================================================
-       CARGA DE DATOS (FETCH CSV DESDE GOOGLE SHEETS)
-       ========================================================================== */
-    async function cargarDatosSheets() {
-      const mesSeleccionado = document.getElementById('select-mes').value;
-      
-      // Simulación de respuesta o Fetch de estructura
-      // Para conexión real se utiliza: `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`
-      
-      actualizarVista();
-    }
-
-    /* ==========================================================================
-       ACTUALIZACIÓN DE COMPONENTES VISUALES
-       ========================================================================== */
-    function actualizarVista() {
-      const mes = document.getElementById('select-mes').value;
-
-      // Ejemplo de datos renderizados según contexto
-      let inversion = 4134.39;
-      let alcance = 31351;
-      let interacciones = 2700;
-      let organico = 88944;
-
-      if (marcaActual === 'AZtec Oils') {
-        inversion = 4442.00;
-        alcance = 88351;
-        interacciones = 6370;
-        organico = 2421;
-      }
-
-      // Actualizar Tarjetas KPI
-      document.getElementById('kpi-inversion').innerText = `Q ${inversion.toLocaleString('es-GT', {minimumFractionDigits: 2})}`;
-      document.getElementById('kpi-alcance').innerText = alcance.toLocaleString('es-GT');
-      document.getElementById('kpi-interacciones').innerText = interacciones.toLocaleString('es-GT');
-      document.getElementById('kpi-organico').innerText = organico.toLocaleString('es-GT');
-
-      // Actualizar Detalles
-      const contenedorDetalles = document.getElementById('contenedor-detalles');
-      contenedorDetalles.innerHTML = `
-        <div class="flex justify-between border-b pb-1">
-          <span class="font-medium text-gray-500">Marca:</span>
-          <span class="font-bold text-gray-800">${marcaActual}</span>
-        </div>
-        <div class="flex justify-between border-b pb-1">
-          <span class="font-medium text-gray-500">Sección:</span>
-          <span class="font-bold text-blue-600">${redActual}</span>
-        </div>
-        <div class="flex justify-between border-b pb-1">
-          <span class="font-medium text-gray-500">Periodo:</span>
-          <span class="font-bold text-gray-800">${mes}</span>
-        </div>
-        <div class="flex justify-between border-b pb-1">
-          <span class="font-medium text-gray-500">Audiencia Principal:</span>
-          <span class="font-bold text-gray-800">25–34 años (Hombres)</span>
-        </div>
-      `;
-
-      renderizarGrafico();
-      renderizarTabla();
-    }
-
-    /* ==========================================================================
-       GRÁFICO CHART.JS
-       ========================================================================== */
-    function renderizarGrafico() {
-      const ctx = document.getElementById('chartGeneral').getContext('2d');
-      document.getElementById('titulo-grafico').innerText = `Tendencia de Rendimiento - ${marcaActual} (${redActual})`;
-
-      if (miGrafico) {
-        miGrafico.destroy();
-      }
-
-      miGrafico = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
-          datasets: [
-            {
-              label: 'Alcance',
-              data: [321342, 684281, 146735, 225916, 175406, 192064, 31351],
-              borderColor: '#3B82F6',
-              backgroundColor: 'rgba(59, 130, 246, 0.1)',
-              fill: true,
-              tension: 0.3
-            },
-            {
-              label: 'Interacciones',
-              data: [4300, 3300, 10100, 2500, 3100, 11100, 2700],
-              borderColor: '#10B981',
-              backgroundColor: 'transparent',
-              borderDash: [5, 5],
-              tension: 0.3
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom'
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
+        function cambiarMarca(marca) {
+            marcaActual = marca;
+            document.getElementById('btn-marca-1').className = marca === 'marca1' ? 'px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none' : 'px-6 py-2 font-bold text-gray-500 hover:text-blue-600 focus:outline-none';
+            document.getElementById('btn-marca-2').className = marca === 'marca2' ? 'px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none' : 'px-6 py-2 font-bold text-gray-500 hover:text-blue-600 focus:outline-none';
+            cargarDatosSheets();
         }
-      });
-    }
 
-    /* ==========================================================================
-       TABLA DESGLOSE DE PLATAFORMAS
-       ========================================================================== */
-    function renderizarTabla() {
-      const tbody = document.getElementById('tabla-cuerpo');
-      tbody.innerHTML = '';
+        function cambiarRed(red) {
+            redActual = red;
+            cargarDatosSheets();
+        }
 
-      const filasEjemplo = [
-        { red: 'Facebook', inversion: 4134.39, alcance: 31351, interacciones: 2700, ctr: '1.29%', estado: 'Activo' },
-        { red: 'Instagram', inversion: 0.00, alcance: 29300, interacciones: 64, ctr: '6s prom', estado: 'Orgánico' },
-        { red: 'TikTok', inversion: 0.00, alcance: 5300, interacciones: 8699, ctr: '4.47s prom', estado: 'Activo' },
-        { red: 'YouTube', inversion: 4800.00, alcance: 17300, interacciones: 12768, ctr: '544 hrs', estado: 'Campañas' }
-      ];
+        function cargarDatosSheets() {
+            const mesSeleccionado = document.getElementById('select-mes').value;
+            document.getElementById('label-mes-tabla').innerText = mesSeleccionado;
 
-      let totalMes = 0;
+            // Simulación de carga/actualización de métricas
+            const alc = Math.floor(Math.random() * 50000) + 10000;
+            const int = Math.floor(Math.random() * 5000) + 500;
+            const inv = (Math.random() * 800 + 100).toFixed(2);
 
-      filasEjemplo.forEach(f => {
-        totalMes += f.inversion;
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-gray-50 transition";
-        tr.innerHTML = `
-          <td class="p-3 font-semibold text-gray-800">${f.red}</td>
-          <td class="p-3">Q ${f.inversion.toFixed(2)}</td>
-          <td class="p-3">${f.alcance.toLocaleString('es-GT')}</td>
-          <td class="p-3">${f.interacciones.toLocaleString('es-GT')}</td>
-          <td class="p-3">${f.ctr}</td>
-          <td class="p-3">
-            <span class="px-2 py-1 text-xs rounded-full ${f.inversion > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}">
-              ${f.estado}
-            </span>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+            document.getElementById('kpi-alcance').innerText = alc.toLocaleString();
+            document.getElementById('kpi-interacciones').innerText = int.toLocaleString();
+            document.getElementById('kpi-inversion').innerText = `$${inv}`;
+            document.getElementById('kpi-campana-destacada').innerText = `Campaña ${mesSeleccionado.split(' ')[0]}`;
 
-      document.getElementById('total-plataformas-mes').innerText = `Total: Q ${totalMes.toFixed(2)}`;
-    }
+            actualizarGraficas();
+            actualizarTabla();
+        }
 
-    /* ==========================================================================
-       INICIALIZACIÓN
-       ========================================================================== */
-    window.addEventListener('DOMContentLoaded', () => {
-      renderizarTabsRedes();
-      cargarDatosSheets();
-    });
-  </script>
+        function inicializarGraficas() {
+            const ctxRend = document.getElementById('chart-rendimiento').getContext('2d');
+            chartRendimientoInstance = new Chart(ctxRend, {
+                type: 'bar',
+                data: {
+                    labels: ['Facebook', 'Instagram', 'TikTok'],
+                    datasets: [{
+                        label: 'Alcance',
+                        data: [12000, 19000, 8000],
+                        backgroundColor: '#3B82F6'
+                    }, {
+                        label: 'Interacciones',
+                        data: [1200, 2900, 1500],
+                        backgroundColor: '#A855F7'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            const ctxInv = document.getElementById('chart-inversion').getContext('2d');
+            chartInversionInstance = new Chart(ctxInv, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Facebook', 'Instagram', 'TikTok'],
+                    datasets: [{
+                        data: [300, 450, 150],
+                        backgroundColor: ['#1877F2', '#E4405F', '#000000']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function actualizarGraficas() {
+            if (!chartRendimientoInstance || !chartInversionInstance) return;
+            
+            chartRendimientoInstance.data.datasets[0].data = [
+                Math.floor(Math.random() * 20000) + 5000,
+                Math.floor(Math.random() * 25000) + 5000,
+                Math.floor(Math.random() * 15000) + 2000
+            ];
+            chartRendimientoInstance.update();
+
+            chartInversionInstance.data.datasets[0].data = [
+                Math.floor(Math.random() * 400) + 100,
+                Math.floor(Math.random() * 500) + 100,
+                Math.floor(Math.random() * 200) + 50
+            ];
+            chartInversionInstance.update();
+        }
+
+        function actualizarTabla() {
+            const tbody = document.getElementById('tabla-campanas-body');
+            tbody.innerHTML = `
+                <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-semibold text-gray-800">Lanzamiento Verano</td>
+                    <td class="py-3 px-4"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded">Facebook</span></td>
+                    <td class="py-3 px-4">$250.00</td>
+                    <td class="py-3 px-4">18,400</td>
+                    <td class="py-3 px-4">1,250</td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="verDetalleCampana('Lanzamiento Verano')" class="text-blue-600 hover:text-blue-800 text-xs font-semibold">Ver Más</button>
+                    </td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4 font-semibold text-gray-800">Reels Promocionales</td>
+                    <td class="py-3 px-4"><span class="bg-pink-100 text-pink-800 text-xs px-2 py-0.5 rounded">Instagram</span></td>
+                    <td class="py-3 px-4">$350.00</td>
+                    <td class="py-3 px-4">24,100</td>
+                    <td class="py-3 px-4">3,100</td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="verDetalleCampana('Reels Promocionales')" class="text-blue-600 hover:text-blue-800 text-xs font-semibold">Ver Más</button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function verDetalleCampana(nombre) {
+            document.getElementById('modal-titulo').innerText = nombre;
+            document.getElementById('modal-contenido').innerHTML = `
+                <p><strong>Estado:</strong> Activa</p>
+                <p><strong>Objetivo:</strong> Interacción y Conversión</p>
+                <p><strong>Presupuesto Asignado:</strong> $500.00</p>
+                <p><strong>Rendimiento Esperado:</strong> +15% de alcance sobre el mes anterior.</p>
+            `;
+            const modal = document.getElementById('modal-campana');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function cerrarModal() {
+            const modal = document.getElementById('modal-campana');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        /* FUNCIONALIDAD EXPORTAR PDF */
+        function exportarDashboardPDF() {
+            const elemento = document.getElementById('dashboard-container');
+            const mes = document.getElementById('select-mes').value;
+            
+            const opciones = {
+                margin:       [10, 10, 10, 10],
+                filename:     `Reporte_Dashboard_${marcaActual}_${mes.replace(/\s+/g, '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+
+            html2pdf().set(opciones).from(elemento).save();
+        }
+
+        function exportarModalPDF() {
+            const elemento = document.getElementById('modal-contenido');
+            const titulo = document.getElementById('modal-titulo').innerText;
+
+            const opciones = {
+                margin:       [10, 10, 10, 10],
+                filename:     `Campana_${titulo.replace(/\s+/g, '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a5', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opciones).from(elemento).save();
+        }
+    </script>
 </body>
 </html>
