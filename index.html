@@ -1,1863 +1,349 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Dashboard Redes Sociales R.A</title>
-
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Font Awesome -->
-<link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
->
-
-<!-- Chart.js para gráficos -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Redes Sociales R.A</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8 font-sans">
 
-<body class="bg-gray-100 font-sans text-gray-800">
+  <div class="max-w-7xl mx-auto space-y-6">
 
-<div class="flex h-screen overflow-hidden">
+    <!-- HEADER / ENCABEZADO -->
+    <header class="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Dashboard Redes Sociales R.A</h1>
+        <p class="text-sm text-gray-500">Métricas de Rendimiento y Campañas Digitales</p>
+      </div>
 
-<!-- =========================================================
-     SIDEBAR
-========================================================== -->
+      <!-- SELECCIONADOR DE MES -->
+      <div class="flex items-center gap-2">
+        <label for="select-mes" class="font-semibold text-gray-700 text-sm">Seleccionar Mes:</label>
+        <select id="select-mes" onchange="actualizarVista()" class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm">
+          <option value="Julio 2026" selected>Julio 2026</option>
+          <option value="Agosto 2026">Agosto 2026</option>
+          <option value="Junio 2026">Junio 2026</option>
+          <option value="Mayo 2026">Mayo 2026</option>
+          <option value="Abril 2026">Abril 2026</option>
+          <option value="Marzo 2026">Marzo 2026</option>
+          <option value="Febrero 2026">Febrero 2026</option>
+          <option value="Enero 2026">Enero 2026</option>
+        </select>
+      </div>
+    </header>
 
-<aside class="w-64 bg-slate-900 text-white flex flex-col justify-between p-4 shadow-lg">
+    <!-- NAVEGACIÓN DE MARCAS Y REDES -->
+    <nav class="bg-white rounded-xl shadow-md p-4">
+      <div class="flex border-b mb-4">
+        <button id="tab-marca-acquaroni" onclick="cambiarMarca('Repuestos Acquaroni')" class="px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition">
+          Repuestos Acquaroni
+        </button>
+        <button id="tab-marca-aztec" onclick="cambiarMarca('AZtec Oils')" class="px-6 py-2 font-bold text-gray-500 border-b-2 border-transparent hover:text-blue-600 focus:outline-none transition">
+          AZtec Oils
+        </button>
+      </div>
 
-    <div>
+      <div id="subtabs-redes" class="flex flex-wrap gap-2"></div>
+    </nav>
 
-        <div class="mb-8 flex items-center gap-3">
+    <!-- METRICAS CLAVE / FICHAS (FILTRADAS POR MES) -->
+    <section id="tarjetas-resumen" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-blue-500">
+        <p class="text-xs font-bold text-gray-400 uppercase">Inversión Total</p>
+        <h2 id="kpi-inversion" class="text-2xl font-bold text-gray-800 mt-1">Q 0.00</h2>
+      </div>
+      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-green-500">
+        <p class="text-xs font-bold text-gray-400 uppercase">Alcance Pagado</p>
+        <h2 id="kpi-alcance" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+      </div>
+      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-orange-500">
+        <p class="text-xs font-bold text-gray-400 uppercase">Alcance Orgánico</p>
+        <h2 id="kpi-organico" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+      </div>
+      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-purple-500">
+        <p class="text-xs font-bold text-gray-400 uppercase">Interacciones</p>
+        <h2 id="kpi-interacciones" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+      </div>
+      <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-indigo-500">
+        <p class="text-xs font-bold text-gray-400 uppercase">Seguidores (Mes Exacto)</p>
+        <h2 id="kpi-seguidores" class="text-2xl font-bold text-gray-800 mt-1">0</h2>
+      </div>
+    </section>
 
-            <i class="fa-solid fa-chart-pie text-2xl text-blue-400"></i>
-
-            <div>
-
-                <h1 class="font-bold text-lg leading-tight">
-                    R.A DASHBOARD
-                </h1>
-
-                <p class="text-xs text-gray-400">
-                    Marketing & Analítica
-                </p>
-
-            </div>
-
+    <!-- DETALLES Y PROYECCIÓN POR RED SOCIAL -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+        <h3 id="titulo-grafico" class="text-lg font-bold text-gray-800 mb-4">Inversión Mensual & Proyección Anual</h3>
+        <div class="relative h-72 w-full">
+          <canvas id="chartGeneral"></canvas>
         </div>
+      </div>
 
-        <nav class="space-y-2">
-
-            <button
-                onclick="cambiarModulo('redes')"
-                id="btn-nav-redes"
-                class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium transition"
-            >
-                <i class="fa-solid fa-chart-simple"></i>
-                Redes Sociales
-            </button>
-
-            <button
-                onclick="cambiarModulo('posts')"
-                id="btn-nav-posts"
-                class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-            >
-                <i class="fa-solid fa-rocket"></i>
-                Post Impulsados
-            </button>
-
-            <button
-                onclick="cambiarModulo('campanas')"
-                id="btn-nav-campanas"
-                class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-            >
-                <i class="fa-solid fa-bullhorn"></i>
-                Campañas
-            </button>
-
-            <button
-                onclick="cambiarModulo('presupuesto')"
-                id="btn-nav-presupuesto"
-                class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-            >
-                <i class="fa-solid fa-wallet"></i>
-                Presupuesto & EE.CC.
-            </button>
-
-        </nav>
-
-    </div>
-
-    <div class="text-xs text-gray-500 border-t border-slate-800 pt-4 flex justify-between items-center">
-
-        <span>
-            Dashboard R.A v3.5
-        </span>
-
-        <span
-            id="loader-status"
-            class="text-blue-400 text-xs hidden"
-        >
-            <i class="fa-solid fa-spinner fa-spin"></i>
-        </span>
-
-    </div>
-
-</aside>
-
-
-<!-- =========================================================
-     ÁREA PRINCIPAL
-========================================================== -->
-
-<main class="flex-1 flex flex-col overflow-y-auto">
-
-<header class="bg-white border-b px-8 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10 shadow-sm">
-
-    <h2
-        id="titulo-seccion"
-        class="text-xl font-bold text-gray-800"
-    >
-        Redes Sociales
-    </h2>
-
-    <div class="flex items-center gap-4">
-
-        <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
-
-            <i class="fa-solid fa-calendar text-gray-400"></i>
-
-            <select
-                id="filtro-anio"
-                onchange="actualizarTodo()"
-                class="bg-transparent text-sm font-semibold focus:outline-none"
-            >
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
-
-            </select>
-
-        </div>
-
-        <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
-
-            <i class="fa-solid fa-filter text-gray-400"></i>
-
-            <select
-                id="filtro-mes"
-                onchange="actualizarTodo()"
-                class="bg-transparent text-sm font-semibold focus:outline-none"
-            >
-
-                <option value="todos">Todos los Meses</option>
-                <option value="Enero">Enero</option>
-                <option value="Febrero">Febrero</option>
-                <option value="Marzo">Marzo</option>
-                <option value="Abril">Abril</option>
-                <option value="Mayo">Mayo</option>
-                <option value="Junio">Junio</option>
-                <option value="Julio">Julio</option>
-                <option value="Agosto">Agosto</option>
-                <option value="Septiembre">Septiembre</option>
-                <option value="Octubre">Octubre</option>
-                <option value="Noviembre">Noviembre</option>
-                <option value="Diciembre">Diciembre</option>
-
-            </select>
-
-        </div>
-
-        <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
-
-            <i class="fa-solid fa-building text-gray-400"></i>
-
-            <select
-                id="filtro-cuenta"
-                onchange="cambiarCuentaPrincipal()"
-                class="bg-transparent text-sm font-semibold focus:outline-none"
-            >
-
-                <option value="acquaroni">
-                    Repuestos Acquaroni
-                </option>
-
-                <option value="aztec">
-                    AZtec Oils
-                </option>
-
-                <option value="ultraparts">
-                    Ultra Parts
-                </option>
-
-            </select>
-
-        </div>
-
-    </div>
-
-</header>
-
-
-<div class="p-8 space-y-8">
-
-
-<!-- =================================================
-     MÓDULO 1: REDES SOCIALES
-================================================== -->
-
-<section
-    id="mod-redes"
-    class="modulo-seccion space-y-6"
->
-
-    <div
-        id="tabs-redes"
-        class="flex gap-2 border-b pb-2"
-    ></div>
-
-    <!-- KPIS ESTÁNDAR DE REDES -->
-    <div
-        id="kpis-estandar"
-        class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4"
-    >
-
-        <div
-            id="card-kpi-inversion"
-            class="bg-white p-4 rounded-xl border shadow-sm"
-        >
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Inversión Total
-            </p>
-            <p
-                id="kpi-inversion"
-                class="text-xl font-extrabold text-blue-600 mt-1"
-            >
-                Q 0.00
-            </p>
-        </div>
-
-        <div
-            id="card-kpi-ctr"
-            class="bg-white p-4 rounded-xl border shadow-sm"
-        >
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                CTR Promedio
-            </p>
-            <p
-                id="kpi-ctr"
-                class="text-xl font-extrabold text-green-600 mt-1"
-            >
-                0.00%
-            </p>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border shadow-sm">
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Alcance Pagado
-            </p>
-            <p
-                id="kpi-alcance"
-                class="text-xl font-extrabold text-purple-600 mt-1"
-            >
-                0
-            </p>
-        </div>
-
-        <!-- FICHA NUEVA: ALCANCE ORGANICO -->
-        <div class="bg-white p-4 rounded-xl border shadow-sm">
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Alcance Orgánico
-            </p>
-            <p
-                id="kpi-alcance-organico"
-                class="text-xl font-extrabold text-teal-600 mt-1"
-            >
-                0
-            </p>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border shadow-sm">
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Impresiones
-            </p>
-            <p
-                id="kpi-impresiones"
-                class="text-xl font-extrabold text-orange-600 mt-1"
-            >
-                0
-            </p>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border shadow-sm">
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Interacciones / Seg.
-            </p>
-            <p
-                id="kpi-interacciones"
-                class="text-xl font-extrabold text-gray-700 mt-1"
-            >
-                0
-            </p>
-        </div>
-
-        <!-- FICHA NUEVA: SEGUIDORES -->
-        <div
-            id="card-kpi-seguidores"
-            class="bg-white p-4 rounded-xl border shadow-sm"
-        >
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Seguidores Totales
-            </p>
-            <p
-                id="kpi-seguidores"
-                class="text-xl font-extrabold text-pink-600 mt-1"
-            >
-                0
-            </p>
-        </div>
-
-    </div>
-
-
-    <!-- TIKTOK LIVE -->
-    <div
-        id="kpis-tiktok-live"
-        class="grid grid-cols-1 md:grid-cols-6 gap-4 hidden"
-    >
-
-        <div class="bg-white p-4 rounded-xl border shadow-sm">
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Visualizaciones
-            </p>
-            <p
-                id="kpi-live-views"
-                class="text-xl font-extrabold text-blue-600 mt-1"
-            >
-                0
-            </p>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border shadow-sm">
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Donadores
-            </p>
-            <p
-                id="kpi-live-donadores"
-                class="text-xl font-extrabold text-purple-600 mt-1"
-            >
-                0
-            </p>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border shadow-sm">
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Diamantes
-            </p>
-            <p
-                id="kpi-live-diamantes"
-                class="text-xl font-extrabold text-yellow-600 mt-1"
-            >
-                0
-            </p>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border shadow-sm">
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Seguidores Nuevos
-            </p>
-            <p
-                id="kpi-live-seguidores"
-                class="text-xl font-extrabold text-green-600 mt-1"
-            >
-                0
-            </p>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border shadow-sm">
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Comentarios
-            </p>
-            <p
-                id="kpi-live-comentarios"
-                class="text-xl font-extrabold text-indigo-600 mt-1"
-            >
-                0
-            </p>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border shadow-sm">
-            <p class="text-xs text-gray-500 font-semibold uppercase">
-                Me Gusta
-            </p>
-            <p
-                id="kpi-live-likes"
-                class="text-xl font-extrabold text-pink-600 mt-1"
-            >
-                0
-            </p>
-        </div>
-
-    </div>
-
-    <!-- SECCIÓN DE GRÁFICAS DEL MÓDULO DE REDES SOCIALES -->
-    <div
-        id="contenedor-graficas-redes"
-        class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4"
-    >
-        <!-- Gráfica 1: Líneas Inversión + Proyección -->
-        <div class="bg-white p-5 rounded-xl border shadow-sm">
-            <h4 class="font-bold text-gray-700 text-sm mb-3">Inversión Mensual & Proyección Anual</h4>
-            <div class="h-64">
-                <canvas id="chart-inversion-proyeccion"></canvas>
-            </div>
-        </div>
-
-        <!-- Gráfica 2: Barras Alcance (Pagado vs Orgánico) -->
-        <div class="bg-white p-5 rounded-xl border shadow-sm">
-            <h4 class="font-bold text-gray-700 text-sm mb-3">Alcance por Mes (Pagado vs Orgánico)</h4>
-            <div class="h-64">
-                <canvas id="chart-alcance-mensual"></canvas>
-            </div>
-        </div>
-
-        <!-- Gráfica 3: Crecimiento de Seguidores (%) -->
-        <div class="bg-white p-5 rounded-xl border shadow-sm">
-            <h4 class="font-bold text-gray-700 text-sm mb-3">Crecimiento Mensual de Seguidores (%)</h4>
-            <div class="h-64">
-                <canvas id="chart-crecimiento-seguidores"></canvas>
-            </div>
-        </div>
-
-        <!-- Gráfica Específica TikTok Live / Interacciones / Youtube -->
-        <div
-            id="wrapper-grafica-especifica"
-            class="bg-white p-5 rounded-xl border shadow-sm"
-        >
-            <h4
-                id="titulo-grafica-especifica"
-                class="font-bold text-gray-700 text-sm mb-3"
-            >
-                Métrica Adicional
-            </h4>
-            <div class="h-64">
-                <canvas id="chart-red-especifica"></canvas>
-            </div>
-        </div>
-    </div>
-
-</section>
-
-
-<!-- =================================================
-     MÓDULO 2: POST IMPULSADOS
-================================================== -->
-
-<section
-    id="mod-posts"
-    class="modulo-seccion hidden space-y-6"
->
-
-    <h3 class="text-lg font-bold">
-        Publicaciones Promocionadas
-    </h3>
-
-    <div class="bg-white rounded-xl border shadow-sm p-4 overflow-x-auto">
-
-        <table class="w-full text-sm text-left border-collapse">
-
-            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
-
-                <tr>
-
-                    <th class="p-3">
-                        Vista Previa
-                    </th>
-
-                    <th class="p-3">
-                        Año / Mes
-                    </th>
-
-                    <th class="p-3">
-                        Publicación
-                    </th>
-
-                    <th class="p-3">
-                        Red Social
-                    </th>
-
-                    <th class="p-3">
-                        Reproducciones
-                    </th>
-
-                    <th class="p-3">
-                        Alcance
-                    </th>
-
-                    <th class="p-3">
-                        Conversaciones
-                    </th>
-
-                    <th class="p-3">
-                        Inversión (Q)
-                    </th>
-
-                    <th class="p-3">
-                        CPC
-                    </th>
-
-                </tr>
-
-            </thead>
-
-            <tbody
-                id="tabla-posts-body"
-                class="divide-y"
-            ></tbody>
-
-        </table>
-
-    </div>
-
-</section>
-
-
-<!-- =================================================
-     MÓDULO 3: CAMPAÑAS
-================================================== -->
-
-<section
-    id="mod-campanas"
-    class="modulo-seccion hidden space-y-6"
->
-
-    <div>
-
-        <h3 class="text-lg font-bold">
-            Gestión de Campañas
-        </h3>
-
-        <p class="text-sm text-gray-500 mt-1">
-            Selecciona una campaña para ver sus posts,
-            artes y métricas.
-        </p>
-
-    </div>
-
-    <div
-        id="contenedor-campanas"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-    ></div>
-
-</section>
-
-
-<!-- =================================================
-     MÓDULO 4: PRESUPUESTO Y ESTADOS DE CUENTA
-================================================== -->
-
-<section
-    id="mod-presupuesto"
-    class="modulo-seccion hidden space-y-6"
->
-
-    <div class="flex justify-between items-center flex-wrap gap-4">
+      <!-- TARJETA DE DETALLES Y ACCIÓN DE CAMPAÑA -->
+      <div class="bg-white p-6 rounded-xl shadow-md flex flex-col justify-between">
         <div>
-            <h3 class="text-lg font-bold">
-                Consolidado de Presupuesto & Estados de Cuenta
-            </h3>
-            <p class="text-xs text-gray-500 mt-1">
-                Datos sincronizados con archivos de Liquidación y Estados de Cuenta de la empresa.
-            </p>
+          <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Detalles de Sección</h3>
+          <div id="contenedor-detalles" class="space-y-3 text-sm text-gray-600"></div>
         </div>
 
-        <button
-            onclick="guardarAsignadoManual()"
-            class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition"
-        >
-            <i class="fa-solid fa-pen-to-square mr-1"></i> Modificar Asignado Manual
-        </button>
+        <!-- SUBIR IMAGEN (CON GUARDADO LOCAL) -->
+        <div class="mt-4 pt-4 border-t space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1">Cargar Arte / Captura de Campaña:</label>
+            <input type="file" id="input-imagen" accept="image/*" onchange="guardarYMostrarImagen(event)" class="text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+          </div>
+          <div id="preview-container" class="hidden">
+            <img id="img-preview" src="" alt="Arte de campaña" class="w-full h-32 object-cover rounded-lg border">
+          </div>
+          
+          <!-- BOTÓN VER CAMPAÑA -->
+          <button onclick="abrirModalCampana()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition shadow">
+            Ver Campaña
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- MODAL DE DETALLE DE CAMPAÑA -->
+  <div id="modal-campana" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-lg w-full p-6 space-y-4 relative">
+      <button onclick="cerrarModalCampana()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 font-bold">✕</button>
+      <h3 id="modal-titulo" class="text-xl font-bold text-gray-800">Detalles de la Campaña</h3>
+      <div id="modal-contenido" class="text-sm text-gray-600 space-y-2"></div>
+      <div class="text-right">
+        <button onclick="cerrarModalCampana()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1.5 px-4 rounded-lg">Cerrar</button>
+      </div>
     </div>
+  </div>
 
-    <!-- FICHAS DE PRESUPUESTO REFORMULADAS -->
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+  <script>
+    let marcaActual = 'Repuestos Acquaroni';
+    let redActual = 'Facebook';
+    let miGrafico = null;
 
-        <!-- 1. Asignado Total (Manual) -->
-        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-blue-500">
-            <p class="text-xs text-gray-500 font-bold uppercase">
-                Asignado Total
-            </p>
-            <p
-                id="pres-asignado"
-                class="text-xl font-extrabold text-gray-800 mt-2"
-            >
-                Q 0.00
-            </p>
-        </div>
-
-        <!-- 2. Ejecutado Total (Estados de Cuenta) -->
-        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-green-500">
-            <p class="text-xs text-gray-500 font-bold uppercase">
-                Ejecutado EE.CC.
-            </p>
-            <p
-                id="pres-ejecutado"
-                class="text-xl font-extrabold text-gray-800 mt-2"
-            >
-                Q 0.00
-            </p>
-        </div>
-
-        <!-- 3. Redes Sociales (Estados de Cuenta) -->
-        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-indigo-500">
-            <p class="text-xs text-gray-500 font-bold uppercase">
-                Redes Sociales EE.CC.
-            </p>
-            <p
-                id="pres-redes-eecc"
-                class="text-xl font-extrabold text-gray-800 mt-2"
-            >
-                Q 0.00
-            </p>
-        </div>
-
-        <!-- 4. Repuestos Acquaroni (Hoja Principal) -->
-        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-red-500">
-            <p class="text-xs text-gray-500 font-bold uppercase">
-                Repuestos Acquaroni
-            </p>
-            <p
-                id="pres-acquaroni"
-                class="text-xl font-extrabold text-gray-800 mt-2"
-            >
-                Q 0.00
-            </p>
-        </div>
-
-        <!-- 5. AZtec Oils (Hoja Principal) -->
-        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-yellow-500">
-            <p class="text-xs text-gray-500 font-bold uppercase">
-                AZtec Oils
-            </p>
-            <p
-                id="pres-aztec"
-                class="text-xl font-extrabold text-gray-800 mt-2"
-            >
-                Q 0.00
-            </p>
-        </div>
-
-        <!-- 6. Mercadeo (Hoja Principal) -->
-        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-teal-500">
-            <p class="text-xs text-gray-500 font-bold uppercase">
-                Mercadeo
-            </p>
-            <p
-                id="pres-mercadeo"
-                class="text-xl font-extrabold text-gray-800 mt-2"
-            >
-                Q 0.00
-            </p>
-        </div>
-
-        <!-- 7. Plataformas Externas (Estados de Cuenta) -->
-        <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-purple-500 col-span-full md:col-span-2">
-            <p class="text-xs text-gray-500 font-bold uppercase">
-                Plataformas Externas EE.CC.
-            </p>
-            <p
-                id="pres-plataformas-m4"
-                class="text-xl font-extrabold text-gray-800 mt-2"
-            >
-                Q 0.00
-            </p>
-        </div>
-
-    </div>
-
-    <!-- GRÁFICAS DE PRESUPUESTO -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-        
-        <!-- Gráfica Inversión Mensual con Porcentaje -->
-        <div class="bg-white p-5 rounded-xl border shadow-sm">
-            <h4 class="font-bold text-gray-700 text-sm mb-3">Inversión Mensual vs Ejecución (%)</h4>
-            <div class="h-64">
-                <canvas id="chart-presupuesto-mensual"></canvas>
-            </div>
-        </div>
-
-        <!-- Gráfica Proyección del Próximo Año -->
-        <div class="bg-white p-5 rounded-xl border shadow-sm">
-            <div class="flex justify-between items-center mb-3">
-                <h4 class="font-bold text-gray-700 text-sm">Proyección Anual Estimada</h4>
-                <span id="badge-proyeccion-status" class="bg-blue-100 text-blue-700 text-xs px-2.5 py-0.5 rounded font-semibold">
-                    Semana 1 Sept. (Muestra activa)
-                </span>
-            </div>
-            <div class="h-64">
-                <canvas id="chart-presupuesto-proyeccion"></canvas>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- DETALLE DE ESTADOS DE CUENTA (EXCEL LIQUIDACIÓN) -->
-    <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
-        <h4 class="font-bold text-gray-800 text-base border-b pb-2">
-            Desglose de Estados de Cuenta por Pestañas (Abril - Agosto)
-        </h4>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left border-collapse">
-                <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
-                    <tr>
-                        <th class="p-3">Pestaña / Mes</th>
-                        <th class="p-3">Redes Sociales (Q)</th>
-                        <th class="p-3">Plataformas / Servicios (Q)</th>
-                        <th class="p-3">Total Ejecutado (Q)</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-eecc-body" class="divide-y">
-                    <!-- Dinámico -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-</section>
-
-</div>
-
-</main>
-
-</div>
-
-
-<!-- =============================================================
-     MODAL AMPLIAR IMAGEN (POST IMPULSADOS)
-============================================================== -->
-
-<div
-    id="modal-imagen-preview"
-    class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4 cursor-pointer"
-    onclick="cerrarModalImagen()"
->
-    <div class="relative max-w-4xl w-full flex justify-center items-center">
-        <img
-            id="imagen-ampliada"
-            src=""
-            class="max-h-[90vh] max-w-full rounded-lg shadow-2xl object-contain"
-        >
-        <button
-            onclick="cerrarModalImagen()"
-            class="absolute -top-10 right-0 text-white text-2xl font-bold hover:text-gray-300"
-        >
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-    </div>
-</div>
-
-
-<!-- =============================================================
-     MODAL CAMPAÑA
-============================================================== -->
-
-<div
-    id="modal-campana"
-    class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4"
->
-
-<div
-    class="bg-white rounded-2xl max-w-6xl w-full max-h-[92vh] overflow-y-auto shadow-2xl"
->
-
-    <div class="sticky top-0 z-20 bg-white border-b px-6 py-5">
-
-        <div class="flex justify-between items-start gap-4">
-
-            <div>
-
-                <h3
-                    id="modal-campana-titulo"
-                    class="text-xl font-bold text-gray-800"
-                ></h3>
-
-                <p
-                    id="modal-campana-subtitulo"
-                    class="text-sm text-gray-500 mt-1"
-                ></p>
-
-            </div>
-
-            <button
-                onclick="cerrarModalCampana()"
-                class="text-gray-400 hover:text-gray-700 transition"
-            >
-
-                <i class="fa-solid fa-xmark text-2xl"></i>
-
-            </button>
-
-        </div>
-
-    </div>
-
-    <div
-        id="modal-campana-contenido"
-        class="p-6 space-y-6"
-    ></div>
-
-</div>
-
-</div>
-
-
-<!-- =============================================================
-     SCRIPT DE LÓGICA Y GRÁFICOS
-============================================================== -->
-
-<script>
-
-const SCRIPT_URL =
-    'https://script.google.com/macros/s/AKfycbxIZexYXWgwBTI4bRWF-z-NReaah6uvbOagcFjsw81nDW7x7Wiqj27pZLjYTljW3mto/exec';
-
-let rawData = {};
-let redActiva = '';
-let asignadoManual = 180000; // Valor asignado inicial / predeterminado
-
-// Instancias de Gráficos Chart.js
-let chartInversionProyeccion = null;
-let chartAlcanceMensual = null;
-let chartCrecimientoSeguidores = null;
-let chartRedEspecifica = null;
-let chartPresupuestoMensual = null;
-let chartPresupuestoProyeccion = null;
-
-/* Datos Muestra Estados de Cuenta (Excel redes sociales liquidacion .xlsx) */
-const datosEstadosDeCuenta = {
-    "Abril": { redes: 12500, plataformas: 3200 },
-    "Mayo": { redes: 14000, plataformas: 3500 },
-    "Junio": { redes: 13800, plataformas: 4100 },
-    "Julio": { redes: 15200, plataformas: 5050 },
-    "Agosto": { redes: 16000, plataformas: 4800 }
-};
-
-
-/* =============================================================
-   CAMBIAR MÓDULO
-============================================================= */
-
-function cambiarModulo(moduloId) {
-
-    document
-        .querySelectorAll('.modulo-seccion')
-        .forEach(sec => {
-            sec.classList.add('hidden');
-        });
-
-    document
-        .querySelectorAll('.btn-nav')
-        .forEach(btn => {
-
-            btn.classList.remove(
-                'bg-blue-600',
-                'text-white'
-            );
-
-            btn.classList.add(
-                'hover:bg-slate-800',
-                'text-gray-300'
-            );
-
-        });
-
-    document
-        .getElementById(`mod-${moduloId}`)
-        .classList.remove('hidden');
-
-    const btnActivo =
-        document.getElementById(
-            `btn-nav-${moduloId}`
-        );
-
-    if (btnActivo) {
-
-        btnActivo.classList.add(
-            'bg-blue-600',
-            'text-white'
-        );
-
-    }
-
-    const titulos = {
-
-        redes: 'Redes Sociales',
-        posts: 'Post Impulsados',
-        campanas: 'Campañas',
-        presupuesto: 'Presupuesto & EE.CC.'
-
+    // Métricas por Mes
+    const datosExcel = {
+      'Repuestos Acquaroni': {
+        'Julio 2026': { inversion: 4134.39, alcancePagado: 31351, alcanceOrganico: 88944, interacciones: 2700, seguidoresExactos: 256 },
+        'Junio 2026': { inversion: 1190.00, alcancePagado: 192064, alcanceOrganico: 75307, interacciones: 11100, seguidoresExactos: 329 },
+        'Mayo 2026': { inversion: 1879.87, alcancePagado: 175406, alcanceOrganico: 65093, interacciones: 3100, seguidoresExactos: 373 }
+      },
+      'AZtec Oils': {
+        'Julio 2026': { inversion: 4442.00, alcancePagado: 88351, alcanceOrganico: 2421, interacciones: 6370, seguidoresExactos: 22 },
+        'Junio 2026': { inversion: 4151.00, alcancePagado: 531780, alcanceOrganico: 1253, interacciones: 23305, seguidoresExactos: 45 }
+      }
     };
 
-    document
-        .getElementById('titulo-seccion')
-        .innerText =
-        titulos[moduloId];
-
-}
-
-
-/* =============================================================
-   CAMBIO DE CUENTA
-============================================================= */
-
-function cambiarCuentaPrincipal() {
-
-    renderizarTabsRedes();
-    actualizarTodo();
-
-}
-
-
-/* =============================================================
-   TABS REDES
-============================================================= */
-
-function renderizarTabsRedes() {
-
-    const cuenta =
-        document
-            .getElementById('filtro-cuenta')
-            .value;
-
-    const contenedorTabs =
-        document
-            .getElementById('tabs-redes');
-
-    contenedorTabs.innerHTML = '';
-
-    let redes = [];
-
-    if (cuenta === 'acquaroni') {
-        redes = ['Facebook', 'Instagram', 'TikTok Live', 'TikTok', 'YouTube'];
-    } else if (cuenta === 'aztec') {
-        redes = ['Facebook', 'Instagram', 'TikTok'];
-    } else if (cuenta === 'ultraparts') {
-        redes = ['Facebook', 'Instagram', 'TikTok', 'YouTube'];
-    }
-
-    redActiva = redes[0];
-
-    redes.forEach(red => {
-
-        const button =
-            document.createElement('button');
-
-        button.className =
-            `px-4 py-2 text-sm font-semibold rounded-lg transition ${
-                red === redActiva
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-500 hover:bg-gray-100'
-            }`;
-
-        button.innerText = red;
-
-        button.onclick = () => {
-
-            redActiva = red;
-
-            document
-                .querySelectorAll(
-                    '#tabs-redes button'
-                )
-                .forEach(b => {
-
-                    b.className =
-                        'px-4 py-2 text-sm font-semibold rounded-lg transition text-gray-500 hover:bg-gray-100';
-
-                });
-
-            button.className =
-                'px-4 py-2 text-sm font-semibold rounded-lg transition bg-blue-100 text-blue-700';
-
-            renderizarModuloRedes();
-
-        };
-
-        contenedorTabs.appendChild(button);
-
-    });
-
-}
-
-
-/* =============================================================
-   OBTENER HOJA
-============================================================= */
-
-function obtenerHojaInsensible(busqueda) {
-
-    if (!rawData)
-        return [];
-
-    const keyLimpia =
-        busqueda
-            .toLowerCase()
-            .replace(/\s+/g, '');
-
-    const claveEncontrada =
-        Object
-            .keys(rawData)
-            .find(k =>
-                k
-                    .toLowerCase()
-                    .replace(/\s+/g, '') ===
-                keyLimpia
-            );
-
-    return claveEncontrada
-        ? rawData[claveEncontrada]
-        : [];
-
-}
-
-
-/* =============================================================
-   CARGAR DATOS
-============================================================= */
-
-async function cargarDatosSheets() {
-
-    const loader =
-        document
-            .getElementById('loader-status');
-
-    loader.classList.remove('hidden');
-
-    try {
-
-        const res =
-            await fetch(SCRIPT_URL);
-
-        rawData =
-            await res.json();
-
-        actualizarTodo();
-
-    } catch (error) {
-
-        console.error(
-            'Error cargando los datos:',
-            error
-        );
-
-    } finally {
-
-        loader.classList.add('hidden');
-
-    }
-
-}
-
-
-/* =============================================================
-   FILTRO GENERAL
-============================================================= */
-
-function filtrarFilas(
-    filas,
-    indexAnio = 0,
-    indexMes = 1
-) {
-
-    if (
-        !filas ||
-        filas.length <= 1
-    ) {
-        return [];
-    }
-
-    const anioSel =
-        document
-            .getElementById('filtro-anio')
-            .value;
-
-    const mesSel =
-        document
-            .getElementById('filtro-mes')
-            .value;
-
-    return filas
-        .slice(1)
-        .filter(row => {
-
-            const anioMatch =
-                !row[indexAnio] ||
-                row[indexAnio]
-                    .toString()
-                    .trim() ===
-                anioSel;
-
-            const mesMatch =
-                mesSel === 'todos' ||
-                (
-                    row[indexMes] &&
-                    row[indexMes]
-                        .toString()
-                        .toLowerCase()
-                        .trim() ===
-                    mesSel.toLowerCase()
-                );
-
-            return (
-                anioMatch &&
-                mesMatch
-            );
-
-        });
-
-}
-
-
-/* =============================================================
-   LIMPIAR NÚMEROS
-============================================================= */
-
-function limpiarValorNum(val) {
-
-    if (
-        val === null ||
-        val === undefined ||
-        val === ''
-    ) {
-        return 0;
-    }
-
-    const num =
-        parseFloat(
-            val
-                .toString()
-                .replace(/[^0-9.-]+/g, '')
-        );
-
-    return isNaN(num)
-        ? 0
-        : num;
-
-}
-
-
-/* =============================================================
-   ACTUALIZAR TODO
-============================================================= */
-
-function actualizarTodo() {
-
-    renderizarModuloRedes();
-
-    renderizarModuloPosts();
-
-    renderizarModuloCampanas();
-
-    renderizarModuloPresupuesto();
-
-}
-
-
-/* =============================================================
-   REDES SOCIALES
-============================================================= */
-
-function renderizarModuloRedes() {
-
-    const cuenta =
-        document
-            .getElementById('filtro-cuenta')
-            .value;
-
-    let nombreHoja = '';
-
-    if (cuenta === 'acquaroni') {
-        if (redActiva === 'Facebook') nombreHoja = 'Facebook Repuestos Acquaroni';
-        else if (redActiva === 'Instagram') nombreHoja = 'Instagram Repuestos Acquaroni';
-        else if (redActiva === 'TikTok Live') nombreHoja = 'Tiktok live Repuestos Acquaroni';
-        else if (redActiva === 'TikTok') nombreHoja = 'Tiktok Repuestos Acquaroni';
-        else if (redActiva === 'YouTube') nombreHoja = 'Youtube Repuestos Acquaroni';
-    } else if (cuenta === 'aztec') {
-        if (redActiva === 'Facebook') nombreHoja = 'Facebook de AZtec Oils';
-        else if (redActiva === 'Instagram') nombreHoja = 'Instagram de AZtec Oils';
-        else if (redActiva === 'TikTok') nombreHoja = 'Tiktok de AZtec Oils';
-    } else if (cuenta === 'ultraparts') {
-        // Ultra Parts (Sin datos por ahora)
-        nombreHoja = `UltraParts ${redActiva}`;
-    }
-
-    const filas = obtenerHojaInsensible(nombreHoja);
-    const filasFiltradas = filtrarFilas(filas, 0, 1);
-
-    const kpisEstandar = document.getElementById('kpis-estandar');
-    const kpisLive = document.getElementById('kpis-tiktok-live');
-    const cardInversion = document.getElementById('card-kpi-inversion');
-    const cardCtr = document.getElementById('card-kpi-ctr');
-
-    if (redActiva === 'TikTok Live') {
-
-        kpisEstandar.classList.add('hidden');
-        kpisLive.classList.remove('hidden');
-
-        let tViews = 0, tDon = 0, tDiam = 0, tSeg = 0, tCom = 0, tLikes = 0;
-
-        filasFiltradas.forEach(f => {
-            tViews += limpiarValorNum(f[2]);
-            tDon += limpiarValorNum(f[3]);
-            tDiam += limpiarValorNum(f[4]);
-            tSeg += limpiarValorNum(f[5]);
-            tCom += limpiarValorNum(f[6]);
-            tLikes += limpiarValorNum(f[7]);
-        });
-
-        document.getElementById('kpi-live-views').innerText = tViews.toLocaleString();
-        document.getElementById('kpi-live-donadores').innerText = tDon.toLocaleString();
-        document.getElementById('kpi-live-diamantes').innerText = tDiam.toLocaleString();
-        document.getElementById('kpi-live-seguidores').innerText = tSeg.toLocaleString();
-        document.getElementById('kpi-live-comentarios').innerText = tCom.toLocaleString();
-        document.getElementById('kpi-live-likes').innerText = tLikes.toLocaleString();
-
-    } else {
-
-        kpisLive.classList.add('hidden');
-        kpisEstandar.classList.remove('hidden');
-
-        if (redActiva === 'Instagram') {
-            cardInversion.classList.add('hidden');
-            cardCtr.classList.add('hidden');
-        } else {
-            cardInversion.classList.remove('hidden');
-            cardCtr.classList.remove('hidden');
+    // Histórico de Inversión y Proyección filtrado POR RED SOCIAL
+    const proyeccionesPorRed = {
+      'Repuestos Acquaroni': {
+        'Facebook': {
+          real: [1531.76, 2742.37, 1213.54, 1166.87, 1879.87, 1190.00, 4134.39, 0, 0, 0, 0, 0],
+          proyeccion: [null, null, null, null, null, null, 4134.39, 2500, 2600, 2700, 2800, 3000]
+        },
+        'YouTube': {
+          real: [4800, 4800, 4800, 4800, 4800, 4800, 4800, 0, 0, 0, 0, 0],
+          proyeccion: [null, null, null, null, null, null, 4800, 4800, 4800, 4800, 4800, 4800]
+        },
+        'Instagram': {
+          real: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          proyeccion: [null, null, null, null, null, null, 0, 500, 500, 600, 600, 800]
+        },
+        'TikTok': {
+          real: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          proyeccion: [null, null, null, null, null, null, 0, 300, 400, 400, 500, 500]
         }
+      },
+      'AZtec Oils': {
+        'Facebook': {
+          real: [308, 834, 461, 1448, 2039, 4151, 4442, 0, 0, 0, 0, 0],
+          proyeccion: [null, null, null, null, null, null, 4442, 3500, 3800, 4000, 4200, 4500]
+        },
+        'Instagram': {
+          real: [0, 280, 0, 0, 157, 0, 0, 0, 0, 0, 0, 0],
+          proyeccion: [null, null, null, null, null, null, 0, 400, 400, 500, 500, 600]
+        }
+      }
+    };
 
-        let totalInv = 0, totalAlc = 0, totalAlcOrg = 0, totalImp = 0, totalInt = 0, totalSeg = 0;
-        let countCtr = 0, sumCtr = 0;
+    const estructuraRedes = {
+      'Repuestos Acquaroni': ['Facebook', 'Instagram', 'TikTok', 'YouTube', 'Posts Impulsados', 'Campañas'],
+      'AZtec Oils': ['Facebook', 'Instagram', 'TikTok', 'Posts Impulsados', 'Campañas']
+    };
 
-        filasFiltradas.forEach(f => {
-            if (redActiva === 'TikTok') {
-                totalInv += limpiarValorNum(f[7]); // Inversión agregada
-                totalAlc += limpiarValorNum(f[2]);
-                totalImp += limpiarValorNum(f[3]);
-                totalInt += limpiarValorNum(f[4]);
-                totalSeg += limpiarValorNum(f[8]); // Seguidores
-            } else if (redActiva === 'Instagram') {
-                totalAlc += limpiarValorNum(f[2]);
-                totalAlcOrg += limpiarValorNum(f[6]); // Alcance orgánico
-                totalImp += limpiarValorNum(f[3]);
-                totalInt += limpiarValorNum(f[4]);
-                totalSeg += limpiarValorNum(f[7]); // Seguidores
-            } else { // Facebook / Youtube
-                const inv = limpiarValorNum(f[2]);
-                const ctr = limpiarValorNum(f[3]);
-                const alc = limpiarValorNum(f[4]);
-                const imp = limpiarValorNum(f[5]);
-                const inter = limpiarValorNum(f[6]);
-                const alcOrg = limpiarValorNum(f[7]);
-                const seg = limpiarValorNum(f[8]);
+    function cambiarMarca(nuevaMarca) {
+      marcaActual = nuevaMarca;
+      document.getElementById('tab-marca-acquaroni').className = nuevaMarca === 'Repuestos Acquaroni' 
+        ? "px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition"
+        : "px-6 py-2 font-bold text-gray-500 border-b-2 border-transparent hover:text-blue-600 focus:outline-none transition";
+      document.getElementById('tab-marca-aztec').className = nuevaMarca === 'AZtec Oils' 
+        ? "px-6 py-2 font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition"
+        : "px-6 py-2 font-bold text-gray-500 border-b-2 border-transparent hover:text-blue-600 focus:outline-none transition";
 
-                totalInv += inv;
-                totalAlc += alc;
-                totalAlcOrg += alcOrg;
-                totalImp += imp;
-                totalInt += inter;
-                totalSeg += seg;
-
-                if (ctr > 0) {
-                    sumCtr += ctr;
-                    countCtr++;
-                }
-            }
-        });
-
-        document.getElementById('kpi-inversion').innerText = `Q ${totalInv.toFixed(2)}`;
-        document.getElementById('kpi-ctr').innerText = `${(countCtr ? sumCtr / countCtr : 0).toFixed(2)}%`;
-        document.getElementById('kpi-alcance').innerText = totalAlc.toLocaleString();
-        document.getElementById('kpi-alcance-organico').innerText = totalAlcOrg.toLocaleString();
-        document.getElementById('kpi-impresiones').innerText = totalImp.toLocaleString();
-        document.getElementById('kpi-interacciones').innerText = totalInt.toLocaleString();
-        document.getElementById('kpi-seguidores').innerText = totalSeg.toLocaleString();
+      redActual = estructuraRedes[marcaActual][0];
+      renderizarTabsRedes();
+      actualizarVista();
     }
 
-    renderizarGraficasRedes(filasFiltradas);
-}
+    function renderizarTabsRedes() {
+      const contenedor = document.getElementById('subtabs-redes');
+      contenedor.innerHTML = '';
+      estructuraRedes[marcaActual].forEach(red => {
+        const btn = document.createElement('button');
+        btn.innerText = red;
+        btn.className = `px-3 py-1.5 text-xs font-semibold rounded-lg transition ${red === redActual ? 'bg-blue-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`;
+        btn.onclick = () => { redActual = red; renderizarTabsRedes(); actualizarVista(); };
+        contenedor.appendChild(btn);
+      });
+    }
 
+    function actualizarVista() {
+      const mes = document.getElementById('select-mes').value;
+      const datosMarca = datosExcel[marcaActual] && datosExcel[marcaActual][mes] 
+        ? datosExcel[marcaActual][mes] 
+        : { inversion: 0, alcancePagado: 0, alcanceOrganico: 0, interacciones: 0, seguidoresExactos: 0 };
 
-/* =============================================================
-   RENDERIZADO DE GRÁFICAS DE REDES SOCIALES
-============================================================= */
+      // Actualización de Fichas KPI
+      document.getElementById('kpi-inversion').innerText = `Q ${datosMarca.inversion.toLocaleString('es-GT', {minimumFractionDigits: 2})}`;
+      document.getElementById('kpi-alcance').innerText = datosMarca.alcancePagado.toLocaleString('es-GT');
+      document.getElementById('kpi-organico').innerText = datosMarca.alcanceOrganico.toLocaleString('es-GT');
+      document.getElementById('kpi-interacciones').innerText = datosMarca.interacciones.toLocaleString('es-GT');
+      document.getElementById('kpi-seguidores').innerText = datosMarca.seguidoresExactos.toLocaleString('es-GT');
 
-function renderizarGraficasRedes(filas) {
+      document.getElementById('contenedor-detalles').innerHTML = `
+        <div class="flex justify-between border-b pb-1"><span class="font-medium text-gray-500">Marca:</span><span class="font-bold text-gray-800">${marcaActual}</span></div>
+        <div class="flex justify-between border-b pb-1"><span class="font-medium text-gray-500">Sección / Red:</span><span class="font-bold text-blue-600">${redActual}</span></div>
+        <div class="flex justify-between border-b pb-1"><span class="font-medium text-gray-500">Periodo:</span><span class="font-bold text-gray-800">${mes}</span></div>
+      `;
 
-    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      cargarImagenGuardada();
+      renderizarGraficoProyeccion();
+    }
 
-    // Datos base iniciales
-    let dataInv = [1200, 1500, 1800, 1400, 1600, 2000, 2100, 1900, 0, 0, 0, 0];
-    let dataProy = [1200, 1500, 1800, 1400, 1600, 2000, 2100, 1900, 2200, 2300, 2500, 2800];
-    let dataAlcPag = [5000, 7000, 8500, 6000, 7500, 9000, 9500, 8800, 0, 0, 0, 0];
-    let dataAlcOrg = [2000, 2300, 2100, 2500, 2800, 3100, 3000, 3200, 0, 0, 0, 0];
-    let dataCrecSeg = [3.2, 4.1, 2.8, 5.0, 3.9, 4.5, 4.8, 3.6, 0, 0, 0, 0];
+    /* GRÁFICA DE INVERSIÓN Y PROYECCIÓN POR RED SOCIAL */
+    function renderizarGraficoProyeccion() {
+      const ctx = document.getElementById('chartGeneral').getContext('2d');
+      document.getElementById('titulo-grafico').innerText = `Inversión & Proyección Anual - ${redActual} (${marcaActual})`;
 
-    // Destruir gráficos previos si existen
-    if (chartInversionProyeccion) chartInversionProyeccion.destroy();
-    if (chartAlcanceMensual) chartAlcanceMensual.destroy();
-    if (chartCrecimientoSeguidores) chartCrecimientoSeguidores.destroy();
-    if (chartRedEspecifica) chartRedEspecifica.destroy();
+      if (miGrafico) miGrafico.destroy();
 
-    // 1. Gráfica Inversión + Proyección
-    const ctxInv = document.getElementById('chart-inversion-proyeccion').getContext('2d');
-    chartInversionProyeccion = new Chart(ctxInv, {
+      // Buscar los datos específicos de la red seleccionada
+      const datosRed = proyeccionesPorRed[marcaActual] && proyeccionesPorRed[marcaActual][redActual]
+        ? proyeccionesPorRed[marcaActual][redActual]
+        : { 
+            real: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+            proyeccion: [null, null, null, null, null, null, 0, 0, 0, 0, 0, 0] 
+          };
+
+      miGrafico = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: meses,
-            datasets: [
-                {
-                    label: 'Inversión Real (Q)',
-                    data: dataInv,
-                    borderColor: '#2563eb',
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                    fill: true,
-                    tension: 0.3
-                },
-                {
-                    label: 'Proyección Estimada (Q)',
-                    data: dataProy,
-                    borderColor: '#9333ea',
-                    borderDash: [5, 5],
-                    fill: false,
-                    tension: 0.3
-                }
-            ]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    // 2. Gráfica Alcance (Barras)
-    const ctxAlc = document.getElementById('chart-alcance-mensual').getContext('2d');
-    chartAlcanceMensual = new Chart(ctxAlc, {
-        type: 'bar',
-        data: {
-            labels: meses,
-            datasets: [
-                { label: 'Alcance Pagado', data: dataAlcPag, backgroundColor: '#8b5cf6' },
-                { label: 'Alcance Orgánico', data: dataAlcOrg, backgroundColor: '#14b8a6' }
-            ]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    // 3. Gráfica Crecimiento Seguidores (%)
-    const ctxSeg = document.getElementById('chart-crecimiento-seguidores').getContext('2d');
-    chartCrecimientoSeguidores = new Chart(ctxSeg, {
-        type: 'bar',
-        data: {
-            labels: meses,
-            datasets: [{
-                label: 'Crecimiento (%)',
-                data: dataCrecSeg,
-                backgroundColor: '#ec4899'
-            }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    // 4. Gráfica Específica por Red Social
-    const wrapperEsp = document.getElementById('wrapper-grafica-especifica');
-    const tituloEsp = document.getElementById('titulo-grafica-especifica');
-    const ctxEsp = document.getElementById('chart-red-especifica').getContext('2d');
-
-    if (redActiva === 'TikTok Live') {
-        wrapperEsp.classList.remove('hidden');
-        tituloEsp.innerText = 'Porcentaje de Seguidores Obtenidos en Live';
-        chartRedEspecifica = new Chart(ctxEsp, {
-            type: 'doughnut',
-            data: {
-                labels: ['Seguidores Nuevos', 'Otros Oyentes'],
-                datasets: [{ data: [35, 65], backgroundColor: ['#22c55e', '#cbd5e1'] }]
+          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          datasets: [
+            {
+              label: 'Inversión Real (Q)',
+              data: datosRed.real,
+              borderColor: '#2563EB',
+              backgroundColor: 'rgba(37, 99, 235, 0.1)',
+              fill: true,
+              tension: 0.3,
+              pointRadius: 4
             },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    } else if (redActiva === 'TikTok') {
-        wrapperEsp.classList.remove('hidden');
-        tituloEsp.innerText = 'Interacciones por Video & General';
-        chartRedEspecifica = new Chart(ctxEsp, {
-            type: 'bar',
-            data: {
-                labels: ['Video 1', 'Video 2', 'Video 3', 'Video 4', 'Prom. General'],
-                datasets: [{ label: 'Interacciones', data: [1200, 3400, 890, 2100, 1898], backgroundColor: '#f97316' }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    } else if (redActiva === 'YouTube') {
-        wrapperEsp.classList.remove('hidden');
-        tituloEsp.innerText = 'Rendimiento de Reproducciones en YouTube';
-        chartRedEspecifica = new Chart(ctxEsp, {
-            type: 'line',
-            data: {
-                labels: meses,
-                datasets: [{ label: 'Reproducciones', data: [800, 1200, 1900, 2400, 2100, 3100, 3500, 4000, 0, 0, 0, 0], borderColor: '#ef4444' }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    } else {
-        wrapperEsp.classList.add('hidden');
-    }
-
-}
-
-
-/* =============================================================
-   POST IMPULSADOS CON PREVIEW AMPLIADO DE IMAGEN
-============================================================= */
-
-function renderizarModuloPosts() {
-
-    const cuenta = document.getElementById('filtro-cuenta').value;
-
-    let nombreHoja = 'Post impulsados Repuestos Acquaroni';
-    if (cuenta === 'aztec') nombreHoja = 'Post impulsados AZtec Oils';
-    else if (cuenta === 'ultraparts') nombreHoja = 'Post impulsados Ultra Parts';
-
-    const filas = obtenerHojaInsensible(nombreHoja);
-    const filasFiltradas = filtrarFilas(filas, 0, 1);
-
-    const tbody = document.getElementById('tabla-posts-body');
-    tbody.innerHTML = '';
-
-    filasFiltradas.forEach((f, idx) => {
-
-        const reproducciones = limpiarValorNum(f[4]);
-        const alcance = limpiarValorNum(f[5]);
-        const conversaciones = limpiarValorNum(f[6]);
-        const inversion = limpiarValorNum(f[7]);
-        const cpc = f[8] !== undefined && f[8] !== null && f[8] !== '' ? limpiarValorNum(f[8]) : 0;
-
-        tbody.innerHTML += `
-            <tr>
-                <td class="p-3">
-                    <label class="cursor-pointer text-blue-500 hover:text-blue-700 font-semibold text-xs flex items-center gap-1">
-                        <i class="fa-solid fa-image"></i>
-                        Cargar
-                        <input
-                            type="file"
-                            class="hidden"
-                            accept="image/*"
-                            onchange="previewImagenPost(event, 'img-post-${idx}')"
-                        >
-                    </label>
-
-                    <img
-                        id="img-post-${idx}"
-                        class="w-12 h-12 object-cover rounded shadow-sm hidden mt-1 cursor-pointer hover:opacity-80 transition"
-                        onclick="ampliarImagen(this.src)"
-                        title="Haz clic para agrandar"
-                    >
-                </td>
-
-                <td class="p-3">${f[0]} / ${f[1] || '-'}</td>
-                <td class="p-3 font-medium">${escapeHtml(f[2] || '-')}</td>
-                <td class="p-3">${escapeHtml(f[3] || '-')}</td>
-                <td class="p-3">${reproducciones.toLocaleString()}</td>
-                <td class="p-3">${alcance.toLocaleString()}</td>
-                <td class="p-3">${conversaciones.toLocaleString()}</td>
-                <td class="p-3">Q ${inversion.toFixed(2)}</td>
-                <td class="p-3 font-bold text-blue-600">Q ${cpc.toFixed(2)}</td>
-            </tr>
-        `;
-    });
-
-}
-
-function previewImagenPost(e, id) {
-    const file = e.target.files[0];
-    if (file) {
-        const img = document.getElementById(id);
-        img.src = URL.createObjectURL(file);
-        img.classList.remove('hidden');
-    }
-}
-
-function ampliarImagen(src) {
-    const modal = document.getElementById('modal-imagen-preview');
-    const imgModal = document.getElementById('imagen-ampliada');
-    imgModal.src = src;
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-}
-
-function cerrarModalImagen() {
-    const modal = document.getElementById('modal-imagen-preview');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-}
-
-
-/* =============================================================
-   CAMPAÑAS
-============================================================= */
-
-function normalizarCampana(valor) {
-    return (valor || '').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
-
-function prepararFilasCampanas(filas) {
-    if (!filas || filas.length <= 1) return [];
-
-    const anioSeleccionado = document.getElementById('filtro-anio').value;
-    const mesSeleccionado = document.getElementById('filtro-mes').value;
-
-    let campanaActual = '', anioActual = '', mesActual = '';
-    const resultado = [];
-
-    filas.slice(1).forEach(filaOriginal => {
-        const fila = [...filaOriginal];
-
-        if (fila[0]) anioActual = fila[0].toString().trim();
-        if (fila[1]) mesActual = fila[1].toString().trim();
-        if (fila[2]) campanaActual = fila[2].toString().trim();
-
-        fila[0] = fila[0] || anioActual;
-        fila[1] = fila[1] || mesActual;
-        fila[2] = fila[2] || campanaActual;
-
-        const coincideAnio = fila[0].toString().trim() === anioSeleccionado;
-        const coincideMes = mesSeleccionado === 'todos' || fila[1].toString().trim().toLowerCase() === mesSeleccionado.toLowerCase();
-        const tienePost = fila[3] !== undefined && fila[3] !== null && fila[3].toString().trim() !== '';
-
-        if (coincideAnio && coincideMes && tienePost) {
-            resultado.push(fila);
-        }
-    });
-
-    return resultado;
-}
-
-function renderizarModuloCampanas() {
-
-    const cuenta = document.getElementById('filtro-cuenta').value;
-
-    let nombreHoja = 'Campañas Repuestos Acquaroni';
-    if (cuenta === 'aztec') nombreHoja = 'Campañas AZtec Oils';
-    else if (cuenta === 'ultraparts') nombreHoja = 'Campañas Ultra Parts';
-
-    const filas = obtenerHojaInsensible(nombreHoja);
-    const filasCampanas = prepararFilasCampanas(filas);
-    const container = document.getElementById('contenedor-campanas');
-
-    container.innerHTML = '';
-
-    if (!filasCampanas.length) {
-        container.innerHTML = `
-            <div class="col-span-full bg-white rounded-xl border p-10 text-center">
-                <i class="fa-solid fa-bullhorn text-4xl text-gray-300 mb-4"></i>
-                <p class="font-semibold text-gray-600">No hay campañas disponibles.</p>
-                <p class="text-sm text-gray-400 mt-1">Revisa el año, mes o la cuenta seleccionada.</p>
-            </div>
-        `;
-        return;
-    }
-
-    const campanas = {};
-
-    filasCampanas.forEach(fila => {
-        const nombreCampana = fila[2].toString().trim();
-        const clave = normalizarCampana(nombreCampana);
-
-        if (!campanas[clave]) {
-            campanas[clave] = { nombre: nombreCampana, anio: fila[0], mes: fila[1], posts: [] };
-        }
-        campanas[clave].posts.push(fila);
-    });
-
-    Object.keys(campanas).forEach((clave, index) => {
-        const campana = campanas[clave];
-        const presupuestoTotal = campana.posts.reduce((total, fila) => total + limpiarValorNum(fila[7]), 0);
-        const cantidadPosts = campana.posts.length;
-        const idPortada = `cover-campana-${index}`;
-
-        container.innerHTML += `
-            <div class="bg-white rounded-xl border shadow-sm hover:shadow-lg transition overflow-hidden">
-                <div class="h-40 bg-gradient-to-br from-slate-100 to-gray-200 relative flex items-center justify-center overflow-hidden">
-                    <img id="${idPortada}" class="absolute inset-0 w-full h-full object-cover hidden">
-                    <div class="flex flex-col items-center justify-center text-gray-400">
-                        <i class="fa-solid fa-bullhorn text-4xl mb-2"></i>
-                        <span class="text-xs font-medium">Portada de campaña</span>
-                    </div>
-                    <label onclick="event.stopPropagation()" class="absolute bottom-3 right-3 z-10 cursor-pointer bg-white/95 hover:bg-white text-gray-700 px-3 py-2 rounded-lg text-xs font-bold shadow">
-                        <i class="fa-solid fa-camera mr-1"></i> Subir portada
-                        <input type="file" class="hidden" accept="image/*" onchange="previewImagenCampana(event, '${idPortada}')">
-                    </label>
-                </div>
-                <div class="p-5">
-                    <div class="flex justify-between items-start gap-3">
-                        <div>
-                            <h4 class="font-bold text-gray-800 text-base leading-tight">${escapeHtml(campana.nombre)}</h4>
-                            <p class="text-xs text-gray-500 mt-2">${escapeHtml(campana.anio)} - ${escapeHtml(campana.mes)}</p>
-                        </div>
-                        <span class="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap">
-                            ${cantidadPosts} ${cantidadPosts === 1 ? 'Post' : 'Posts'}
-                        </span>
-                    </div>
-                    <div class="mt-4 pt-3 border-t flex justify-between items-center">
-                        <span class="text-xs font-semibold text-gray-500">Presupuesto total</span>
-                        <span class="text-lg font-black text-blue-600">Q ${presupuestoTotal.toFixed(2)}</span>
-                    </div>
-                    <button type="button" onclick="abrirDesgloseCampana(${JSON.stringify(campana.nombre)})" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-lg text-sm font-bold transition">
-                        <i class="fa-solid fa-eye mr-2"></i> Ver campaña
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-}
-
-function abrirDesgloseCampana(nombreCampana) {
-    const cuenta = document.getElementById('filtro-cuenta').value;
-    let nombreHoja = 'Campañas Repuestos Acquaroni';
-    if (cuenta === 'aztec') nombreHoja = 'Campañas AZtec Oils';
-    else if (cuenta === 'ultraparts') nombreHoja = 'Campañas Ultra Parts';
-
-    const filas = obtenerHojaInsensible(nombreHoja);
-    const filasCampanas = prepararFilasCampanas(filas);
-    const postsCampana = filasCampanas.filter(fila => normalizarCampana(fila[2]) === normalizarCampana(nombreCampana));
-    const presupuestoTotal = postsCampana.reduce((total, fila) => total + limpiarValorNum(fila[7]), 0);
-
-    document.getElementById('modal-campana-titulo').innerText = `Campaña: ${nombreCampana}`;
-    document.getElementById('modal-campana-subtitulo').innerText = `${postsCampana.length} ${postsCampana.length === 1 ? 'post' : 'posts'} · Presupuesto total: Q ${presupuestoTotal.toFixed(2)}`;
-
-    const container = document.getElementById('modal-campana-contenido');
-    container.innerHTML = '';
-
-    postsCampana.forEach((fila, index) => {
-        crearFichaPostCampana(fila, index, container);
-    });
-
-    abrirModalCampana();
-}
-
-function abrirModalCampana() {
-    const modal = document.getElementById('modal-campana');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-}
-
-function cerrarModalCampana() {
-    const modal = document.getElementById('modal-campana');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-}
-
-function crearFichaPostCampana(fila, index, container) {
-    const nombrePost = fila[3] ? fila[3].toString().trim() : `Post ${index + 1}`;
-    const reproducciones = limpiarValorNum(fila[4]);
-    const alcance = limpiarValorNum(fila[5]);
-    const conversaciones = limpiarValorNum(fila[6]);
-    const presupuesto = limpiarValorNum(fila[7]);
-    const postId = `campana-post-${Date.now()}-${index}`;
-
-    container.innerHTML += `
-        <article class="bg-white border rounded-2xl shadow-sm overflow-hidden">
-            <div class="px-5 py-4 border-b bg-gray-50 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-black">${index + 1}</div>
-                    <div>
-                        <h4 class="font-bold text-gray-800">${escapeHtml(nombrePost)}</h4>
-                        <p class="text-xs text-gray-500">${escapeHtml(fila[1] || '')}</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs text-gray-500">Presupuesto</p>
-                    <p class="text-lg font-black text-blue-600">Q ${presupuesto.toFixed(2)}</p>
-                </div>
-            </div>
-            <div class="p-5">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <div class="bg-gray-50 border rounded-xl p-4">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Reproducciones</p>
-                        <p class="text-xl font-black text-gray-800 mt-1">${reproducciones.toLocaleString()}</p>
-                    </div>
-                    <div class="bg-gray-50 border rounded-xl p-4">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Alcance</p>
-                        <p class="text-xl font-black text-purple-600 mt-1">${alcance.toLocaleString()}</p>
-                    </div>
-                    <div class="bg-gray-50 border rounded-xl p-4">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Conversaciones</p>
-                        <p class="text-xl font-black text-green-600 mt-1">${conversaciones.toLocaleString()}</p>
-                    </div>
-                    <div class="bg-gray-50 border rounded-xl p-4">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Presupuesto</p>
-                        <p class="text-xl font-black text-blue-600 mt-1">Q ${presupuesto.toFixed(2)}</p>
-                    </div>
-                </div>
-            </div>
-        </article>
-    `;
-}
-
-function previewArteCampana(event, postId) {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-        const image = document.getElementById(`${postId}-image`);
-        image.src = URL.createObjectURL(file);
-        image.classList.remove('hidden');
-    }
-}
-
-function previewImagenCampana(event, id) {
-    const file = event.target.files[0];
-    if (file) {
-        const img = document.getElementById(id);
-        img.src = URL.createObjectURL(file);
-        img.classList.remove('hidden');
-    }
-}
-
-
-/* =============================================================
-   PRESUPUESTO Y ESTADOS DE CUENTA (INTEGRACIÓN COMPLETA)
-============================================================= */
-
-function guardarAsignadoManual() {
-    const nuevoMonto = prompt("Ingresa el Presupuesto Asignado Total (Q):", asignadoManual);
-    if (nuevoMonto !== null && !isNaN(parseFloat(nuevoMonto))) {
-        asignadoManual = parseFloat(nuevoMonto);
-        renderizarModuloPresupuesto();
-    }
-}
-
-function renderizarModuloPresupuesto() {
-
-    // 1. Obtener datos de la Hoja Principal (Presupuesto)
-    const filasPres = obtenerHojaInsensible('Presupuesto');
-    const filasFiltradas = filtrarFilas(filasPres, 0, 1);
-
-    let acq = 0, azt = 0, mercadeo = 0;
-
-    filasFiltradas.forEach(f => {
-        acq += limpiarValorNum(f[4]);      // Repuestos Acquaroni
-        azt += limpiarValorNum(f[5]);      // AZtec Oils
-        mercadeo += limpiarValorNum(f[7]); // Mercadeo
-    });
-
-    // 2. Procesar Estados de Cuenta (Excel redes sociales liquidacion .xlsx)
-    let totalRedesEECC = 0;
-    let totalPlataformasEECC = 0;
-
-    const tbodyEECC = document.getElementById('tabla-eecc-body');
-    tbodyEECC.innerHTML = '';
-
-    Object.keys(datosEstadosDeCuenta).forEach(mes => {
-        const item = datosEstadosDeCuenta[mes];
-        totalRedesEECC += item.redes;
-        totalPlataformasEECC += item.plataformas;
-        const totalMes = item.redes + item.plataformas;
-
-        tbodyEECC.innerHTML += `
-            <tr class="hover:bg-gray-50">
-                <td class="p-3 font-semibold text-gray-700">${mes}</td>
-                <td class="p-3">Q ${item.redes.toFixed(2)}</td>
-                <td class="p-3">Q ${item.plataformas.toFixed(2)}</td>
-                <td class="p-3 font-bold text-blue-600">Q ${totalMes.toFixed(2)}</td>
-            </tr>
-        `;
-    });
-
-    const totalEjecutadoEECC = totalRedesEECC + totalPlataformasEECC;
-
-    // 3. Renderizar Fichas
-    document.getElementById('pres-asignado').innerText = `Q ${asignadoManual.toFixed(2)}`;
-    document.getElementById('pres-ejecutado').innerText = `Q ${totalEjecutadoEECC.toFixed(2)}`;
-    document.getElementById('pres-redes-eecc').innerText = `Q ${totalRedesEECC.toFixed(2)}`;
-    document.getElementById('pres-acquaroni').innerText = `Q ${acq.toFixed(2)}`;
-    document.getElementById('pres-aztec').innerText = `Q ${azt.toFixed(2)}`;
-    document.getElementById('pres-mercadeo').innerText = `Q ${mercadeo.toFixed(2)}`;
-    document.getElementById('pres-plataformas-m4').innerText = `Q ${totalPlataformasEECC.toFixed(2)}`;
-
-    // 4. Renderizar Gráficas de Presupuesto
-    renderizarGraficasPresupuesto(totalEjecutadoEECC);
-
-}
-
-function renderizarGraficasPresupuesto(totalEjecutado) {
-
-    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-
-    if (chartPresupuestoMensual) chartPresupuestoMensual.destroy();
-    if (chartPresupuestoProyeccion) chartPresupuestoProyeccion.destroy();
-
-    // Gráfica Presupuesto Mensual vs Ejecución (%)
-    const ctxPres = document.getElementById('chart-presupuesto-mensual').getContext('2d');
-    chartPresupuestoMensual = new Chart(ctxPres, {
-        type: 'bar',
-        data: {
-            labels: ['Abril', 'Mayo', 'Junio', 'Julio', 'Agosto'],
-            datasets: [
-                { label: 'Ejecución (Q)', data: [15700, 17500, 17900, 20250, 20800], backgroundColor: '#3b82f6' },
-                { label: '% Ejecutado sobre Asignado', data: [87, 92, 94, 102, 105], type: 'line', borderColor: '#ef4444', yAxisID: 'y1' }
-            ]
+            {
+              label: 'Proyección Estimada (Q)',
+              data: datosRed.proyeccion,
+              borderColor: '#9333EA',
+              borderDash: [5, 5],
+              backgroundColor: 'transparent',
+              tension: 0.3,
+              pointRadius: 4
+            }
+          ]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true },
-                y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: v => `${v}%` } }
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.dataset.label}: Q ${context.raw ? context.raw.toLocaleString('es-GT') : 0}`;
+                }
+              }
             }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) { return 'Q ' + value; }
+              }
+            }
+          }
         }
-    });
-
-    // Gráfica Proyección del Próximo Año (Generación programada para 1ra Semana Septiembre)
-    const ctxProy = document.getElementById('chart-presupuesto-proyeccion').getContext('2d');
-    chartPresupuestoProyeccion = new Chart(ctxProy, {
-        type: 'line',
-        data: {
-            labels: meses,
-            datasets: [
-                { label: 'Inversión Actual', data: [15000, 15000, 15000, 15700, 17500, 17900, 20250, 20800, 0, 0, 0, 0], borderColor: '#10b981' },
-                { label: 'Proyección Muestra Próximo Año (+12%)', data: [16800, 16800, 16800, 17584, 19600, 20048, 22680, 23296, 24000, 24500, 25000, 26000], borderColor: '#6366f1', borderDash: [5, 5] }
-            ]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
-
-}
-
-
-/* =============================================================
-   FUNCIONES AUXILIARES Y EVENTOS GLOBAL
-============================================================= */
-
-function escapeHtml(valor) {
-    return (valor || '')
-        .toString()
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
-
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        cerrarModalCampana();
-        cerrarModalImagen();
+      });
     }
-});
 
-window.addEventListener('DOMContentLoaded', () => {
-    renderizarTabsRedes();
-    cargarDatosSheets();
-});
+    /* PERSISTENCIA DE IMÁGENES */
+    function guardarYMostrarImagen(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const base64Image = e.target.result;
+          const clave = `img_${marcaActual}_${redActual}_${document.getElementById('select-mes').value}`;
+          localStorage.setItem(clave, base64Image);
+          mostrarImagen(base64Image);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
-</script>
+    function cargarImagenGuardada() {
+      const clave = `img_${marcaActual}_${redActual}_${document.getElementById('select-mes').value}`;
+      const imagenGuardada = localStorage.getItem(clave);
+      if (imagenGuardada) {
+        mostrarImagen(imagenGuardada);
+      } else {
+        document.getElementById('preview-container').classList.add('hidden');
+      }
+    }
 
+    function mostrarImagen(src) {
+      const img = document.getElementById('img-preview');
+      img.src = src;
+      document.getElementById('preview-container').classList.remove('hidden');
+    }
+
+    /* BOTÓN VER CAMPAÑA */
+    function abrirModalCampana() {
+      const mes = document.getElementById('select-mes').value;
+      document.getElementById('modal-titulo').innerText = `Campaña: ${marcaActual} (${redActual})`;
+      document.getElementById('modal-contenido').innerHTML = `
+        <p><strong>Mes de Consulta:</strong> ${mes}</p>
+        <p><strong>Plataforma:</strong> ${redActual}</p>
+        <div class="p-3 bg-gray-50 rounded-lg border text-xs space-y-1">
+          <p class="font-semibold text-gray-700">Métricas acumuladas del periodo:</p>
+          <p>• Alcance pagado: ${document.getElementById('kpi-alcance').innerText}</p>
+          <p>• Inversión ejecutada: ${document.getElementById('kpi-inversion').innerText}</p>
+        </div>
+      `;
+      document.getElementById('modal-campana').classList.remove('hidden');
+    }
+
+    function cerrarModalCampana() {
+      document.getElementById('modal-campana').classList.add('hidden');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderizarTabsRedes();
+      actualizarVista();
+    });
+  </script>
 </body>
 </html>
