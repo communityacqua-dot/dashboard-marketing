@@ -667,10 +667,11 @@
 
 <script>
 
+// WEB APP 1: Fuente Principal
 const SCRIPT_URL =
     'https://script.google.com/macros/s/AKfycbxIZexYXWgwBTI4bRWF-z-NReaah6uvbOagcFjsw81nDW7x7Wiqj27pZLjYTljW3mto/exec';
 
-// URL exclusiva para Presupuesto, Plataformas Externas, Redes Sociales (Ficha Presupuesto) y Ejecutado Total
+// WEB APP 2: Exclusiva para Presupuesto, Plataformas Externas, Redes Sociales (Ficha Presupuesto) y Ejecutado Total
 const SCRIPT_URL_ESTADO_CUENTA =
     'https://script.google.com/macros/s/AKfycbxyjacHyhplef1SGWNvLOwQNCwRUzT-wJys7eMLSTm0-L2bkJ-HEzGG6FHd7IbPw_Wyxg/exec';
 
@@ -860,7 +861,7 @@ function obtenerHojaInsensible(busqueda, origen = rawData) {
 
 
 /* =============================================================
-   CARGAR DATOS
+   CARGAR DATOS INDEPENDIENTE (DOS WEB APPS SEPARADAS)
 ============================================================= */
 
 async function cargarDatosSheets() {
@@ -1011,7 +1012,7 @@ function actualizarTodo() {
 
 
 /* =============================================================
-   REDES SOCIALES
+   REDES SOCIALES (WEB APP 1)
 ============================================================= */
 
 function renderizarModuloRedes() {
@@ -1091,8 +1092,8 @@ function renderizarModuloRedes() {
                 totalInv += limpiarValorNum(f[2]);
                 sumCtr += limpiarValorNum(f[3]);
                 if (limpiarValorNum(f[3]) > 0) countCtr++;
-                totalAlc += limpiarValorNum(f[4]); // Alcance Total para Instagram y Facebook corregido
-                totalAlcOrg += limpiarValorNum(f[5]); // Dato exacto reportado en Excel para Alcance Orgánico
+                totalAlc += limpiarValorNum(f[4]); // Alcance Total asignado correctamente
+                totalAlcOrg += limpiarValorNum(f[5]); // Alcance Orgánico directo reportado desde la Web App 1
                 totalImp += limpiarValorNum(f[6]);
                 totalInt += limpiarValorNum(f[7]);
                 ultimoSeguidores = limpiarValorNum(f[8]); 
@@ -1119,7 +1120,7 @@ function renderizarModuloRedes() {
 
 
 /* =============================================================
-   RENDERIZADO DE GRÁFICOS PARA REDES SOCIALES
+   RENDERIZADO DE GRÁFICOS Y PROYECCIÓN (AÑO SIGUIENTE)
 ============================================================= */
 
 function renderGraficosRedes(filas) {
@@ -1135,17 +1136,16 @@ function renderGraficosRedes(filas) {
         if (idxMes !== -1) {
             dataInv[idxMes] = limpiarValorNum(f[2]);
             dataAlc[idxMes] = limpiarValorNum(f[4]);
-            dataAlcOrg[idxMes] = limpiarValorNum(f[5]); // Dato exacto reportado
+            dataAlcOrg[idxMes] = limpiarValorNum(f[5]); 
             dataSeg[idxMes] = limpiarValorNum(f[8] || f[6] || f[5]);
             dataIntVideo[idxMes] = limpiarValorNum(f[7] || f[5]);
         }
     });
 
-    // Proyección Dinámica para todo el AÑO SIGUIENTE
-    const anioActual = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
-    const anioSiguiente = anioActual + 1;
+    // Proyección Dinámica para todo el AÑO SIGUIENTE completo
+    const anioSeleccionado = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
+    const anioSiguiente = anioSeleccionado + 1;
     
-    // Título/Encabezado dinámico adaptado al año proyectado
     const elemTitulo = document.getElementById('titulo-chart-inversion');
     if (elemTitulo) {
         elemTitulo.innerText = `Proyección Redes Sociales ${anioSiguiente}`;
@@ -1156,25 +1156,22 @@ function renderGraficosRedes(filas) {
         tagProyeccion.innerText = `Proyección ${anioSiguiente} (Ene-Dic)`;
     }
 
-    // Lógica dinámica para la proyección completa de Enero a Diciembre del año siguiente
     const promedio = dataInv.slice(0, 8).reduce((a, b) => a + b, 0) / 8 || 100;
     let dataProyeccion = new Array(12).fill(0);
     for (let i = 0; i < 12; i++) {
-        dataProyeccion[i] = (dataInv[i] > 0 ? dataInv[i] : promedio) * 1.15; // Proyección +15%
+        dataProyeccion[i] = (dataInv[i] > 0 ? dataInv[i] : promedio) * 1.15;
     }
 
     crearOActualizarChart('chart-inversion', 'line', mesesLabels, [
-        { label: `Inversión ${anioActual} (Q)`, data: dataInv, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
+        { label: `Inversión ${anioSeleccionado} (Q)`, data: dataInv, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
         { label: `Proyección Redes Sociales ${anioSiguiente} (Q)`, data: dataProyeccion, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
     ]);
 
-    // 2. Gráfico de Alcance Total vs Orgánico
     crearOActualizarChart('chart-alcance', 'bar', mesesLabels, [
         { label: 'Alcance Total', data: dataAlc, backgroundColor: '#8b5cf6' },
         { label: 'Alcance Orgánico', data: dataAlcOrg, backgroundColor: '#10b981' }
     ]);
 
-    // 3. Gráfico Crecimiento % Mensual de Seguidores
     let porcentajeCrecimiento = new Array(12).fill(0);
     for (let i = 1; i < 12; i++) {
         if (dataSeg[i - 1] > 0) {
@@ -1186,7 +1183,6 @@ function renderGraficosRedes(filas) {
         { label: 'Crecimiento %', data: porcentajeCrecimiento, backgroundColor: '#14b8a6' }
     ]);
 
-    // 4. Gráfico Adicional
     if (redActiva === 'TikTok' || redActiva === 'YouTube') {
         document.getElementById('titulo-chart-extra').innerText = 'Interacciones por Video / Contenido';
         crearOActualizarChart('chart-extra', 'bar', mesesLabels, [
@@ -1240,7 +1236,7 @@ function crearOActualizarChart(canvasId, type, labels, datasets) {
 
 
 /* =============================================================
-   POST IMPULSADOS CON PERSISTENCIA Y SUBIDA DE IMAGEN DE REFERENCIA
+   POST IMPULSADOS (SUBIDA DE IMÁGENES, PERSISTENCIA Y VISOR)
 ============================================================= */
 
 function renderizarModuloPosts() {
@@ -1377,6 +1373,7 @@ function renderizarModuloCampanas() {
         const portadaKey = `portada-campana-${cuenta}-${clave}`;
         const savedPortada = localStorage.getItem(portadaKey);
 
+        // Excepción mantenida: Portadas de campaña son fijas (sin clic de ampliación)
         container.innerHTML += `
             <div class="bg-white rounded-xl border shadow-sm hover:shadow-lg transition overflow-hidden">
                 <div class="h-40 bg-gray-200 relative flex items-center justify-center overflow-hidden">
@@ -1467,7 +1464,7 @@ function cerrarModalCampana() {
 
 
 /* =============================================================
-   PRESUPUESTO Y ESTADOS DE CUENTA
+   PRESUPUESTO Y ESTADOS DE CUENTA (WEB APP 2)
 ============================================================= */
 
 function solicitarAsignadoTotal() {
@@ -1482,7 +1479,7 @@ function solicitarAsignadoTotal() {
 
 function renderizarModuloPresupuesto() {
 
-    // 1. Datos extraídos ÚNICAMENTE desde la nueva Web App / API externa (SCRIPT_URL_ESTADO_CUENTA)
+    // Extraído EXCLUSIVAMENTE desde la Web App 2 (SCRIPT_URL_ESTADO_CUENTA)
     const filasEstadosCuenta = obtenerHojaInsensible('Estado de Cuenta', estadoCuentaData) || obtenerHojaInsensible('Estados de Cuenta', estadoCuentaData);
     const filasEcuentaFiltradas = filtrarFilas(filasEstadosCuenta, 0, 1);
 
@@ -1499,7 +1496,7 @@ function renderizarModuloPresupuesto() {
         }
     });
 
-    // 2. Datos de cuentas específicos leídos desde Excel principal
+    // Cuentas de marca extraídas desde Excel principal
     const filasPres = obtenerHojaInsensible('Presupuesto', rawData);
     const filasFiltradasPres = filtrarFilas(filasPres, 0, 1);
 
@@ -1519,7 +1516,6 @@ function renderizarModuloPresupuesto() {
     document.getElementById('pres-mercadeo').innerText = `Q ${mercadeo.toFixed(2)}`;
     document.getElementById('pres-plataformas-m4').innerText = `Q ${plataformasExt.toFixed(2)}`;
 
-    // Renderizado de Gráficos de Presupuesto con proyección dinámica para el AÑO SIGUIENTE
     renderGraficosPresupuesto(ejecutadoTotal, redesSociales, plataformasExt);
 }
 
@@ -1527,7 +1523,6 @@ function renderizarModuloPresupuesto() {
 function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
     const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     
-    // Gráfico de Porcentajes de Inversión
     const total = ejecutado || 1;
     const pctRedes = ((redes / total) * 100).toFixed(1);
     const pctPlat = ((plataformas / total) * 100).toFixed(1);
@@ -1536,16 +1531,16 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
         { data: [redes, plataformas], backgroundColor: ['#8b5cf6', '#6366f1'] }
     ]);
 
-    // Proyección de Presupuesto para TODO EL AÑO SIGUIENTE dinámicamente
-    const anioActual = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
-    const anioSiguiente = anioActual + 1;
+    // Proyección Presupuestaria para TODO EL AÑO SIGUIENTE
+    const anioSeleccionado = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
+    const anioSiguiente = anioSeleccionado + 1;
 
     const elemTituloPres = document.getElementById('titulo-presupuesto-proyeccion');
     if (elemTituloPres) {
         elemTituloPres.innerText = `Proyección completa para todo el año ${anioSiguiente}`;
     }
 
-    let proyeccionPresupuesto = new Array(12).fill((ejecutado / 12 || 1000) * 1.10); // Estimación +10% mensual
+    let proyeccionPresupuesto = new Array(12).fill((ejecutado / 12 || 1000) * 1.10);
     crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
         { label: `Proyección Presupuestaria ${anioSiguiente} (Q)`, data: proyeccionPresupuesto, backgroundColor: '#3b82f6' }
     ]);
