@@ -1477,37 +1477,58 @@ function solicitarAsignadoTotal() {
 function renderizarModuloPresupuesto() {
 
     // 1. Datos leídos desde Estados de Cuenta
-    const filasEstadosCuenta = obtenerHojaInsensible('Estado de Cuenta') || obtenerHojaInsensible('Estados de Cuenta');
-    const filasEcuentaFiltradas = filtrarFilas(filasEstadosCuenta, 0, 1);
-
+  function procesarDatosEstadoCuenta(todasLasPestanas) {
     let ejecutadoTotal = 0;
     let redesSociales = 0;
     let plataformasExt = 0;
 
-    filasEcuentaFiltradas.forEach(f => {
-        ejecutadoTotal += limpiarValorNum(f[2]);
-        if ((f[3] || '').toString().toLowerCase().includes('redes')) {
-            redesSociales += limpiarValorNum(f[2]);
-        } else {
-            plataformasExt += limpiarValorNum(f[2]);
-        }
-    });
+    const parseMonto = (val) => {
+        if (!val) return 0;
+        if (typeof val === 'number') return val;
+        const cleanStr = val.toString().replace(/[^0-9.-]+/g, "");
+        return parseFloat(cleanStr) || 0;
+    };
 
-    // 2. Datos leídos del Excel Principal (Presupuesto)
-    const filasPres = obtenerHojaInsensible('Presupuesto');
-    const filasFiltradasPres = filtrarFilas(filasPres, 0, 1);
+    // Si recibe un objeto con múltiples pestañas (Enero 2026, Febrero 2026, etc.)
+    if (todasLasPestanas && typeof todasLasPestanas === 'object' && !Array.isArray(todasLasPestanas)) {
+        Object.keys(todasLasPestanas).forEach(nombrePestana => {
+            // Revisa únicamente las pestañas que tengan nombre de mes y año
+            if (nombrePestana.match(/(Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre)\s+\d{4}/i)) {
+                const rows = todasLasPestanas[nombrePestana];
 
-    let acquaroni = 0, aztec = 0, mercadeo = 0;
+                rows.forEach(row => {
+                    const celdaEtiqueta = (row[0] || row[1] || row[2] || row[3] || row[4] || "").toString().toLowerCase();
+                    
+                    // Busca la fila donde esté el Total Pauta o Total Debitado (ej. F11 / F13)
+                    if (celdaEtiqueta.includes('total pauta') || celdaEtiqueta.includes('total debitado')) {
+                        const monto = parseMonto(row[5]) || parseMonto(row[4]) || parseMonto(row[6]);
+                        redesSociales += monto;
+                    }
+                });
+            }
+        });
+    } else if (Array.isArray(todasLasPestanas)) {
+        // Resguardo si recibe una sola matriz de datos
+        todasLasPestanas.slice(1).forEach(row => {
+            redesSociales += parseMonto(row[2] || row[1]);
+        });
+    }
 
-    filasFiltradasPres.forEach(f => {
-        acquaroni += limpiarValorNum(f[4]);
-        aztec += limpiarValorNum(f[5]);
-        mercadeo += limpiarValorNum(f[6]);
-    });
+    ejecutadoTotal = redesSociales + plataformasExt;
 
-    document.getElementById('pres-asignado').innerText = `Q ${limpiarValorNum(asignadoTotalManual).toFixed(2)}`;
-    document.getElementById('pres-ejecutado').innerText = `Q ${ejecutadoTotal.toFixed(2)}`;
-    document.getElementById('pres-redes-soc').innerText = `Q ${redesSociales.toFixed(2)}`;
+    // Actualiza las tarjetas en pantalla
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = `Q ${val.toLocaleString('es-GT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    };
+
+    setVal('pres-ejecutado-m4', ejecutadoTotal);
+    setVal('pres-redes-m4', redesSociales);
+    setVal('pres-plataformas-m4', plataformasExt);
+
+    // Renderiza gráficas y la proyección 2027 basada en lo acumulado
+    renderGraficosPresupuesto(ejecutadoTotal, redesSociales, plataformasExt);
+}
     document.getElementById('pres-acquaroni').innerText = `Q ${acquaroni.toFixed(2)}`;
  document.getElementById('pres-aztec').innerText = `Q ${aztec.toFixed(2)}`;
     document.getElementById('pres-mercadeo').innerText = `Q ${mercadeo.toFixed(2)}`;
