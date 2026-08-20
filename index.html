@@ -1509,7 +1509,7 @@ function renderizarModuloPresupuesto() {
     document.getElementById('pres-ejecutado').innerText = `Q ${ejecutadoTotal.toFixed(2)}`;
     document.getElementById('pres-redes-soc').innerText = `Q ${redesSociales.toFixed(2)}`;
     document.getElementById('pres-acquaroni').innerText = `Q ${acquaroni.toFixed(2)}`;
-    document.getElementById('pres-aztec').innerText = `Q ${aztec.toFixed(2)}`;
+ document.getElementById('pres-aztec').innerText = `Q ${aztec.toFixed(2)}`;
     document.getElementById('pres-mercadeo').innerText = `Q ${mercadeo.toFixed(2)}`;
     document.getElementById('pres-plataformas-m4').innerText = `Q ${plataformasExt.toFixed(2)}`;
 
@@ -1517,10 +1517,9 @@ function renderizarModuloPresupuesto() {
     renderGraficosPresupuesto(ejecutadoTotal, redesSociales, plataformasExt);
 }
 
-
 function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
     const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    
+
     // Gráfico de Porcentajes de Inversión
     const total = ejecutado || 1;
     const pctRedes = ((redes / total) * 100).toFixed(1);
@@ -1530,23 +1529,15 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
         { data: [redes, plataformas], backgroundColor: ['#8b5cf6', '#6366f1'] }
     ]);
 
-    // Proyección de Presupuesto para los 12 Meses de 2027
-    const promedioPresupuestoMensual = (ejecutado / 8) || 5000;
-    let proyeccionPresupuesto2027 = new Array(12).fill(0);
-    for (let i = 0; i < 12; i++) {
-        proyeccionPresupuesto2027[i] = Math.round(promedioPresupuestoMensual * 1.10);
-    }
+    // Proyección de Presupuesto para los 12 Meses de 2027 (Calculando el total del año)
+    const proyeccionAnual2027 = ejecutado > 0 ? (ejecutado * 1.10) : 66000;
+    const promedioPresupuestoMensual = Math.round(proyeccionAnual2027 / 12);
+    const proyeccionPresupuesto2027 = new Array(12).fill(promedioPresupuestoMensual);
 
     crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
         { label: 'Proyección Presupuesto 2027 (Q)', data: proyeccionPresupuesto2027, backgroundColor: '#3b82f6' }
     ]);
 }
-
-
-function escapeHtml(valor) {
-    return (valor || '').toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-}
-
 
 /* =============================================================
    INICIALIZACIÓN
