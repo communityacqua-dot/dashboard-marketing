@@ -385,7 +385,7 @@
 
         <div class="bg-white p-5 rounded-xl border shadow-sm">
             <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
-                <span>Inversión Mensual vs Proyección</span>
+                <span id="titulo-chart-inversion">Inversión Mensual vs Proyección</span>
                 <span class="text-xs font-normal text-gray-400" id="tag-proyeccion-inv">Proyección Septiembre</span>
             </h4>
             <div class="h-64">
@@ -440,7 +440,7 @@
 
                 <tr>
 
-                    <th class="p-3">Vista Previa</th>
+                    <th class="p-3">Vista Previa / Imagen de Ref.</th>
                     <th class="p-3">Año / Mes</th>
                     <th class="p-3">Publicación</th>
                     <th class="p-3">Red Social</th>
@@ -571,7 +571,7 @@
 
         <div class="bg-white p-5 rounded-xl border shadow-sm">
             <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
-                <span>Proyección de Presupuesto Año Próximo</span>
+                <span id="titulo-presupuesto-proyeccion">Proyección de Presupuesto Año Próximo</span>
                 <span class="text-xs font-normal text-blue-500">Calculado en Septiembre</span>
             </h4>
             <div class="h-64">
@@ -670,7 +670,12 @@
 const SCRIPT_URL =
     'https://script.google.com/macros/s/AKfycbxIZexYXWgwBTI4bRWF-z-NReaah6uvbOagcFjsw81nDW7x7Wiqj27pZLjYTljW3mto/exec';
 
+// URL exclusiva para Presupuesto, Plataformas Externas, Redes Sociales (Ficha Presupuesto) y Ejecutado Total
+const SCRIPT_URL_ESTADO_CUENTA =
+    'https://script.google.com/macros/s/AKfycbxyjacHyhplef1SGWNvLOwQNCwRUzT-wJys7eMLSTm0-L2bkJ-HEzGG6FHd7IbPw_Wyxg/exec';
+
 let rawData = {};
+let estadoCuentaData = {};
 let redActiva = '';
 
 // Almacenamiento de instancias de gráficos
@@ -827,9 +832,9 @@ function renderizarTabsRedes() {
    OBTENER HOJA
 ============================================================= */
 
-function obtenerHojaInsensible(busqueda) {
+function obtenerHojaInsensible(busqueda, origen = rawData) {
 
-    if (!rawData)
+    if (!origen)
         return [];
 
     const keyLimpia =
@@ -839,7 +844,7 @@ function obtenerHojaInsensible(busqueda) {
 
     const claveEncontrada =
         Object
-            .keys(rawData)
+            .keys(origen)
             .find(k =>
                 k
                     .toLowerCase()
@@ -848,7 +853,7 @@ function obtenerHojaInsensible(busqueda) {
             );
 
     return claveEncontrada
-        ? rawData[claveEncontrada]
+        ? origen[claveEncontrada]
         : [];
 
 }
@@ -868,11 +873,13 @@ async function cargarDatosSheets() {
 
     try {
 
-        const res =
-            await fetch(SCRIPT_URL);
+        const [resGeneral, resEstadoCuenta] = await Promise.all([
+            fetch(SCRIPT_URL),
+            fetch(SCRIPT_URL_ESTADO_CUENTA)
+        ]);
 
-        rawData =
-            await res.json();
+        rawData = await resGeneral.json();
+        estadoCuentaData = await resEstadoCuenta.json();
 
         actualizarTodo();
 
@@ -1033,13 +1040,11 @@ function renderizarModuloRedes() {
         else if (redActiva === 'YouTube') nombreHoja = 'Youtube Ultra Parts';
     }
 
-    const filas = obtenerHojaInsensible(nombreHoja);
+    const filas = obtenerHojaInsensible(nombreHoja, rawData);
     const filasFiltradas = filtrarFilas(filas, 0, 1);
 
     const kpisEstandar = document.getElementById('kpis-estandar');
     const kpisLive = document.getElementById('kpis-tiktok-live');
-    const cardInversion = document.getElementById('card-kpi-inversion');
-    const cardCtr = document.getElementById('card-kpi-ctr');
 
     if (redActiva === 'TikTok Live') {
 
@@ -1077,20 +1082,20 @@ function renderizarModuloRedes() {
 
         filasFiltradas.forEach(f => {
             if (redActiva === 'TikTok') {
-                totalInv += limpiarValorNum(f[2]); // Ficha Inversión TikTok
+                totalInv += limpiarValorNum(f[2]); 
                 totalAlc += limpiarValorNum(f[3]);
                 totalImp += limpiarValorNum(f[4]);
                 totalInt += limpiarValorNum(f[5]);
-                ultimoSeguidores = limpiarValorNum(f[6]); // Dato exacto reportado
+                ultimoSeguidores = limpiarValorNum(f[6]); 
             } else if (redActiva === 'Instagram' || redActiva === 'Facebook') {
                 totalInv += limpiarValorNum(f[2]);
                 sumCtr += limpiarValorNum(f[3]);
                 if (limpiarValorNum(f[3]) > 0) countCtr++;
-                totalAlc += limpiarValorNum(f[4]);
-                totalAlcOrg += limpiarValorNum(f[5]); // Ficha Alcance Orgánico
+                totalAlc += limpiarValorNum(f[4]); // Alcance Total para Instagram y Facebook corregido
+                totalAlcOrg += limpiarValorNum(f[5]); // Dato exacto reportado en Excel para Alcance Orgánico
                 totalImp += limpiarValorNum(f[6]);
                 totalInt += limpiarValorNum(f[7]);
-                ultimoSeguidores = limpiarValorNum(f[8]); // Exacto reportado en Excel
+                ultimoSeguidores = limpiarValorNum(f[8]); 
             } else { // YouTube u otros
                 totalAlc += limpiarValorNum(f[2]);
                 totalImp += limpiarValorNum(f[3]);
@@ -1130,27 +1135,37 @@ function renderGraficosRedes(filas) {
         if (idxMes !== -1) {
             dataInv[idxMes] = limpiarValorNum(f[2]);
             dataAlc[idxMes] = limpiarValorNum(f[4]);
-            dataAlcOrg[idxMes] = limpiarValorNum(f[5]);
+            dataAlcOrg[idxMes] = limpiarValorNum(f[5]); // Dato exacto reportado
             dataSeg[idxMes] = limpiarValorNum(f[8] || f[6] || f[5]);
             dataIntVideo[idxMes] = limpiarValorNum(f[7] || f[5]);
         }
     });
 
-    // 1. Gráfico de Inversión + Proyección Septiembre
-    const fechaActual = new Date();
-    const esSeptiembreSemana1 = (fechaActual.getMonth() === 8 && fechaActual.getDate() <= 7);
+    // Proyección Dinámica para todo el AÑO SIGUIENTE
+    const anioActual = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
+    const anioSiguiente = anioActual + 1;
     
-    let dataProyeccion = new Array(12).fill(null);
-    if (esSeptiembreSemana1 || true) { // Muestra activada
-        const promedio = dataInv.slice(0, 8).reduce((a, b) => a + b, 0) / 8 || 100;
-        for (let i = 8; i < 12; i++) {
-            dataProyeccion[i] = promedio * 1.15; // Estimación +15%
-        }
+    // Título/Encabezado dinámico adaptado al año proyectado
+    const elemTitulo = document.getElementById('titulo-chart-inversion');
+    if (elemTitulo) {
+        elemTitulo.innerText = `Proyección Redes Sociales ${anioSiguiente}`;
+    }
+
+    const tagProyeccion = document.getElementById('tag-proyeccion-inv');
+    if (tagProyeccion) {
+        tagProyeccion.innerText = `Proyección ${anioSiguiente} (Ene-Dic)`;
+    }
+
+    // Lógica dinámica para la proyección completa de Enero a Diciembre del año siguiente
+    const promedio = dataInv.slice(0, 8).reduce((a, b) => a + b, 0) / 8 || 100;
+    let dataProyeccion = new Array(12).fill(0);
+    for (let i = 0; i < 12; i++) {
+        dataProyeccion[i] = (dataInv[i] > 0 ? dataInv[i] : promedio) * 1.15; // Proyección +15%
     }
 
     crearOActualizarChart('chart-inversion', 'line', mesesLabels, [
-        { label: 'Inversión Real (Q)', data: dataInv, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
-        { label: 'Proyección Próximo Año (Q)', data: dataProyeccion, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
+        { label: `Inversión ${anioActual} (Q)`, data: dataInv, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
+        { label: `Proyección Redes Sociales ${anioSiguiente} (Q)`, data: dataProyeccion, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
     ]);
 
     // 2. Gráfico de Alcance Total vs Orgánico
@@ -1171,7 +1186,7 @@ function renderGraficosRedes(filas) {
         { label: 'Crecimiento %', data: porcentajeCrecimiento, backgroundColor: '#14b8a6' }
     ]);
 
-    // 4. Gráfico Adicional (Interacciones / YouTube)
+    // 4. Gráfico Adicional
     if (redActiva === 'TikTok' || redActiva === 'YouTube') {
         document.getElementById('titulo-chart-extra').innerText = 'Interacciones por Video / Contenido';
         crearOActualizarChart('chart-extra', 'bar', mesesLabels, [
@@ -1225,14 +1240,14 @@ function crearOActualizarChart(canvasId, type, labels, datasets) {
 
 
 /* =============================================================
-   POST IMPULSADOS CON PERSISTENCIA Y MODAL
+   POST IMPULSADOS CON PERSISTENCIA Y SUBIDA DE IMAGEN DE REFERENCIA
 ============================================================= */
 
 function renderizarModuloPosts() {
 
     const cuenta = document.getElementById('filtro-cuenta').value;
     const nombreHoja = cuenta === 'acquaroni' ? 'Post impulsados Repuestos Acquaroni' : 'Post impulsados AZtec Oils';
-    const filas = obtenerHojaInsensible(nombreHoja);
+    const filas = obtenerHojaInsensible(nombreHoja, rawData);
     const filasFiltradas = filtrarFilas(filas, 0, 1);
 
     const tbody = document.getElementById('tabla-posts-body');
@@ -1245,13 +1260,15 @@ function renderizarModuloPosts() {
         tbody.innerHTML += `
             <tr>
                 <td class="p-3">
-                    <label class="cursor-pointer text-blue-500 hover:text-blue-700 font-semibold text-xs flex items-center gap-1">
-                        <i class="fa-solid fa-image"></i> Cargar Imagen
-                        <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postId}', 'img-post-${idx}')">
-                    </label>
-                    <img id="img-post-${idx}" src="${savedImage || ''}" 
-                        class="w-12 h-12 object-cover rounded shadow-sm ${savedImage ? '' : 'hidden'} mt-1 cursor-pointer"
-                        onclick="abrirVisorImagen(this.src)">
+                    <div class="flex flex-col gap-1 items-start">
+                        <label class="cursor-pointer text-blue-500 hover:text-blue-700 font-semibold text-xs flex items-center gap-1 bg-gray-50 border px-2 py-1 rounded shadow-sm">
+                            <i class="fa-solid fa-upload"></i> Subir Imagen
+                            <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postId}', 'img-post-${idx}')">
+                        </label>
+                        <img id="img-post-${idx}" src="${savedImage || ''}" 
+                            class="w-12 h-12 object-cover rounded shadow-sm ${savedImage ? '' : 'hidden'} cursor-pointer border"
+                            onclick="abrirVisorImagen(this.src)" title="Hacer clic para ampliar">
+                    </div>
                 </td>
                 <td class="p-3">${f[0]} / ${f[1] || '-'}</td>
                 <td class="p-3 font-medium">${escapeHtml(f[2] || '-')}</td>
@@ -1334,7 +1351,7 @@ function prepararFilasCampanas(filas) {
 function renderizarModuloCampanas() {
     const cuenta = document.getElementById('filtro-cuenta').value;
     const nombreHoja = cuenta === 'acquaroni' ? 'Campañas Repuestos Acquaroni' : 'Campañas AZtec Oils';
-    const filas = obtenerHojaInsensible(nombreHoja);
+    const filas = obtenerHojaInsensible(nombreHoja, rawData);
     const filasCampanas = prepararFilasCampanas(filas);
     const container = document.getElementById('contenedor-campanas');
     container.innerHTML = '';
@@ -1401,7 +1418,7 @@ function guardarPortadaCampana(e, storageKey, imgId) {
 function abrirDesgloseCampana(nombreCampana) {
     const cuenta = document.getElementById('filtro-cuenta').value;
     const nombreHoja = cuenta === 'acquaroni' ? 'Campañas Repuestos Acquaroni' : 'Campañas AZtec Oils';
-    const filas = obtenerHojaInsensible(nombreHoja);
+    const filas = obtenerHojaInsensible(nombreHoja, rawData);
     const filasCampanas = prepararFilasCampanas(filas);
 
     const postsCampana = filasCampanas.filter(f => normalizarCampana(f[2]) === normalizarCampana(nombreCampana));
@@ -1412,14 +1429,28 @@ function abrirDesgloseCampana(nombreCampana) {
     document.getElementById('modal-campana-subtitulo').innerText = `${postsCampana.length} Posts registrados`;
 
     postsCampana.forEach((f, idx) => {
+        const postImgKey = `camp-post-img-${cuenta}-${normalizarCampana(nombreCampana)}-${idx}`;
+        const savedPostImg = localStorage.getItem(postImgKey);
+
         container.innerHTML += `
-            <div class="border rounded-xl p-4 bg-gray-50">
-                <h4 class="font-bold text-gray-800">${escapeHtml(f[3] || 'Post')}</h4>
-                <div class="grid grid-cols-4 gap-2 mt-3 text-center">
-                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Reproducciones</p><p class="font-bold">${limpiarValorNum(f[4]).toLocaleString()}</p></div>
-                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Alcance</p><p class="font-bold">${limpiarValorNum(f[5]).toLocaleString()}</p></div>
-                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Conversaciones</p><p class="font-bold">${limpiarValorNum(f[6]).toLocaleString()}</p></div>
-                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Presupuesto</p><p class="font-bold text-blue-600">Q ${limpiarValorNum(f[7]).toFixed(2)}</p></div>
+            <div class="border rounded-xl p-4 bg-gray-50 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h4 class="font-bold text-gray-800">${escapeHtml(f[3] || 'Post')}</h4>
+                    <label class="cursor-pointer text-blue-600 hover:text-blue-800 font-semibold text-xs bg-white px-3 py-1.5 border rounded-lg shadow-sm">
+                        <i class="fa-solid fa-upload mr-1"></i> Imagen de Referencia
+                        <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postImgKey}', 'camp-post-img-el-${idx}')">
+                    </label>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <img id="camp-post-img-el-${idx}" src="${savedPostImg || ''}" 
+                        class="w-16 h-16 object-cover rounded shadow-sm ${savedPostImg ? '' : 'hidden'} cursor-pointer border"
+                        onclick="abrirVisorImagen(this.src)" title="Hacer clic para ampliar">
+                    <div class="grid grid-cols-4 gap-2 flex-1 text-center">
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Reproducciones</p><p class="font-bold">${limpiarValorNum(f[4]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Alcance</p><p class="font-bold">${limpiarValorNum(f[5]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Conversaciones</p><p class="font-bold">${limpiarValorNum(f[6]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Presupuesto</p><p class="font-bold text-blue-600">Q ${limpiarValorNum(f[7]).toFixed(2)}</p></div>
+                    </div>
                 </div>
             </div>
         `;
@@ -1451,8 +1482,8 @@ function solicitarAsignadoTotal() {
 
 function renderizarModuloPresupuesto() {
 
-    // 1. Datos leídos desde Estados de Cuenta (Excel Externo vinculado)
-    const filasEstadosCuenta = obtenerHojaInsensible('Estado de Cuenta') || obtenerHojaInsensible('Estados de Cuenta');
+    // 1. Datos extraídos ÚNICAMENTE desde la nueva Web App / API externa (SCRIPT_URL_ESTADO_CUENTA)
+    const filasEstadosCuenta = obtenerHojaInsensible('Estado de Cuenta', estadoCuentaData) || obtenerHojaInsensible('Estados de Cuenta', estadoCuentaData);
     const filasEcuentaFiltradas = filtrarFilas(filasEstadosCuenta, 0, 1);
 
     let ejecutadoTotal = 0;
@@ -1468,8 +1499,8 @@ function renderizarModuloPresupuesto() {
         }
     });
 
-    // 2. Datos leídos del Excel Principal (Presupuesto)
-    const filasPres = obtenerHojaInsensible('Presupuesto');
+    // 2. Datos de cuentas específicos leídos desde Excel principal
+    const filasPres = obtenerHojaInsensible('Presupuesto', rawData);
     const filasFiltradasPres = filtrarFilas(filasPres, 0, 1);
 
     let acquaroni = 0, aztec = 0, mercadeo = 0;
@@ -1477,7 +1508,7 @@ function renderizarModuloPresupuesto() {
     filasFiltradasPres.forEach(f => {
         acquaroni += limpiarValorNum(f[4]);
         aztec += limpiarValorNum(f[5]);
-        mercadeo += limpiarValorNum(f[6]); // Nueva ficha de Mercadeo
+        mercadeo += limpiarValorNum(f[6]);
     });
 
     document.getElementById('pres-asignado').innerText = `Q ${limpiarValorNum(asignadoTotalManual).toFixed(2)}`;
@@ -1488,7 +1519,7 @@ function renderizarModuloPresupuesto() {
     document.getElementById('pres-mercadeo').innerText = `Q ${mercadeo.toFixed(2)}`;
     document.getElementById('pres-plataformas-m4').innerText = `Q ${plataformasExt.toFixed(2)}`;
 
-    // Renderizado de Gráficos de Presupuesto
+    // Renderizado de Gráficos de Presupuesto con proyección dinámica para el AÑO SIGUIENTE
     renderGraficosPresupuesto(ejecutadoTotal, redesSociales, plataformasExt);
 }
 
@@ -1505,10 +1536,18 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
         { data: [redes, plataformas], backgroundColor: ['#8b5cf6', '#6366f1'] }
     ]);
 
-    // Proyección Próximo Año (Calculada en Septiembre)
-    let proyeccionPresupuesto = new Array(12).fill(ejecutado * 1.10); // Estimación del +10%
+    // Proyección de Presupuesto para TODO EL AÑO SIGUIENTE dinámicamente
+    const anioActual = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
+    const anioSiguiente = anioActual + 1;
+
+    const elemTituloPres = document.getElementById('titulo-presupuesto-proyeccion');
+    if (elemTituloPres) {
+        elemTituloPres.innerText = `Proyección completa para todo el año ${anioSiguiente}`;
+    }
+
+    let proyeccionPresupuesto = new Array(12).fill((ejecutado / 12 || 1000) * 1.10); // Estimación +10% mensual
     crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
-        { label: 'Proyección Estimada Próximo Año (Q)', data: proyeccionPresupuesto, backgroundColor: '#3b82f6' }
+        { label: `Proyección Presupuestaria ${anioSiguiente} (Q)`, data: proyeccionPresupuesto, backgroundColor: '#3b82f6' }
     ]);
 }
 
