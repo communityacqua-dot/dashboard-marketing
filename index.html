@@ -94,7 +94,7 @@
     <div class="text-xs text-gray-500 border-t border-slate-800 pt-4 flex justify-between items-center">
 
         <span>
-            Dashboard R.A v3.6
+            Dashboard R.A v3.5
         </span>
 
         <span
@@ -385,8 +385,8 @@
 
         <div class="bg-white p-5 rounded-xl border shadow-sm">
             <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
-                <span>Inversión Mensual vs Proyección 2027</span>
-                <span class="text-xs font-normal text-blue-500" id="tag-proyeccion-inv">Proyección Redes Sociales 2027 (Ene - Dic)</span>
+                <span>Inversión Mensual vs Proyección</span>
+                <span class="text-xs font-normal text-gray-400" id="tag-proyeccion-inv">Proyección Septiembre</span>
             </h4>
             <div class="h-64">
                 <canvas id="chart-inversion"></canvas>
@@ -560,7 +560,7 @@
 
     </div>
 
-    <!-- GRÁFICO DE PRESUPUESTO CON PROYECCIÓN COMPLETA AÑO PRÓXIMO -->
+    <!-- GRÁFICO DE PRESUPUESTO CON PROYECCIÓN Y PORCENTAJES -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <div class="bg-white p-5 rounded-xl border shadow-sm">
             <h4 class="text-sm font-bold text-gray-700 mb-4">Ejecución Mensual y Porcentajes</h4>
@@ -571,8 +571,8 @@
 
         <div class="bg-white p-5 rounded-xl border shadow-sm">
             <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
-                <span>Proyección Presupuesto 2027</span>
-                <span class="text-xs font-normal text-blue-500">Calculado la 1ª semana de Septiembre</span>
+                <span>Proyección de Presupuesto Año Próximo</span>
+                <span class="text-xs font-normal text-blue-500">Calculado en Septiembre</span>
             </h4>
             <div class="h-64">
                 <canvas id="chart-presupuesto-proyeccion"></canvas>
@@ -1038,6 +1038,8 @@ function renderizarModuloRedes() {
 
     const kpisEstandar = document.getElementById('kpis-estandar');
     const kpisLive = document.getElementById('kpis-tiktok-live');
+    const cardInversion = document.getElementById('card-kpi-inversion');
+    const cardCtr = document.getElementById('card-kpi-ctr');
 
     if (redActiva === 'TikTok Live') {
 
@@ -1075,24 +1077,21 @@ function renderizarModuloRedes() {
 
         filasFiltradas.forEach(f => {
             if (redActiva === 'TikTok') {
-                totalInv += limpiarValorNum(f[2]);
+                totalInv += limpiarValorNum(f[2]); // Ficha Inversión TikTok
                 totalAlc += limpiarValorNum(f[3]);
                 totalImp += limpiarValorNum(f[4]);
                 totalInt += limpiarValorNum(f[5]);
-                ultimoSeguidores = limpiarValorNum(f[6]);
+                ultimoSeguidores = limpiarValorNum(f[6]); // Dato exacto reportado
             } else if (redActiva === 'Instagram' || redActiva === 'Facebook') {
                 totalInv += limpiarValorNum(f[2]);
                 sumCtr += limpiarValorNum(f[3]);
                 if (limpiarValorNum(f[3]) > 0) countCtr++;
-                
-                // Mapeo corregido de Alcance Total y Orgánico según Excel
-                totalAlc += limpiarValorNum(f[6]);        // Columna G: Alcance Total
-                totalAlcOrg += limpiarValorNum(f[10]);     // Columna K: Alcance Orgánico
-                
-                totalImp += limpiarValorNum(f[8]);         // Columna I: Visualizaciones/Impresiones
-                totalInt += limpiarValorNum(f[9]);         // Columna J: Interacciones
-                ultimoSeguidores = limpiarValorNum(f[7]);  // Columna H: Seguidores exactos
-            } else { // YouTube
+                totalAlc += limpiarValorNum(f[4]);
+                totalAlcOrg += limpiarValorNum(f[5]); // Ficha Alcance Orgánico
+                totalImp += limpiarValorNum(f[6]);
+                totalInt += limpiarValorNum(f[7]);
+                ultimoSeguidores = limpiarValorNum(f[8]); // Exacto reportado en Excel
+            } else { // YouTube u otros
                 totalAlc += limpiarValorNum(f[2]);
                 totalImp += limpiarValorNum(f[3]);
                 totalInt += limpiarValorNum(f[4]);
@@ -1130,37 +1129,28 @@ function renderGraficosRedes(filas) {
         const idxMes = obtenerIndiceMes(f[1]);
         if (idxMes !== -1) {
             dataInv[idxMes] = limpiarValorNum(f[2]);
-            if (redActiva === 'Instagram' || redActiva === 'Facebook') {
-                dataAlc[idxMes] = limpiarValorNum(f[6]);
-                dataAlcOrg[idxMes] = limpiarValorNum(f[10]);
-                dataSeg[idxMes] = limpiarValorNum(f[7]);
-                dataIntVideo[idxMes] = limpiarValorNum(f[9]);
-            } else {
-                dataAlc[idxMes] = limpiarValorNum(f[4]);
-                dataAlcOrg[idxMes] = limpiarValorNum(f[5]);
-                dataSeg[idxMes] = limpiarValorNum(f[8] || f[6] || f[5]);
-                dataIntVideo[idxMes] = limpiarValorNum(f[7] || f[5]);
-            }
+            dataAlc[idxMes] = limpiarValorNum(f[4]);
+            dataAlcOrg[idxMes] = limpiarValorNum(f[5]);
+            dataSeg[idxMes] = limpiarValorNum(f[8] || f[6] || f[5]);
+            dataIntVideo[idxMes] = limpiarValorNum(f[7] || f[5]);
         }
     });
 
-    // 1. Generar la Proyección Completa de los 12 meses del próximo año (2027)
+    // 1. Gráfico de Inversión + Proyección Septiembre
     const fechaActual = new Date();
-    const esPrimeraSemanaSeptiembre = (fechaActual.getMonth() === 8 && fechaActual.getDate() <= 7);
+    const esSeptiembreSemana1 = (fechaActual.getMonth() === 8 && fechaActual.getDate() <= 7);
     
-    let dataProyeccion2027 = new Array(12).fill(0);
-    if (esPrimeraSemanaSeptiembre || true) { // Activado para muestra continua
-        const promedioMensual = dataInv.slice(0, 8).reduce((a, b) => a + b, 0) / 8 || 150;
-        for (let i = 0; i < 12; i++) {
-            // Factor estacional leve por mes para proyección realista de todo el año 2027
-            const factorEstacional = 1 + (Math.sin(i) * 0.1); 
-            dataProyeccion2027[i] = Math.round(promedioMensual * 1.15 * factorEstacional);
+    let dataProyeccion = new Array(12).fill(null);
+    if (esSeptiembreSemana1 || true) { // Muestra activada
+        const promedio = dataInv.slice(0, 8).reduce((a, b) => a + b, 0) / 8 || 100;
+        for (let i = 8; i < 12; i++) {
+            dataProyeccion[i] = promedio * 1.15; // Estimación +15%
         }
     }
 
     crearOActualizarChart('chart-inversion', 'line', mesesLabels, [
-        { label: 'Inversión Real 2026 (Q)', data: dataInv, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
-        { label: 'Proyección Redes Sociales 2027 (Q)', data: dataProyeccion2027, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
+        { label: 'Inversión Real (Q)', data: dataInv, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
+        { label: 'Proyección Próximo Año (Q)', data: dataProyeccion, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
     ]);
 
     // 2. Gráfico de Alcance Total vs Orgánico
@@ -1181,7 +1171,7 @@ function renderGraficosRedes(filas) {
         { label: 'Crecimiento %', data: porcentajeCrecimiento, backgroundColor: '#14b8a6' }
     ]);
 
-    // 4. Gráfico Adicional
+    // 4. Gráfico Adicional (Interacciones / YouTube)
     if (redActiva === 'TikTok' || redActiva === 'YouTube') {
         document.getElementById('titulo-chart-extra').innerText = 'Interacciones por Video / Contenido';
         crearOActualizarChart('chart-extra', 'bar', mesesLabels, [
@@ -1304,7 +1294,7 @@ function cerrarVisorImagen() {
 
 
 /* =============================================================
-   CAMPAÑAS CON IMAGEN POR POST
+   CAMPAÑAS
 ============================================================= */
 
 function normalizarCampana(valor) {
@@ -1422,29 +1412,14 @@ function abrirDesgloseCampana(nombreCampana) {
     document.getElementById('modal-campana-subtitulo').innerText = `${postsCampana.length} Posts registrados`;
 
     postsCampana.forEach((f, idx) => {
-        const postCampanaKey = `post-campana-img-${cuenta}-${normalizarCampana(nombreCampana)}-${idx}`;
-        const savedPostImg = localStorage.getItem(postCampanaKey);
-
         container.innerHTML += `
-            <div class="border rounded-xl p-4 bg-gray-50 flex flex-col md:flex-row items-center gap-4">
-                <div class="w-full md:w-32 flex flex-col items-center">
-                    <img id="img-post-camp-${idx}" src="${savedPostImg || ''}" 
-                        class="w-24 h-24 object-cover rounded-lg border bg-white shadow-sm ${savedPostImg ? '' : 'hidden'} cursor-pointer"
-                        onclick="abrirVisorImagen(this.src)">
-                    <label class="mt-2 cursor-pointer bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 border border-blue-200">
-                        <i class="fa-solid fa-upload"></i> Imagen Post
-                        <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postCampanaKey}', 'img-post-camp-${idx}')">
-                    </label>
-                </div>
-
-                <div class="flex-1 w-full">
-                    <h4 class="font-bold text-gray-800 text-base">${escapeHtml(f[3] || 'Post')}</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-center">
-                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500 font-semibold uppercase">Reproducciones</p><p class="font-bold text-gray-700 mt-1">${limpiarValorNum(f[4]).toLocaleString()}</p></div>
-                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500 font-semibold uppercase">Alcance</p><p class="font-bold text-gray-700 mt-1">${limpiarValorNum(f[5]).toLocaleString()}</p></div>
-                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500 font-semibold uppercase">Conversaciones</p><p class="font-bold text-gray-700 mt-1">${limpiarValorNum(f[6]).toLocaleString()}</p></div>
-                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500 font-semibold uppercase">Presupuesto</p><p class="font-bold text-blue-600 mt-1">Q ${limpiarValorNum(f[7]).toFixed(2)}</p></div>
-                    </div>
+            <div class="border rounded-xl p-4 bg-gray-50">
+                <h4 class="font-bold text-gray-800">${escapeHtml(f[3] || 'Post')}</h4>
+                <div class="grid grid-cols-4 gap-2 mt-3 text-center">
+                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Reproducciones</p><p class="font-bold">${limpiarValorNum(f[4]).toLocaleString()}</p></div>
+                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Alcance</p><p class="font-bold">${limpiarValorNum(f[5]).toLocaleString()}</p></div>
+                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Conversaciones</p><p class="font-bold">${limpiarValorNum(f[6]).toLocaleString()}</p></div>
+                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Presupuesto</p><p class="font-bold text-blue-600">Q ${limpiarValorNum(f[7]).toFixed(2)}</p></div>
                 </div>
             </div>
         `;
@@ -1476,81 +1451,52 @@ function solicitarAsignadoTotal() {
 
 function renderizarModuloPresupuesto() {
 
-    // 1. Datos leídos desde Estados de Cuenta
- function procesarDatosEstadoCuenta(todasLasPestanas) {
+    // 1. Datos leídos desde Estados de Cuenta (Excel Externo vinculado)
+    const filasEstadosCuenta = obtenerHojaInsensible('Estado de Cuenta') || obtenerHojaInsensible('Estados de Cuenta');
+    const filasEcuentaFiltradas = filtrarFilas(filasEstadosCuenta, 0, 1);
+
     let ejecutadoTotal = 0;
     let redesSociales = 0;
     let plataformasExt = 0;
-    let aztec = 0;
-    let mercadeo = 0;
 
-    const parseMonto = (val) => {
-        if (!val) return 0;
-        if (typeof val === 'number') return val;
-        const cleanStr = val.toString().replace(/[^0-9.-]+/g, "");
-        return parseFloat(cleanStr) || 0;
-    };
-
-    try {
-        // Opción A: Procesa objeto con múltiples pestañas (Enero 2026, Febrero 2026, etc.)
-        if (todasLasPestanas && typeof todasLasPestanas === 'object' && !Array.isArray(todasLasPestanas)) {
-            Object.keys(todasLasPestanas).forEach(nombrePestana => {
-                const rows = todasLasPestanas[nombrePestana];
-                if (Array.isArray(rows)) {
-                    rows.forEach(row => {
-                        const filaTexto = JSON.stringify(row || []).toLowerCase();
-                        if (filaTexto.includes('total pauta') || filaTexto.includes('total debitado') || filaTexto.includes('redes')) {
-                            const monto = parseMonto(row[5]) || parseMonto(row[4]) || parseMonto(row[2]) || parseMonto(row[1]);
-                            redesSociales += monto;
-                        }
-                    });
-                }
-            });
-        } 
-        // Opción B: Procesa una lista de filas plana
-        else if (Array.isArray(todasLasPestanas) && todasLasPestanas.length > 1) {
-            todasLasPestanas.slice(1).forEach(row => {
-                redesSociales += parseMonto(row[2] || row[1]);
-                plataformasExt += parseMonto(row[3]);
-                aztec += parseMonto(row[4]);
-                mercadeo += parseMonto(row[5]);
-            });
+    filasEcuentaFiltradas.forEach(f => {
+        ejecutadoTotal += limpiarValorNum(f[2]);
+        if ((f[3] || '').toString().toLowerCase().includes('redes')) {
+            redesSociales += limpiarValorNum(f[2]);
+        } else {
+            plataformasExt += limpiarValorNum(f[2]);
         }
-    } catch (e) {
-        console.error("Error al procesar datos del Estado de Cuenta:", e);
-    }
+    });
 
-    ejecutadoTotal = redesSociales + plataformasExt + aztec + mercadeo;
+    // 2. Datos leídos del Excel Principal (Presupuesto)
+    const filasPres = obtenerHojaInsensible('Presupuesto');
+    const filasFiltradasPres = filtrarFilas(filasPres, 0, 1);
 
-    // DATOS DE RESPALDO/PRUEBA: Si no se logró leer la hoja, genera valores de prueba para validar la vista
-    if (ejecutadoTotal === 0) {
-        redesSociales = 18500;
-        plataformasExt = 6200;
-        aztec = 3100;
-        mercadeo = 4200;
-        ejecutadoTotal = redesSociales + plataformasExt + aztec + mercadeo;
-    }
+    let acquaroni = 0, aztec = 0, mercadeo = 0;
 
-    // Actualiza tarjetas DOM
-    const setVal = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.innerText = `Q ${val.toLocaleString('es-GT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    };
+    filasFiltradasPres.forEach(f => {
+        acquaroni += limpiarValorNum(f[4]);
+        aztec += limpiarValorNum(f[5]);
+        mercadeo += limpiarValorNum(f[6]); // Nueva ficha de Mercadeo
+    });
 
-    setVal('pres-ejecutado-m4', ejecutadoTotal);
-    setVal('pres-redes-m4', redesSociales);
-    setVal('pres-plataformas-m4', plataformasExt);
-    setVal('pres-aztec', aztec);
-    setVal('pres-mercadeo', mercadeo);
+    document.getElementById('pres-asignado').innerText = `Q ${limpiarValorNum(asignadoTotalManual).toFixed(2)}`;
+    document.getElementById('pres-ejecutado').innerText = `Q ${ejecutadoTotal.toFixed(2)}`;
+    document.getElementById('pres-redes-soc').innerText = `Q ${redesSociales.toFixed(2)}`;
+    document.getElementById('pres-acquaroni').innerText = `Q ${acquaroni.toFixed(2)}`;
+    document.getElementById('pres-aztec').innerText = `Q ${aztec.toFixed(2)}`;
+    document.getElementById('pres-mercadeo').innerText = `Q ${mercadeo.toFixed(2)}`;
+    document.getElementById('pres-plataformas-m4').innerText = `Q ${plataformasExt.toFixed(2)}`;
 
-    // Renderizado de gráficos
+    // Renderizado de Gráficos de Presupuesto
     renderGraficosPresupuesto(ejecutadoTotal, redesSociales, plataformasExt);
 }
 
+
 function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
     const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-
-    // Donut Chart: Distribución
+    
+    // Gráfico de Porcentajes de Inversión
     const total = ejecutado || 1;
     const pctRedes = ((redes / total) * 100).toFixed(1);
     const pctPlat = ((plataformas / total) * 100).toFixed(1);
@@ -1559,25 +1505,18 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
         { data: [redes, plataformas], backgroundColor: ['#8b5cf6', '#6366f1'] }
     ]);
 
-    // Bar Chart: Proyección 2027
-    const promedioMensual = Math.round(ejecutado / 12) || 5500;
-    const proyeccionPresupuesto2027 = new Array(12).fill(promedioMensual);
-
+    // Proyección Próximo Año (Calculada en Septiembre)
+    let proyeccionPresupuesto = new Array(12).fill(ejecutado * 1.10); // Estimación del +10%
     crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
-        { label: 'Proyección Presupuesto 2027 (Q)', data: proyeccionPresupuesto2027, backgroundColor: '#3b82f6' }
+        { label: 'Proyección Estimada Próximo Año (Q)', data: proyeccionPresupuesto, backgroundColor: '#3b82f6' }
     ]);
 }
-    ]);
 
-    // Proyección de Presupuesto para los 12 Meses de 2027 (Calculando el total del año)
-    const proyeccionAnual2027 = ejecutado > 0 ? (ejecutado * 1.10) : 66000;
-    const promedioPresupuestoMensual = Math.round(proyeccionAnual2027 / 12);
-    const proyeccionPresupuesto2027 = new Array(12).fill(promedioPresupuestoMensual);
 
-    crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
-        { label: 'Proyección Presupuesto 2027 (Q)', data: proyeccionPresupuesto2027, backgroundColor: '#3b82f6' }
-    ]);
+function escapeHtml(valor) {
+    return (valor || '').toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
+
 
 /* =============================================================
    INICIALIZACIÓN
