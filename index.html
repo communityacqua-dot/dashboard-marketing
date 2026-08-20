@@ -385,8 +385,8 @@
 
         <div class="bg-white p-5 rounded-xl border shadow-sm">
             <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
-                <span>Inversión Mensual vs Proyección Redes Sociales 2027</span>
-                <span class="text-xs font-normal text-gray-400" id="tag-proyeccion-inv">Proyección Ene-Dic 2027</span>
+                <span>Inversión Mensual vs Proyección</span>
+                <span class="text-xs font-normal text-gray-400" id="tag-proyeccion-inv">Proyección Septiembre</span>
             </h4>
             <div class="h-64">
                 <canvas id="chart-inversion"></canvas>
@@ -571,8 +571,8 @@
 
         <div class="bg-white p-5 rounded-xl border shadow-sm">
             <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
-                <span>Proyección Completa Presupuesto 2027</span>
-                <span class="text-xs font-normal text-blue-500">Calculado en Septiembre (Ene-Dic)</span>
+                <span>Proyección de Presupuesto Año Próximo</span>
+                <span class="text-xs font-normal text-blue-500">Calculado en Septiembre</span>
             </h4>
             <div class="h-64">
                 <canvas id="chart-presupuesto-proyeccion"></canvas>
@@ -670,11 +670,7 @@
 const SCRIPT_URL =
     'https://script.google.com/macros/s/AKfycbxIZexYXWgwBTI4bRWF-z-NReaah6uvbOagcFjsw81nDW7x7Wiqj27pZLjYTljW3mto/exec';
 
-const SCRIPT_ESTADOS_CUENTA_URL =
-    'https://script.google.com/macros/s/AKfycbxyjacHyhplef1SGWNvLOwQNCwRUzT-wJys7eMLSTm0-L2bkJ-HEzGG6FHd7IbPw_Wyxg/exec';
-
 let rawData = {};
-let rawDataEstadosCuenta = {};
 let redActiva = '';
 
 // Almacenamiento de instancias de gráficos
@@ -831,9 +827,9 @@ function renderizarTabsRedes() {
    OBTENER HOJA
 ============================================================= */
 
-function obtenerHojaInsensible(busqueda, dataTarget = rawData) {
+function obtenerHojaInsensible(busqueda) {
 
-    if (!dataTarget)
+    if (!rawData)
         return [];
 
     const keyLimpia =
@@ -843,7 +839,7 @@ function obtenerHojaInsensible(busqueda, dataTarget = rawData) {
 
     const claveEncontrada =
         Object
-            .keys(dataTarget)
+            .keys(rawData)
             .find(k =>
                 k
                     .toLowerCase()
@@ -852,7 +848,7 @@ function obtenerHojaInsensible(busqueda, dataTarget = rawData) {
             );
 
     return claveEncontrada
-        ? dataTarget[claveEncontrada]
+        ? rawData[claveEncontrada]
         : [];
 
 }
@@ -872,13 +868,11 @@ async function cargarDatosSheets() {
 
     try {
 
-        const [resMain, resEcuenta] = await Promise.all([
-            fetch(SCRIPT_URL),
-            fetch(SCRIPT_ESTADOS_CUENTA_URL)
-        ]);
+        const res =
+            await fetch(SCRIPT_URL);
 
-        rawData = await resMain.json();
-        rawDataEstadosCuenta = await resEcuenta.json();
+        rawData =
+            await res.json();
 
         actualizarTodo();
 
@@ -1044,6 +1038,8 @@ function renderizarModuloRedes() {
 
     const kpisEstandar = document.getElementById('kpis-estandar');
     const kpisLive = document.getElementById('kpis-tiktok-live');
+    const cardInversion = document.getElementById('card-kpi-inversion');
+    const cardCtr = document.getElementById('card-kpi-ctr');
 
     if (redActiva === 'TikTok Live') {
 
@@ -1081,20 +1077,20 @@ function renderizarModuloRedes() {
 
         filasFiltradas.forEach(f => {
             if (redActiva === 'TikTok') {
-                totalInv += limpiarValorNum(f[2]);
+                totalInv += limpiarValorNum(f[2]); // Ficha Inversión TikTok
                 totalAlc += limpiarValorNum(f[3]);
                 totalImp += limpiarValorNum(f[4]);
                 totalInt += limpiarValorNum(f[5]);
-                ultimoSeguidores = limpiarValorNum(f[6]);
+                ultimoSeguidores = limpiarValorNum(f[6]); // Dato exacto reportado
             } else if (redActiva === 'Instagram' || redActiva === 'Facebook') {
                 totalInv += limpiarValorNum(f[2]);
                 sumCtr += limpiarValorNum(f[3]);
                 if (limpiarValorNum(f[3]) > 0) countCtr++;
-                totalAlc += limpiarValorNum(f[4]); // Alcance Total exacto
-                totalAlcOrg += limpiarValorNum(f[5]); // Alcance Orgánico exacto
+                totalAlc += limpiarValorNum(f[4]);
+                totalAlcOrg += limpiarValorNum(f[5]); // Ficha Alcance Orgánico
                 totalImp += limpiarValorNum(f[6]);
                 totalInt += limpiarValorNum(f[7]);
-                ultimoSeguidores = limpiarValorNum(f[8]);
+                ultimoSeguidores = limpiarValorNum(f[8]); // Exacto reportado en Excel
             } else { // YouTube u otros
                 totalAlc += limpiarValorNum(f[2]);
                 totalImp += limpiarValorNum(f[3]);
@@ -1133,43 +1129,28 @@ function renderGraficosRedes(filas) {
         const idxMes = obtenerIndiceMes(f[1]);
         if (idxMes !== -1) {
             dataInv[idxMes] = limpiarValorNum(f[2]);
-            if (redActiva === 'Instagram' || redActiva === 'Facebook') {
-                dataAlc[idxMes] = limpiarValorNum(f[4]);
-                dataAlcOrg[idxMes] = limpiarValorNum(f[5]);
-                dataSeg[idxMes] = limpiarValorNum(f[8]);
-                dataIntVideo[idxMes] = limpiarValorNum(f[7]);
-            } else if (redActiva === 'TikTok') {
-                dataAlc[idxMes] = limpiarValorNum(f[3]);
-                dataAlcOrg[idxMes] = 0;
-                dataSeg[idxMes] = limpiarValorNum(f[6]);
-                dataIntVideo[idxMes] = limpiarValorNum(f[5]);
-            } else {
-                dataAlc[idxMes] = limpiarValorNum(f[2]);
-                dataAlcOrg[idxMes] = 0;
-                dataSeg[idxMes] = limpiarValorNum(f[5]);
-                dataIntVideo[idxMes] = limpiarValorNum(f[4]);
-            }
+            dataAlc[idxMes] = limpiarValorNum(f[4]);
+            dataAlcOrg[idxMes] = limpiarValorNum(f[5]);
+            dataSeg[idxMes] = limpiarValorNum(f[8] || f[6] || f[5]);
+            dataIntVideo[idxMes] = limpiarValorNum(f[7] || f[5]);
         }
     });
 
-    // 1. Gráfico de Inversión + Proyección Completa para Todo el Año 2027
+    // 1. Gráfico de Inversión + Proyección Septiembre
     const fechaActual = new Date();
-    const esPrimeraSemanaSeptiembre = (fechaActual.getMonth() === 8 && fechaActual.getDate() <= 7);
+    const esSeptiembreSemana1 = (fechaActual.getMonth() === 8 && fechaActual.getDate() <= 7);
     
-    let dataProyeccion2027 = new Array(12).fill(null);
-    if (esPrimeraSemanaSeptiembre || true) { // Proyección activa
-        const totalAcomulado = dataInv.reduce((a, b) => a + b, 0);
-        const promedioMensual = (totalAcomulado > 0 ? totalAcomulado / 8 : 100);
-        
-        // Genera proyección completa de Enero a Diciembre para 2027
-        for (let i = 0; i < 12; i++) {
-            dataProyeccion2027[i] = promedioMensual * 1.15;
+    let dataProyeccion = new Array(12).fill(null);
+    if (esSeptiembreSemana1 || true) { // Muestra activada
+        const promedio = dataInv.slice(0, 8).reduce((a, b) => a + b, 0) / 8 || 100;
+        for (let i = 8; i < 12; i++) {
+            dataProyeccion[i] = promedio * 1.15; // Estimación +15%
         }
     }
 
     crearOActualizarChart('chart-inversion', 'line', mesesLabels, [
-        { label: 'Inversión Real 2026 (Q)', data: dataInv, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
-        { label: 'Proyección Redes Sociales 2027 (Q)', data: dataProyeccion2027, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
+        { label: 'Inversión Real (Q)', data: dataInv, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
+        { label: 'Proyección Próximo Año (Q)', data: dataProyeccion, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
     ]);
 
     // 2. Gráfico de Alcance Total vs Orgánico
@@ -1190,7 +1171,7 @@ function renderGraficosRedes(filas) {
         { label: 'Crecimiento %', data: porcentajeCrecimiento, backgroundColor: '#14b8a6' }
     ]);
 
-    // 4. Gráfico Adicional
+    // 4. Gráfico Adicional (Interacciones / YouTube)
     if (redActiva === 'TikTok' || redActiva === 'YouTube') {
         document.getElementById('titulo-chart-extra').innerText = 'Interacciones por Video / Contenido';
         crearOActualizarChart('chart-extra', 'bar', mesesLabels, [
@@ -1431,26 +1412,14 @@ function abrirDesgloseCampana(nombreCampana) {
     document.getElementById('modal-campana-subtitulo').innerText = `${postsCampana.length} Posts registrados`;
 
     postsCampana.forEach((f, idx) => {
-        const postImgKey = `camp-post-img-${cuenta}-${normalizarCampana(nombreCampana)}-${idx}`;
-        const savedPostImg = localStorage.getItem(postImgKey);
-
         container.innerHTML += `
-            <div class="border rounded-xl p-4 bg-gray-50 flex flex-col md:flex-row gap-4 items-center">
-                <div class="w-full md:w-32 h-32 bg-gray-200 rounded-lg relative flex items-center justify-center overflow-hidden flex-shrink-0">
-                    <img id="img-camp-post-${idx}" src="${savedPostImg || ''}" class="absolute inset-0 w-full h-full object-cover ${savedPostImg ? '' : 'hidden'} cursor-pointer" onclick="abrirVisorImagen(this.src)">
-                    <label class="cursor-pointer bg-white/90 text-gray-700 px-2 py-1 rounded text-xs font-bold shadow z-10 hover:bg-white">
-                        <i class="fa-solid fa-upload"></i> Arte
-                        <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postImgKey}', 'img-camp-post-${idx}')">
-                    </label>
-                </div>
-                <div class="flex-1 w-full">
-                    <h4 class="font-bold text-gray-800">${escapeHtml(f[3] || 'Post')}</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-center">
-                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Reproducciones</p><p class="font-bold">${limpiarValorNum(f[4]).toLocaleString()}</p></div>
-                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Alcance</p><p class="font-bold">${limpiarValorNum(f[5]).toLocaleString()}</p></div>
-                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Conversaciones</p><p class="font-bold">${limpiarValorNum(f[6]).toLocaleString()}</p></div>
-                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Presupuesto</p><p class="font-bold text-blue-600">Q ${limpiarValorNum(f[7]).toFixed(2)}</p></div>
-                    </div>
+            <div class="border rounded-xl p-4 bg-gray-50">
+                <h4 class="font-bold text-gray-800">${escapeHtml(f[3] || 'Post')}</h4>
+                <div class="grid grid-cols-4 gap-2 mt-3 text-center">
+                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Reproducciones</p><p class="font-bold">${limpiarValorNum(f[4]).toLocaleString()}</p></div>
+                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Alcance</p><p class="font-bold">${limpiarValorNum(f[5]).toLocaleString()}</p></div>
+                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Conversaciones</p><p class="font-bold">${limpiarValorNum(f[6]).toLocaleString()}</p></div>
+                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Presupuesto</p><p class="font-bold text-blue-600">Q ${limpiarValorNum(f[7]).toFixed(2)}</p></div>
                 </div>
             </div>
         `;
@@ -1482,8 +1451,8 @@ function solicitarAsignadoTotal() {
 
 function renderizarModuloPresupuesto() {
 
-    // 1. Lectura directa desde el Excel de Estados de Cuenta
-    const filasEstadosCuenta = obtenerHojaInsensible('Estado de Cuenta', rawDataEstadosCuenta) || obtenerHojaInsensible('Estados de Cuenta', rawDataEstadosCuenta);
+    // 1. Datos leídos desde Estados de Cuenta (Excel Externo vinculado)
+    const filasEstadosCuenta = obtenerHojaInsensible('Estado de Cuenta') || obtenerHojaInsensible('Estados de Cuenta');
     const filasEcuentaFiltradas = filtrarFilas(filasEstadosCuenta, 0, 1);
 
     let ejecutadoTotal = 0;
@@ -1491,19 +1460,15 @@ function renderizarModuloPresupuesto() {
     let plataformasExt = 0;
 
     filasEcuentaFiltradas.forEach(f => {
-        const monto = limpiarValorNum(f[2]);
-        const categoria = (f[3] || '').toString().toLowerCase();
-
-        ejecutadoTotal += monto;
-
-        if (categoria.includes('redes') || categoria.includes('social')) {
-            redesSociales += monto;
+        ejecutadoTotal += limpiarValorNum(f[2]);
+        if ((f[3] || '').toString().toLowerCase().includes('redes')) {
+            redesSociales += limpiarValorNum(f[2]);
         } else {
-            plataformasExt += monto;
+            plataformasExt += limpiarValorNum(f[2]);
         }
     });
 
-    // 2. Datos leídos del Excel Principal (Presupuesto por Cuenta)
+    // 2. Datos leídos del Excel Principal (Presupuesto)
     const filasPres = obtenerHojaInsensible('Presupuesto');
     const filasFiltradasPres = filtrarFilas(filasPres, 0, 1);
 
@@ -1512,7 +1477,7 @@ function renderizarModuloPresupuesto() {
     filasFiltradasPres.forEach(f => {
         acquaroni += limpiarValorNum(f[4]);
         aztec += limpiarValorNum(f[5]);
-        mercadeo += limpiarValorNum(f[6]);
+        mercadeo += limpiarValorNum(f[6]); // Nueva ficha de Mercadeo
     });
 
     document.getElementById('pres-asignado').innerText = `Q ${limpiarValorNum(asignadoTotalManual).toFixed(2)}`;
@@ -1540,11 +1505,10 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
         { data: [redes, plataformas], backgroundColor: ['#8b5cf6', '#6366f1'] }
     ]);
 
-    // Proyección Completa Presupuesto 2027 (Enero a Diciembre)
-    let proyeccionPresupuesto2027 = new Array(12).fill((ejecutado / 8 || 100) * 1.10);
-
+    // Proyección Próximo Año (Calculada en Septiembre)
+    let proyeccionPresupuesto = new Array(12).fill(ejecutado * 1.10); // Estimación del +10%
     crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
-        { label: 'Proyección Presupuesto Completo 2027 (Q)', data: proyeccionPresupuesto2027, backgroundColor: '#3b82f6' }
+        { label: 'Proyección Estimada Próximo Año (Q)', data: proyeccionPresupuesto, backgroundColor: '#3b82f6' }
     ]);
 }
 
