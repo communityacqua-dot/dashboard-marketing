@@ -203,7 +203,7 @@
                     </div>
 
                     <div class="bg-white p-5 rounded-xl border shadow-sm">
-                        <h4 class="text-sm font-bold text-gray-700 mb-4">Crecimiento % Mensual de Seguidores</h4>
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">Crecimiento Mensual de Seguidores por Red</h4>
                         <div class="h-64">
                             <canvas id="chart-seguidores"></canvas>
                         </div>
@@ -329,7 +329,7 @@
             </section>
 
         </div>
- main>
+    </main>
 </div>
 
 <!-- =============================================================
@@ -597,7 +597,7 @@ function renderizarModuloRedes() {
         filasFiltradas.forEach(f => {
             if (redActiva === 'TikTok') {
                 totalInv += limpiarValorNum(f[2]);
-                totalAlc += limpiarValorNum(f[3]); // Columna exactade Alcance Total en TikTok
+                totalAlc += limpiarValorNum(f[3]);
                 totalImp += limpiarValorNum(f[4]);
                 totalInt += limpiarValorNum(f[5]);
                 ultimoSeguidores = limpiarValorNum(f[6]);
@@ -605,10 +605,10 @@ function renderizarModuloRedes() {
                 totalInv += limpiarValorNum(f[2]);
                 sumCtr += limpiarValorNum(f[3]);
                 if (limpiarValorNum(f[3]) > 0) countCtr++;
-                totalAlc += limpiarValorNum(f[4]); // Lectura directa e íntegra de ALCANCE TOTAL
+                totalAlc += limpiarValorNum(f[4]);
                 totalAlcOrg += limpiarValorNum(f[5]);
                 totalImp += limpiarValorNum(f[6]);
-                totalInt += limpiarValorNum(f[7]); // Total exacto de Interacciones
+                totalInt += limpiarValorNum(f[7]);
                 ultimoSeguidores = limpiarValorNum(f[8]);
             } else {
                 totalAlc += limpiarValorNum(f[2]);
@@ -637,13 +637,11 @@ function debeMostrarProyeccionSiguienteAnio() {
     const ahora = new Date();
     const anioActual = ahora.getFullYear();
 
-    // EXCEPCIÓN SOLICITADA: Para el año 2026 se genera de inmediato
     if (anioActual === 2026) {
         return true;
     }
 
-    // Para años posteriores: Se habilita durante/a partir de la primera semana de Septiembre (Mes indexado 8)
-    const mesActual = ahora.getMonth(); // 8 = Septiembre
+    const mesActual = ahora.getMonth();
     const diaActual = ahora.getDate();
 
     if (mesActual > 8) return true;
@@ -660,7 +658,6 @@ function renderGraficosRedes(filas) {
     let dataInv = new Array(12).fill(0);
     let dataAlc = new Array(12).fill(0);
     let dataAlcOrg = new Array(12).fill(0);
-    let dataSeg = new Array(12).fill(0);
     let dataIntVideo = new Array(12).fill(0);
 
     filas.forEach(f => {
@@ -669,7 +666,6 @@ function renderGraficosRedes(filas) {
             dataInv[idxMes] = limpiarValorNum(f[2]);
             dataAlc[idxMes] = limpiarValorNum(f[4]);
             dataAlcOrg[idxMes] = limpiarValorNum(f[5]);
-            dataSeg[idxMes] = limpiarValorNum(f[8] || f[6] || f[5]);
             dataIntVideo[idxMes] = limpiarValorNum(f[7] || f[5]);
         }
     });
@@ -697,16 +693,8 @@ function renderGraficosRedes(filas) {
         { label: 'Alcance Orgánico', data: dataAlcOrg, backgroundColor: '#10b981' }
     ]);
 
-    let porcentajeCrecimiento = new Array(12).fill(0);
-    for (let i = 1; i < 12; i++) {
-        if (dataSeg[i - 1] > 0) {
-            porcentajeCrecimiento[i] = (((dataSeg[i] - dataSeg[i - 1]) / dataSeg[i - 1]) * 100).toFixed(2);
-        }
-    }
-
-    crearOActualizarChart('chart-seguidores', 'bar', mesesLabels, [
-        { label: 'Crecimiento %', data: porcentajeCrecimiento, backgroundColor: '#14b8a6' }
-    ]);
+    // CAMBIO 1 Y 2: CRECIMIENTO MENSUAL DE SEGUIDORES MULTI-RED REAL
+    renderGraficoSeguidoresPorRed(mesesLabels);
 
     if (redActiva === 'TikTok' || redActiva === 'YouTube') {
         document.getElementById('titulo-chart-extra').innerText = 'Interacciones por Video / Contenido';
@@ -719,6 +707,67 @@ function renderGraficosRedes(filas) {
             { label: 'Interacciones', data: dataIntVideo, borderColor: '#6366f1', fill: false }
         ]);
     }
+}
+
+/* =============================================================
+   CAMBIO 1 Y 2: LÓGICA DE CRECIMIENTO REAL SEPARADO POR RED
+============================================================= */
+function renderGraficoSeguidoresPorRed(mesesLabels) {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const anioSel = document.getElementById('filtro-anio').value;
+
+    let mapasHojas = [];
+    if (cuenta === 'acquaroni') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook Repuestos Acquaroni', color: '#1877f2', colSeg: 8 },
+            { red: 'Instagram', hoja: 'Instagram Repuestos Acquaroni', color: '#e1306c', colSeg: 8 },
+            { red: 'TikTok', hoja: 'Tiktok Repuestos Acquaroni', color: '#000000', colSeg: 6 },
+            { red: 'YouTube', hoja: 'Youtube Repuestos Acquaroni', color: '#ff0000', colSeg: 5 }
+        ];
+    } else if (cuenta === 'aztec') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook de AZtec Oils', color: '#1877f2', colSeg: 8 },
+            { red: 'Instagram', hoja: 'Instagram de AZtec Oils', color: '#e1306c', colSeg: 8 },
+            { red: 'TikTok', hoja: 'Tiktok de AZtec Oils', color: '#000000', colSeg: 6 }
+        ];
+    } else if (cuenta === 'ultra') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook Ultra Parts', color: '#1877f2', colSeg: 8 },
+            { red: 'Instagram', hoja: 'Instagram Ultra Parts', color: '#e1306c', colSeg: 8 },
+            { red: 'TikTok', hoja: 'Tiktok Ultra Parts', color: '#000000', colSeg: 6 },
+            { red: 'YouTube', hoja: 'Youtube Ultra Parts', color: '#ff0000', colSeg: 5 }
+        ];
+    }
+
+    const datasets = [];
+
+    mapasHojas.forEach(item => {
+        const filas = obtenerHojaPrincipalInsensible(item.hoja);
+        let serieSeguidoresReal = new Array(12).fill(0);
+
+        if (filas && filas.length > 1) {
+            filas.slice(1).forEach(row => {
+                const rowAnio = row[0] ? row[0].toString().trim() : '';
+                if (rowAnio === anioSel) {
+                    const idxMes = obtenerIndiceMes(row[1]);
+                    if (idxMes !== -1) {
+                        serieSeguidoresReal[idxMes] = limpiarValorNum(row[item.colSeg]);
+                    }
+                }
+            });
+        }
+
+        datasets.push({
+            label: item.red,
+            data: serieSeguidoresReal,
+            borderColor: item.color,
+            backgroundColor: item.color,
+            fill: false,
+            tension: 0.1
+        });
+    });
+
+    crearOActualizarChart('chart-seguidores', 'line', mesesLabels, datasets);
 }
 
 function renderGraficosTikTokLive(filas) {
@@ -987,8 +1036,11 @@ function solicitarAsignadoTotal() {
     }
 }
 
+/* =============================================================
+   CAMBIO 3: CLASIFICACIÓN RIGUROSA DE PLATAFORMAS EXTERNAS
+============================================================= */
 function renderizarModuloPresupuesto() {
-    // 1. Datos del Estado de Cuenta (URL 2)
+    // 1. Datos del Estado de Cuenta (URL 2 EXCLUSIVAMENTE)
     const filasEstadosCuenta = obtenerHojaEstadoCuentaInsensible('Estado de Cuenta') || obtenerHojaEstadoCuentaInsensible('Estados de Cuenta');
     const filasEcuentaFiltradas = filtrarFilas(filasEstadosCuenta, 0, 1);
 
@@ -996,20 +1048,22 @@ function renderizarModuloPresupuesto() {
     let redesSocialesEcuenta = 0;
     let plataformasExt = 0;
 
-    // Patrón flexible para identificar cobranzas de Meta/Facebook/Redes
-    const regexRedesSociales = /(facebk|facebook|meta|meta\s*platforms|instagram|tiktok)/i;
+    // Patrones de clasificación directa
+    const regexRedes = /(facebk|facebook|meta|meta\s*platforms|instagram|tiktok)/i;
+    const regexPlataformas = /(google|google\s*one|google\s*services|google\s*storage|g\.co\/helppay)/i;
 
     filasEcuentaFiltradas.forEach(f => {
-        const monto = limpiarValorNum(f[2]); // Valor monetario real
+        const monto = limpiarValorNum(f[2]);
         const concepto = (f[3] || f[1] || '').toString();
 
         ejecutadoTotal += monto;
 
-        if (regexRedesSociales.test(concepto)) {
+        if (regexRedes.test(concepto)) {
             redesSocialesEcuenta += monto;
-        } else {
+        } else if (regexPlataformas.test(concepto)) {
             plataformasExt += monto;
         }
+        // Movimientos no identificados (Otros) quedan fuera de Plataformas Ext.
     });
 
     // 2. Datos complementarios del Archivo Principal (URL 1)
