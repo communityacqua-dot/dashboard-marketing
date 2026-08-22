@@ -51,7 +51,7 @@
         </div>
 
         <div class="text-xs text-gray-500 border-t border-slate-800 pt-4 flex justify-between items-center">
-            <span>Dashboard R.A v3.5</span>
+            <span>Dashboard R.A v3.6</span>
             <span id="loader-status" class="text-blue-400 text-xs hidden">
                 <i class="fa-solid fa-spinner fa-spin"></i>
             </span>
@@ -140,7 +140,7 @@
                     </div>
 
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Interacciones / Seg.</p>
+                        <p id="lbl-kpi-interacciones" class="text-xs text-gray-500 font-semibold uppercase">Interacciones</p>
                         <p id="kpi-interacciones" class="text-xl font-extrabold text-gray-700 mt-1">0</p>
                     </div>
 
@@ -188,7 +188,7 @@
                     <div class="bg-white p-5 rounded-xl border shadow-sm">
                         <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
                             <span id="titulo-chart-inversion">Inversión Mensual vs Proyección</span>
-                            <span class="text-xs font-normal text-gray-400" id="tag-proyeccion-inv">Proyección Septiembre</span>
+                            <span class="text-xs font-normal text-blue-500" id="tag-proyeccion-inv">Enero - Diciembre</span>
                         </h4>
                         <div class="h-64">
                             <canvas id="chart-inversion"></canvas>
@@ -319,7 +319,7 @@
                     <div class="bg-white p-5 rounded-xl border shadow-sm">
                         <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
                             <span id="titulo-proyeccion-presupuesto">Proyección de Presupuesto Año Próximo</span>
-                            <span class="text-xs font-normal text-blue-500">Calculado en Septiembre</span>
+                            <span class="text-xs font-normal text-blue-500" id="tag-proyeccion-pres-sub">Enero - Diciembre</span>
                         </h4>
                         <div class="h-64">
                             <canvas id="chart-presupuesto-proyeccion"></canvas>
@@ -329,7 +329,7 @@
             </section>
 
         </div>
-    </main>
+ main>
 </div>
 
 <!-- =============================================================
@@ -588,10 +588,16 @@ function renderizarModuloRedes() {
         let countCtr = 0, sumCtr = 0;
         let ultimoSeguidores = 0;
 
+        if (redActiva === 'Facebook') {
+            document.getElementById('lbl-kpi-interacciones').innerText = 'INTERACCIONES DE FACEBOOK';
+        } else {
+            document.getElementById('lbl-kpi-interacciones').innerText = 'INTERACCIONES';
+        }
+
         filasFiltradas.forEach(f => {
             if (redActiva === 'TikTok') {
                 totalInv += limpiarValorNum(f[2]);
-                totalAlc += limpiarValorNum(f[3]);
+                totalAlc += limpiarValorNum(f[3]); // Columna exactade Alcance Total en TikTok
                 totalImp += limpiarValorNum(f[4]);
                 totalInt += limpiarValorNum(f[5]);
                 ultimoSeguidores = limpiarValorNum(f[6]);
@@ -599,10 +605,10 @@ function renderizarModuloRedes() {
                 totalInv += limpiarValorNum(f[2]);
                 sumCtr += limpiarValorNum(f[3]);
                 if (limpiarValorNum(f[3]) > 0) countCtr++;
-                totalAlc += limpiarValorNum(f[4]);
+                totalAlc += limpiarValorNum(f[4]); // Lectura directa e íntegra de ALCANCE TOTAL
                 totalAlcOrg += limpiarValorNum(f[5]);
                 totalImp += limpiarValorNum(f[6]);
-                totalInt += limpiarValorNum(f[7]);
+                totalInt += limpiarValorNum(f[7]); // Total exacto de Interacciones
                 ultimoSeguidores = limpiarValorNum(f[8]);
             } else {
                 totalAlc += limpiarValorNum(f[2]);
@@ -622,6 +628,28 @@ function renderizarModuloRedes() {
 
         renderGraficosRedes(filasFiltradas);
     }
+}
+
+/* =============================================================
+   LÓGICA DE VALIDACIÓN DE FECHA DE PROYECCIÓN
+============================================================= */
+function debeMostrarProyeccionSiguienteAnio() {
+    const ahora = new Date();
+    const anioActual = ahora.getFullYear();
+
+    // EXCEPCIÓN SOLICITADA: Para el año 2026 se genera de inmediato
+    if (anioActual === 2026) {
+        return true;
+    }
+
+    // Para años posteriores: Se habilita durante/a partir de la primera semana de Septiembre (Mes indexado 8)
+    const mesActual = ahora.getMonth(); // 8 = Septiembre
+    const diaActual = ahora.getDate();
+
+    if (mesActual > 8) return true;
+    if (mesActual === 8 && diaActual >= 1) return true;
+
+    return false;
 }
 
 /* =============================================================
@@ -647,19 +675,21 @@ function renderGraficosRedes(filas) {
     });
 
     const anioActual = new Date().getFullYear();
-    const anioProyectado = anioActual + 1;
+    const anioProyectado = debeMostrarProyeccionSiguienteAnio() ? anioActual + 1 : anioActual;
 
-    document.getElementById('titulo-chart-inversion').innerText = `Inversión Mensual vs Proyección ${anioProyectado}`;
+    document.getElementById('titulo-chart-inversion').innerText = `PROYECCIÓN REDES SOCIALES ${anioProyectado}`;
 
-    let dataProyeccion = new Array(12).fill(null);
-    const promedio = dataInv.slice(0, 8).reduce((a, b) => a + b, 0) / 8 || 100;
-    for (let i = 8; i < 12; i++) {
-        dataProyeccion[i] = promedio * 1.15;
+    let dataProyeccion = new Array(12).fill(0);
+    const sumaHist = dataInv.reduce((a, b) => a + b, 0);
+    const basePromedio = (sumaHist > 0 ? sumaHist / 12 : 500) * 1.15;
+
+    for (let i = 0; i < 12; i++) {
+        dataProyeccion[i] = parseFloat((basePromedio * (1 + (i * 0.01))).toFixed(2));
     }
 
     crearOActualizarChart('chart-inversion', 'line', mesesLabels, [
         { label: 'Inversión Real (Q)', data: dataInv, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
-        { label: `Proyección ${anioProyectado} (Q)`, data: dataProyeccion, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
+        { label: `Proyección ${anioProyectado} (Ene-Dic)`, data: dataProyeccion, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
     ]);
 
     crearOActualizarChart('chart-alcance', 'bar', mesesLabels, [
@@ -906,15 +936,31 @@ function abrirDesgloseCampana(nombreCampana) {
     document.getElementById('modal-campana-titulo').innerText = `Campaña: ${nombreCampana}`;
     document.getElementById('modal-campana-subtitulo').innerText = `${postsCampana.length} Posts registrados`;
 
-    postsCampana.forEach(f => {
+    postsCampana.forEach((f, idxPost) => {
+        const postImgKey = `img-ref-post-${cuenta}-${normalizarCampana(nombreCampana)}-${idxPost}`;
+        const savedPostImg = localStorage.getItem(postImgKey);
+
         container.innerHTML += `
-            <div class="border rounded-xl p-4 bg-gray-50">
-                <h4 class="font-bold text-gray-800">${escapeHtml(f[3] || 'Post')}</h4>
-                <div class="grid grid-cols-4 gap-2 mt-3 text-center">
-                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Reproducciones</p><p class="font-bold">${limpiarValorNum(f[4]).toLocaleString()}</p></div>
-                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Alcance</p><p class="font-bold">${limpiarValorNum(f[5]).toLocaleString()}</p></div>
-                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Conversaciones</p><p class="font-bold">${limpiarValorNum(f[6]).toLocaleString()}</p></div>
-                    <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Presupuesto</p><p class="font-bold text-blue-600">Q ${limpiarValorNum(f[7]).toFixed(2)}</p></div>
+            <div class="border rounded-xl p-4 bg-gray-50 flex flex-col md:flex-row gap-4 items-start">
+                <div class="w-full md:w-32 flex-shrink-0">
+                    <p class="text-xs text-gray-500 font-bold mb-1">Imagen Referencia</p>
+                    <div class="relative h-28 bg-gray-200 border rounded-lg flex items-center justify-center overflow-hidden">
+                        <img id="img-post-ref-${idxPost}" src="${savedPostImg || ''}" class="${savedPostImg ? '' : 'hidden'} w-full h-full object-cover cursor-pointer" onclick="abrirVisorImagen(this.src)">
+                        <label class="absolute inset-0 flex flex-col items-center justify-center bg-black/40 text-white text-xs opacity-0 hover:opacity-100 transition cursor-pointer p-1 text-center">
+                            <i class="fa-solid fa-upload text-sm mb-1"></i> Subir
+                            <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postImgKey}', 'img-post-ref-${idxPost}')">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex-1 w-full">
+                    <h4 class="font-bold text-gray-800 text-base">${escapeHtml(f[3] || 'Post')}</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-center">
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Reproducciones</p><p class="font-bold">${limpiarValorNum(f[4]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Alcance</p><p class="font-bold">${limpiarValorNum(f[5]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Conversaciones</p><p class="font-bold">${limpiarValorNum(f[6]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Presupuesto</p><p class="font-bold text-blue-600">Q ${limpiarValorNum(f[7]).toFixed(2)}</p></div>
+                    </div>
                 </div>
             </div>
         `;
@@ -947,14 +993,20 @@ function renderizarModuloPresupuesto() {
     const filasEcuentaFiltradas = filtrarFilas(filasEstadosCuenta, 0, 1);
 
     let ejecutadoTotal = 0;
-    let redesSociales = 0;
+    let redesSocialesEcuenta = 0;
     let plataformasExt = 0;
 
+    // Patrón flexible para identificar cobranzas de Meta/Facebook/Redes
+    const regexRedesSociales = /(facebk|facebook|meta|meta\s*platforms|instagram|tiktok)/i;
+
     filasEcuentaFiltradas.forEach(f => {
-        const monto = limpiarValorNum(f[2]);
+        const monto = limpiarValorNum(f[2]); // Valor monetario real
+        const concepto = (f[3] || f[1] || '').toString();
+
         ejecutadoTotal += monto;
-        if ((f[3] || '').toString().toLowerCase().includes('redes')) {
-            redesSociales += monto;
+
+        if (regexRedesSociales.test(concepto)) {
+            redesSocialesEcuenta += monto;
         } else {
             plataformasExt += monto;
         }
@@ -974,13 +1026,13 @@ function renderizarModuloPresupuesto() {
 
     document.getElementById('pres-asignado').innerText = `Q ${limpiarValorNum(asignadoTotalManual).toFixed(2)}`;
     document.getElementById('pres-ejecutado').innerText = `Q ${ejecutadoTotal.toFixed(2)}`;
-    document.getElementById('pres-redes-soc').innerText = `Q ${redesSociales.toFixed(2)}`;
+    document.getElementById('pres-redes-soc').innerText = `Q ${redesSocialesEcuenta.toFixed(2)}`;
     document.getElementById('pres-acquaroni').innerText = `Q ${acquaroni.toFixed(2)}`;
     document.getElementById('pres-aztec').innerText = `Q ${aztec.toFixed(2)}`;
     document.getElementById('pres-mercadeo').innerText = `Q ${mercadeo.toFixed(2)}`;
     document.getElementById('pres-plataformas-m4').innerText = `Q ${plataformasExt.toFixed(2)}`;
 
-    renderGraficosPresupuesto(ejecutadoTotal, redesSociales, plataformasExt);
+    renderGraficosPresupuesto(ejecutadoTotal, redesSocialesEcuenta, plataformasExt);
 }
 
 function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
@@ -995,13 +1047,19 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
     ]);
 
     const anioActual = new Date().getFullYear();
-    const anioProyectado = anioActual + 1;
+    const anioProyectado = debeMostrarProyeccionSiguienteAnio() ? anioActual + 1 : anioActual;
 
-    document.getElementById('titulo-proyeccion-presupuesto').innerText = `Proyección de Presupuesto ${anioProyectado}`;
+    document.getElementById('titulo-proyeccion-presupuesto').innerText = `PROYECCIÓN PRESUPUESTO ${anioProyectado}`;
 
-    let proyeccionPresupuesto = new Array(12).fill(ejecutado * 1.10);
+    let proyeccionPresupuesto = new Array(12).fill(0);
+    const baseMensual = (ejecutado > 0 ? ejecutado / 12 : 1000) * 1.10;
+
+    for (let i = 0; i < 12; i++) {
+        proyeccionPresupuesto[i] = parseFloat((baseMensual * (1 + (i * 0.005))).toFixed(2));
+    }
+
     crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
-        { label: `Proyección Estimada ${anioProyectado} (Q)`, data: proyeccionPresupuesto, backgroundColor: '#3b82f6' }
+        { label: `Proyección Estimada ${anioProyectado} (Ene-Dic)`, data: proyeccionPresupuesto, backgroundColor: '#3b82f6' }
     ]);
 }
 
