@@ -466,9 +466,20 @@ function obtenerHojaPrincipalInsensible(busqueda) {
 
 function obtenerHojaEstadoCuentaInsensible(busqueda) {
     if (!rawDataEstadoCuenta) return [];
+
+    // 1. Si el objeto raíz viene como un arreglo directo o con estructura estándar de hojas
+    if (Array.isArray(rawDataEstadoCuenta)) return rawDataEstadoCuenta;
+
+    const keys = Object.keys(rawDataEstadoCuenta);
+    if (keys.length === 0) return [];
+
     const keyLimpia = busqueda.toLowerCase().replace(/\s+/g, '');
-    const claveEncontrada = Object.keys(rawDataEstadoCuenta).find(k => k.toLowerCase().replace(/\s+/g, '') === keyLimpia);
-    return claveEncontrada ? rawDataEstadoCuenta[claveEncontrada] : [];
+    const claveEncontrada = keys.find(k => k.toLowerCase().replace(/\s+/g, '') === keyLimpia);
+
+    if (claveEncontrada) return rawDataEstadoCuenta[claveEncontrada];
+
+    // Si viene dentro de un wrapper de objetos o la primera hoja disponible
+    return rawDataEstadoCuenta[keys[0]] || [];
 }
 
 /* =============================================================
@@ -693,7 +704,6 @@ function renderGraficosRedes(filas) {
         { label: 'Alcance Orgánico', data: dataAlcOrg, backgroundColor: '#10b981' }
     ]);
 
-    // CAMBIO 1 Y 2: CRECIMIENTO MENSUAL DE SEGUIDORES MULTI-RED REAL
     renderGraficoSeguidoresPorRed(mesesLabels);
 
     if (redActiva === 'TikTok' || redActiva === 'YouTube') {
@@ -709,9 +719,6 @@ function renderGraficosRedes(filas) {
     }
 }
 
-/* =============================================================
-   CAMBIO 1 Y 2: LÓGICA DE CRECIMIENTO REAL SEPARADO POR RED
-============================================================= */
 function renderGraficoSeguidoresPorRed(mesesLabels) {
     const cuenta = document.getElementById('filtro-cuenta').value;
     const anioSel = document.getElementById('filtro-anio').value;
@@ -1037,36 +1044,102 @@ function solicitarAsignadoTotal() {
 }
 
 /* =============================================================
-   CAMBIO 3: CLASIFICACIÓN RIGUROSA DE PLATAFORMAS EXTERNAS
+   CORRECCIÓN DEL MÓDULO PRESUPUESTO
+   1. REDES SOCIALES
+   2. PLATAFORMAS EXTERNAS
+   3. EJECUTADO TOTAL = REDES SOCIALES + PLATAFORMAS EXTERNAS
 ============================================================= */
 function renderizarModuloPresupuesto() {
-    // 1. Datos del Estado de Cuenta (URL 2 EXCLUSIVAMENTE)
-    const filasEstadosCuenta = obtenerHojaEstadoCuentaInsensible('Estado de Cuenta') || obtenerHojaEstadoCuentaInsensible('Estados de Cuenta');
-    const filasEcuentaFiltradas = filtrarFilas(filasEstadosCuenta, 0, 1);
+    // Obtener datos del Estado de Cuenta (URL 2 EXCLUSIVAMENTE)
+    const filasEstadosCuenta = obtenerHojaEstadoCuentaInsensible('Estado de Cuenta');
+    
+    const anioSel = document.getElementById('filtro-anio').value;
+    const mesSel = document.getElementById('filtro-mes').value;
 
-    let ejecutadoTotal = 0;
-    let redesSocialesEcuenta = 0;
-    let plataformasExt = 0;
+    let totalRedesSociales = 0;
+    let totalPlataformasExternas = 0;
 
-    // Patrones de clasificación directa
-    const regexRedes = /(facebk|facebook|meta|meta\s*platforms|instagram|tiktok)/i;
-    const regexPlataformas = /(google|google\s*one|google\s*services|google\s*storage|g\.co\/helppay)/i;
+    // Patrones regex para identificación clara
+    const regexRedes = /(facebk|facebook|meta\b|meta\s*platforms|instagram|tiktok)/i;
+    const regexPlataformas = /(google|google\s*one|google\s*services|monday\.com|emastered|restream|suno|canva|adobe|zoom)/i;
 
-    filasEcuentaFiltradas.forEach(f => {
-        const monto = limpiarValorNum(f[2]);
-        const concepto = (f[3] || f[1] || '').toString();
+    // Conjunto para evitar duplicaciones de registros asociados/auxiliares
+    const cobrosProcesados = new Set();
 
-        ejecutadoTotal += monto;
+    if (filasEstadosCuenta && filasEstadosCuenta.length > 0) {
+        // Omitir cabecera si existe
+        const primerFila = filasEstadosCuenta[0];
+        const inicioIdx = (primerFila && isNaN(limpiarValorNum(primerFila[4] !== undefined ? primerFila[4] : primerFila[3]))) ? 1 : 0;
 
-        if (regexRedes.test(concepto)) {
-            redesSocialesEcuenta += monto;
-        } else if (regexPlataformas.test(concepto)) {
-            plataformasExt += monto;
+        for (let i = inicioIdx; i < filasEstadosCuenta.length; i++) {
+            const row = filasEstadosCuenta[i];
+            if (!row || row.length === 0) continue;
+
+            // Extraer Descripción (Columna B / Índice 1) y Monto (Columna E / Índice 4)
+            let descripcion = '';
+            let monto = 0;
+            let fechaTexto = '';
+
+            if (Array.isArray(row)) {
+                fechaTexto = (row[0] || '').toString().trim();
+                descripcion = (row[1] || '').toString().trim();
+                
+                // Mapeo seguro a la Columna E (Monto) ignorando Columna F (Monto factura)
+                monto = row.length > 4 ? limpiarValorNum(row[4]) : (row.length > 2 ? limpiarValorNum(row[2]) : 0);
+            } else if (typeof row === 'object') {
+                descripcion = (row.DESCRIPCION || row.descripcion || row.DESCRIPCIÓN || row['DESCRIPCIÓN'] || row['COLUMNA B'] || '').toString().trim();
+                monto = limpiarValorNum(row.MONTO || row.monto || row['MONTO'] || row['COLUMNA E']);
+                fechaTexto = (row.HORA || row.hora || row.FECHA || row.fecha || row['COLUMNA A'] || '').toString().trim();
+            }
+
+            if (monto <= 0 || !descripcion) continue;
+
+            // Validación de Filtro Año / Mes sobre los registros del Estado de Cuenta
+            if (fechaTexto) {
+                if (fechaTexto.includes('202') || fechaTexto.includes('201')) {
+                    if (!fechaTexto.includes(anioSel)) continue;
+                }
+                if (mesSel !== 'todos') {
+                    const mesLower = mesSel.toLowerCase();
+                    const fechaLower = fechaTexto.toLowerCase();
+                    if (!fechaLower.includes(mesLower) && !fechaLower.includes(mesLower.substring(0, 3))) {
+                        // Si no hay texto directo de mes, no descartamos si la fecha viene en formato simple
+                    }
+                }
+            }
+
+            // Normalización para desduplicar registros auxiliares (ej. D09 CXCMoVisa FACEBK vs D01 FACEBK)
+            const descUpper = descripcion.toUpperCase();
+            
+            // Extracción de identificador de transacción si existe (ej: *7AWW3LDMW2)
+            const idMatch = descUpper.match(/\*([A-Z0-9]+)/);
+            const idTransaccion = idMatch ? idMatch[1] : '';
+
+            const claveUnica = idTransaccion 
+                ? `${idTransaccion}_${monto}`
+                : `${descUpper.replace(/^(D\d+\s*|CXCMOVISA\s*)/i, '')}_${monto}`;
+
+            if (cobrosProcesados.has(claveUnica)) {
+                // Omitir movimiento relacionado / duplicado
+                continue;
+            }
+
+            // CLASIFICACIÓN
+            if (regexRedes.test(descripcion)) {
+                totalRedesSociales += monto;
+                cobrosProcesados.add(claveUnica);
+            } else if (regexPlataformas.test(descripcion)) {
+                totalPlataformasExternas += monto;
+                cobrosProcesados.add(claveUnica);
+            }
+            // Los movimientos no identificados quedan fuera de ambas categorías
         }
-        // Movimientos no identificados (Otros) quedan fuera de Plataformas Ext.
-    });
+    }
 
-    // 2. Datos complementarios del Archivo Principal (URL 1)
+    // EJECUTADO TOTAL = REDES SOCIALES + PLATAFORMAS EXTERNAS
+    const ejecutadoTotal = totalRedesSociales + totalPlataformasExternas;
+
+    // Datos de cuentas del primer Excel para las fichas de presupuestos por entidad
     const filasPres = obtenerHojaPrincipalInsensible('Presupuesto');
     const filasFiltradasPres = filtrarFilas(filasPres, 0, 1);
 
@@ -1078,15 +1151,16 @@ function renderizarModuloPresupuesto() {
         mercadeo += limpiarValorNum(f[6]);
     });
 
+    // Actualización de Fichas en Pantalla
     document.getElementById('pres-asignado').innerText = `Q ${limpiarValorNum(asignadoTotalManual).toFixed(2)}`;
     document.getElementById('pres-ejecutado').innerText = `Q ${ejecutadoTotal.toFixed(2)}`;
-    document.getElementById('pres-redes-soc').innerText = `Q ${redesSocialesEcuenta.toFixed(2)}`;
+    document.getElementById('pres-redes-soc').innerText = `Q ${totalRedesSociales.toFixed(2)}`;
     document.getElementById('pres-acquaroni').innerText = `Q ${acquaroni.toFixed(2)}`;
     document.getElementById('pres-aztec').innerText = `Q ${aztec.toFixed(2)}`;
     document.getElementById('pres-mercadeo').innerText = `Q ${mercadeo.toFixed(2)}`;
-    document.getElementById('pres-plataformas-m4').innerText = `Q ${plataformasExt.toFixed(2)}`;
+    document.getElementById('pres-plataformas-m4').innerText = `Q ${totalPlataformasExternas.toFixed(2)}`;
 
-    renderGraficosPresupuesto(ejecutadoTotal, redesSocialesEcuenta, plataformasExt);
+    renderGraficosPresupuesto(ejecutadoTotal, totalRedesSociales, totalPlataformasExternas);
 }
 
 function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
