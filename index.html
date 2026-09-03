@@ -144,6 +144,11 @@
                         <p id="kpi-tiempo-reproduccion" class="text-xl font-extrabold text-indigo-600 mt-1">0 hrs</p>
                     </div>
 
+                    <div id="card-kpi-nuevos-espectadores" class="bg-white p-4 rounded-xl border shadow-sm hidden">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Nuevos Espectadores de Contenido</p>
+                        <p id="kpi-nuevos-espectadores" class="text-xl font-extrabold text-cyan-600 mt-1">0</p>
+                    </div>
+
                     <div id="card-kpi-interacciones" class="bg-white p-4 rounded-xl border shadow-sm">
                         <p id="lbl-kpi-interacciones" class="text-xs text-gray-500 font-semibold uppercase">Interacciones</p>
                         <p id="kpi-interacciones" class="text-xl font-extrabold text-gray-700 mt-1">0</p>
@@ -642,6 +647,7 @@ function renderizarModuloRedes() {
         const cardAlcanceOrg = document.getElementById('card-kpi-alcance-organico');
         const cardImpresiones = document.getElementById('card-kpi-impresiones');
         const cardTiempoRepro = document.getElementById('card-kpi-tiempo-reproduccion');
+        const cardNuevosEspectadores = document.getElementById('card-kpi-nuevos-espectadores');
         const cardInteracciones = document.getElementById('card-kpi-interacciones');
         const cardInversion = document.getElementById('card-kpi-inversion');
         const lblSeguidores = document.getElementById('lbl-kpi-seguidores');
@@ -652,16 +658,15 @@ function renderizarModuloRedes() {
         cardAlcanceOrg.classList.remove('hidden');
         cardImpresiones.classList.remove('hidden');
         if (cardTiempoRepro) cardTiempoRepro.classList.add('hidden');
+        if (cardNuevosEspectadores) cardNuevosEspectadores.classList.add('hidden');
         cardInteracciones.classList.remove('hidden');
         cardInversion.classList.remove('hidden');
         lblSeguidores.innerText = 'NUEVOS SEGUIDORES';
 
         if (redActiva === 'Instagram') {
-            // 2. INSTAGRAM — IMPRESIONES ELIMINADAS
             cardImpresiones.classList.add('hidden');
             if (containerGenero) containerGenero.classList.remove('hidden');
         } else if (redActiva === 'TikTok') {
-            // 3. TIKTOK — ELIMINAR FICHA/GRÁFICA DE ALCANCE TOTAL VS ORGÁNICO Y OTRAS
             cardCtr.classList.add('hidden');
             cardAlcanceOrg.classList.add('hidden');
             cardAlcance.classList.add('hidden');
@@ -669,19 +674,17 @@ function renderizarModuloRedes() {
             if (containerAlcance) containerAlcance.classList.add('hidden');
             if (seccionTikTokTop) seccionTikTokTop.classList.remove('hidden');
         } else if (redActiva === 'YouTube') {
-            // 7. YOUTUBE — FICHAS ELIMINADAS (Alcance Total, Impresiones, Interacciones)
             cardCtr.classList.add('hidden');
             cardAlcanceOrg.classList.add('hidden');
             cardAlcance.classList.add('hidden');
             cardImpresiones.classList.add('hidden');
             cardInteracciones.classList.add('hidden');
             
-            // 6. YOUTUBE — AGREGAR "TIEMPO DE REPRODUCCIÓN"
             if (cardTiempoRepro) cardTiempoRepro.classList.remove('hidden');
+            if (cardNuevosEspectadores) cardNuevosEspectadores.classList.remove('hidden');
             
             lblSeguidores.innerText = 'SUSCRIPTORES GANADOS';
             
-            // 7. YOUTUBE — ELIMINAR GRÁFICO "Alcance Total vs Orgánico"
             if (containerAlcance) containerAlcance.classList.add('hidden');
         }
 
@@ -692,19 +695,23 @@ function renderizarModuloRedes() {
         const idxAlcanceOrg = obtenerIndiceColumna(filas, ['alcance organico', 'alcance orgánico']);
         const idxImpresiones = obtenerIndiceColumna(filas, ['impresiones']);
         
-        // 1. INSTAGRAM — LECTURA DIRECTA DE COLUMNA "interacciones"
+        // 1. INSTAGRAM — LECTURA DIRECTA DE COLUMNA "interacciones" POR ENCABEZADO
         const idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
         
-        // 6. YOUTUBE — TIEMPO DE REPRODUCCIÓN
         const idxTiempoRepro = obtenerIndiceColumna(filas, [
             'tiempo de reproduccion', 'tiempo de reproducción', 'tiempo de reproduccion (horas)', 
             'tiempo de reproducción (horas)', 'horas de reproduccion', 'horas de reproducción', 
             'tiempo de reproduccion (hrs)', 'tiempo de reproducción (hrs)', 'tiempo reproduccion'
         ]);
+
+        // 3. YOUTUBE — LECTURA DIRECTA DE COLUMNA "nuevos espectadores de contenido"
+        const idxNuevosEspectadores = obtenerIndiceColumna(filas, [
+            'nuevos espectadores de contenido', 'nuevos espectadores', 'espectadores de contenido'
+        ]);
         
         const idxNuevosSeguidores = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
 
-        let totalInv = 0, totalAlc = 0, totalAlcOrg = 0, totalImp = 0, totalInt = 0, totalTiempoRepro = 0, totalNuevosSeg = 0;
+        let totalInv = 0, totalAlc = 0, totalAlcOrg = 0, totalImp = 0, totalInt = 0, totalTiempoRepro = 0, totalNuevosEsp = 0, totalNuevosSeg = 0;
         let countCtr = 0, sumCtr = 0;
 
         document.getElementById('lbl-kpi-interacciones').innerText = 'INTERACCIONES';
@@ -725,6 +732,7 @@ function renderizarModuloRedes() {
             if (idxImpresiones !== -1) totalImp += limpiarValorNum(f[idxImpresiones]);
             if (idxInteracciones !== -1) totalInt += limpiarValorNum(f[idxInteracciones]);
             if (idxTiempoRepro !== -1) totalTiempoRepro += limpiarValorNum(f[idxTiempoRepro]);
+            if (idxNuevosEspectadores !== -1) totalNuevosEsp += limpiarValorNum(f[idxNuevosEspectadores]);
             if (idxNuevosSeguidores !== -1) totalNuevosSeg += limpiarValorNum(f[idxNuevosSeguidores]);
         });
 
@@ -737,10 +745,13 @@ function renderizarModuloRedes() {
         
         const elemTiempo = document.getElementById('kpi-tiempo-reproduccion');
         if (elemTiempo) elemTiempo.innerText = `${totalTiempoRepro.toLocaleString()} hrs`;
+
+        const elemNuevosEsp = document.getElementById('kpi-nuevos-espectadores');
+        if (elemNuevosEsp) elemNuevosEsp.innerText = totalNuevosEsp.toLocaleString();
         
         document.getElementById('kpi-seguidores-exactos').innerText = totalNuevosSeg.toLocaleString();
 
-        // 4 y 5. TIKTOK — VIDEOS MÁS VISUALIZADOS / TODOS LOS MESES
+        // 2. TIKTOK — TABLA DE VIDEOS MÁS VISTOS
         if (redActiva === 'TikTok') {
             renderTikTokTopVideos(filasFiltradas, filas);
         }
@@ -750,14 +761,15 @@ function renderizarModuloRedes() {
 }
 
 /* =============================================================
-   4 y 5. TIKTOK — VIDEOS MÁS VISUALIZADOS (MES Y TODOS LOS MESES)
+   2. TIKTOK — TABLA DE VIDEOS MÁS VISTOS DEL PERÍODO
 ============================================================= */
 function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
     const mesSel = document.getElementById('filtro-mes').value;
     const cardMes = document.getElementById('card-tiktok-top-video-mes');
     const cardTabla = document.getElementById('card-tiktok-top-videos-tabla');
 
-    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['titulo', 'título']);
+    // Detección dinámica de columnas por encabezado
+    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['titulo del video', 'título del video', 'titulo de video', 'título de video', 'titulo', 'título', 'nombre del video']);
     const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'vistas', 'reproducciones']);
 
     if (idxTitulo === -1 || idxViews === -1) {
@@ -767,7 +779,6 @@ function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
     }
 
     if (mesSel !== 'todos') {
-        // 4. MES ESPECÍFICO -> Ficha "Video más visualizado del mes"
         cardTabla.classList.add('hidden');
         cardMes.classList.remove('hidden');
 
@@ -791,7 +802,7 @@ function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
             document.getElementById('tiktok-top-views').innerText = '0 visualizaciones';
         }
     } else {
-        // 5. "TODOS LOS MESES" -> Tabla ordenada de mayor a menor visualizaciones
+        // "TODOS LOS MESES" -> Tabla ordenada de mayor a menor visualizaciones
         cardMes.classList.add('hidden');
         cardTabla.classList.remove('hidden');
 
@@ -804,7 +815,7 @@ function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
             }
         });
 
-        // Ordenar de mayor a menor
+        // Ordenar de mayor a menor según Visualizaciones
         listaVideos.sort((a, b) => b.views - a.views);
 
         const tbody = document.getElementById('tabla-tiktok-top-body');
@@ -813,7 +824,7 @@ function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
         if (listaVideos.length === 0) {
             tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-500">No se encontraron videos registrados.</td></tr>`;
         } else {
-            // Mostrar hasta los 10 más vistos o todos los disponibles
+            // Mostrar los 10 videos más visualizados del período
             const topVideos = listaVideos.slice(0, 10);
             topVideos.forEach((v, index) => {
                 tbody.innerHTML += `
@@ -892,14 +903,13 @@ function renderGraficosRedes(filasFiltradas, todasLasFilas) {
         ]);
     }
 
-    // 8. INSTAGRAM — GRÁFICO DE GÉNERO
     if (redActiva === 'Instagram') {
         renderGraficoGeneroInstagram(filasFiltradas, todasLasFilas);
     }
 }
 
 /* =============================================================
-   8. INSTAGRAM — GRÁFICO DE GÉNERO
+   INSTAGRAM — GRÁFICO DE GÉNERO
 ============================================================= */
 function renderGraficoGeneroInstagram(filasFiltradas, todasLasFilas) {
     const idxGenero = obtenerIndiceColumna(todasLasFilas, ['genero', 'género']);
