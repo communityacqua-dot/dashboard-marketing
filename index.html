@@ -997,45 +997,53 @@ function solicitarAsignadoTotal() {
 
 /* =============================================================
    MÓDULO PRESUPUESTO (EXCLUSIVAMENTE DESDE EXCEL 1)
-   1. Pestaña 'Presupuesto' -> Fichas Presupuesto & Redes Sociales
-   2. Pestaña 'Plataformas Externas' -> Ficha Plataformas Ext.
-   3. Ejecutado Total = Redes Sociales + Plataformas Externas
+   FUENTES EXACTAS SOLICITADAS:
+   - Ficha "Plataformas Ext.": Excel 1 -> Plataformas Externas -> Monto Ejecutado
+   - Ficha "Redes Sociales": Excel 1 -> Presupuesto -> Redes Sociales
+   - Ficha "Ejecutado Total": Excel 1 -> Presupuesto -> Ejecutado Total
 ============================================================= */
 function renderizarModuloPresupuesto() {
-    const anioSel = document.getElementById('filtro-anio').value;
-    const mesSel = document.getElementById('filtro-mes').value;
-
-    // 1. OBTENER DATOS DE LA PESTAÑA "Presupuesto" DEL EXCEL 1
+    // 1. OBTENER DATOS Y ENCABEZADOS DE LA PESTAÑA "Presupuesto" DEL EXCEL 1
     const filasPresupuesto = obtenerHojaPrincipalInsensible('Presupuesto');
+    const encabezadosPres = filasPresupuesto && filasPresupuesto.length > 0 ? filasPresupuesto[0].map(e => (e || '').toString().trim().toLowerCase()) : [];
+    
+    const idxEjecutadoTotal = encabezadosPres.findIndex(e => e === 'ejecutado total');
+    const idxRedesSociales = encabezadosPres.findIndex(e => e === 'redes sociales');
+    const idxAcquaroni = encabezadosPres.findIndex(e => e === 'repuestos acquaroni');
+    const idxAztec = encabezadosPres.findIndex(e => e === 'aztec oils');
+    const idxMercadeo = encabezadosPres.findIndex(e => e === 'mercadeo');
+
     const filasFiltradasPres = filtrarFilas(filasPresupuesto, 0, 1);
 
+    let ejecutadoTotal = 0;
     let totalRedesSociales = 0;
     let totalAcquaroni = 0;
     let totalAztec = 0;
     let totalMercadeo = 0;
 
     filasFiltradasPres.forEach(f => {
-        totalRedesSociales += limpiarValorNum(f[3]); // Redes Sociales
-        totalAcquaroni += limpiarValorNum(f[4]);     // Repuestos Acquaroni
-        totalAztec += limpiarValorNum(f[5]);         // AZtec Oils
-        totalMercadeo += limpiarValorNum(f[6]);      // Mercadeo
+        if (idxEjecutadoTotal !== -1) ejecutadoTotal += limpiarValorNum(f[idxEjecutadoTotal]);
+        if (idxRedesSociales !== -1) totalRedesSociales += limpiarValorNum(f[idxRedesSociales]);
+        if (idxAcquaroni !== -1) totalAcquaroni += limpiarValorNum(f[idxAcquaroni]);
+        if (idxAztec !== -1) totalAztec += limpiarValorNum(f[idxAztec]);
+        if (idxMercadeo !== -1) totalMercadeo += limpiarValorNum(f[idxMercadeo]);
     });
 
-    // 2. OBTENER DATOS DE LA PESTAÑA "Plataformas Externas" DEL EXCEL 1
+    // 2. OBTENER DATOS Y ENCABEZADOS DE LA PESTAÑA "Plataformas Externas" DEL EXCEL 1
     const filasPlataformas = obtenerHojaPrincipalInsensible('Plataformas Externas');
+    const encabezadosPlat = filasPlataformas && filasPlataformas.length > 0 ? filasPlataformas[0].map(e => (e || '').toString().trim().toLowerCase()) : [];
+    const idxMontoEjecutadoPlat = encabezadosPlat.findIndex(e => e === 'monto ejecutado');
+
     const filasFiltradasPlat = filtrarFilas(filasPlataformas, 0, 1);
 
     let totalPlataformasExternas = 0;
     filasFiltradasPlat.forEach(f => {
-        // Intenta leer el monto de las columnas comunes de valores/importes
-        const monto = f.length > 4 ? limpiarValorNum(f[4]) : (f.length > 2 ? limpiarValorNum(f[2]) : limpiarValorNum(f[3]));
-        totalPlataformasExternas += monto;
+        if (idxMontoEjecutadoPlat !== -1) {
+            totalPlataformasExternas += limpiarValorNum(f[idxMontoEjecutadoPlat]);
+        }
     });
 
-    // 3. EJECUTADO TOTAL = REDES SOCIALES + PLATAFORMAS EXTERNAS
-    const ejecutadoTotal = totalRedesSociales + totalPlataformasExternas;
-
-    // Actualización de Fichas en Pantalla
+    // Actualización de Fichas en Pantalla con sus correspondientes fuentes exactas
     document.getElementById('pres-asignado').innerText = `Q ${limpiarValorNum(asignadoTotalManual).toFixed(2)}`;
     document.getElementById('pres-ejecutado').innerText = `Q ${ejecutadoTotal.toFixed(2)}`;
     document.getElementById('pres-redes-soc').innerText = `Q ${totalRedesSociales.toFixed(2)}`;
