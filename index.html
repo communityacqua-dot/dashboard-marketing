@@ -150,6 +150,34 @@
                     </div>
                 </div>
 
+                <!-- TIKTOK VIDEO MÁS VISUALIZADO / LISTADO -->
+                <div id="seccion-tiktok-top-videos" class="hidden">
+                    <!-- Ficha para Mes Especifico -->
+                    <div id="card-tiktok-top-video-mes" class="bg-white p-5 rounded-xl border shadow-sm hidden">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Video más visualizado del mes</p>
+                        <blockquote id="tiktok-top-titulo" class="text-lg font-bold text-gray-800 italic border-l-4 border-blue-600 pl-3 py-1 mb-2">
+                            -
+                        </blockquote>
+                        <p id="tiktok-top-views" class="text-2xl font-black text-blue-600">0 visualizaciones</p>
+                    </div>
+
+                    <!-- Tabla para Todos los Meses -->
+                    <div id="card-tiktok-top-videos-tabla" class="bg-white p-5 rounded-xl border shadow-sm hidden">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">Videos Más Vistos del Período</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left border-collapse">
+                                <thead class="bg-gray-50 text-xs text-gray-500 uppercase border-b">
+                                    <tr>
+                                        <th class="p-3">Título</th>
+                                        <th class="p-3 text-right">Visualizaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-tiktok-top-body" class="divide-y"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- TIKTOK LIVE KPIS -->
                 <div id="kpis-tiktok-live" class="grid grid-cols-1 md:grid-cols-6 gap-4 hidden">
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
@@ -195,7 +223,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-5 rounded-xl border shadow-sm">
+                    <div id="container-chart-alcance" class="bg-white p-5 rounded-xl border shadow-sm">
                         <h4 class="text-sm font-bold text-gray-700 mb-4">Alcance Total vs Orgánico</h4>
                         <div class="h-64">
                             <canvas id="chart-alcance"></canvas>
@@ -213,6 +241,13 @@
                         <h4 id="titulo-chart-extra" class="text-sm font-bold text-gray-700 mb-4">Métricas Complementarias</h4>
                         <div class="h-64">
                             <canvas id="chart-extra"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="container-chart-genero" class="bg-white p-5 rounded-xl border shadow-sm hidden">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">Distribución por Género</h4>
+                        <div class="h-64">
+                            <canvas id="chart-genero"></canvas>
                         </div>
                     </div>
                 </div>
@@ -556,6 +591,13 @@ function renderizarModuloRedes() {
 
     const kpisEstandar = document.getElementById('kpis-estandar');
     const kpisLive = document.getElementById('kpis-tiktok-live');
+    const containerGenero = document.getElementById('container-chart-genero');
+    const containerAlcance = document.getElementById('container-chart-alcance');
+    const seccionTikTokTop = document.getElementById('seccion-tiktok-top-videos');
+
+    if (containerGenero) containerGenero.classList.add('hidden');
+    if (containerAlcance) containerAlcance.classList.remove('hidden');
+    if (seccionTikTokTop) seccionTikTokTop.classList.add('hidden');
 
     if (redActiva === 'TikTok Live') {
         kpisEstandar.classList.add('hidden');
@@ -585,25 +627,44 @@ function renderizarModuloRedes() {
 
         // Visibilidad adaptativa de Fichas según la Red Social
         const cardCtr = document.getElementById('card-kpi-ctr');
+        const cardAlcance = document.getElementById('card-kpi-alcance');
         const cardAlcanceOrg = document.getElementById('card-kpi-alcance-organico');
+        const cardImpresiones = document.getElementById('card-kpi-impresiones');
+        const cardInteracciones = document.getElementById('card-kpi-interacciones');
         const cardInversion = document.getElementById('card-kpi-inversion');
         const lblSeguidores = document.getElementById('lbl-kpi-seguidores');
 
-        // Restablecer visibilidad
+        // Restablecer visibilidad por defecto
         cardCtr.classList.remove('hidden');
+        cardAlcance.classList.remove('hidden');
         cardAlcanceOrg.classList.remove('hidden');
+        cardImpresiones.classList.remove('hidden');
+        cardInteracciones.classList.remove('hidden');
         cardInversion.classList.remove('hidden');
         lblSeguidores.innerText = 'NUEVOS SEGUIDORES';
 
-        if (redActiva === 'TikTok') {
-            // CAMBIOS 5 y 6: Eliminar CTR y Alcance Orgánico en TikTok
+        if (redActiva === 'Instagram') {
+            // CAMBIO 2: Eliminar la ficha de Impresiones en Instagram
+            cardImpresiones.classList.add('hidden');
+            if (containerGenero) containerGenero.classList.remove('hidden');
+        } else if (redActiva === 'TikTok') {
+            // CAMBIOS 3 & 5 y 6: Eliminar CTR, Alcance Orgánico, Alcance Total e Impresiones en TikTok
             cardCtr.classList.add('hidden');
             cardAlcanceOrg.classList.add('hidden');
+            cardAlcance.classList.add('hidden');
+            cardImpresiones.classList.add('hidden');
+            if (seccionTikTokTop) seccionTikTokTop.classList.remove('hidden');
         } else if (redActiva === 'YouTube') {
-            // CAMBIOS 10 y 11: Eliminar CTR y Alcance Orgánico en YouTube
+            // CAMBIOS 4 & 10 y 11: Eliminar CTR, Alcance Orgánico, Alcance Total, Impresiones e Interacciones en YouTube
             cardCtr.classList.add('hidden');
             cardAlcanceOrg.classList.add('hidden');
+            cardAlcance.classList.add('hidden');
+            cardImpresiones.classList.add('hidden');
+            cardInteracciones.classList.add('hidden');
             lblSeguidores.innerText = 'SUSCRIPTORES GANADOS';
+            
+            // CAMBIO 8: Eliminar gráfica "Alcance Total vs Orgánico" en YouTube
+            if (containerAlcance) containerAlcance.classList.add('hidden');
         }
 
         // Mapeo dinámico de Índices por Nombre Exacto de Encabezado en Excel 1
@@ -634,6 +695,7 @@ function renderizarModuloRedes() {
             if (idxAlcance !== -1) totalAlc += limpiarValorNum(f[idxAlcance]);
             if (idxAlcanceOrg !== -1) totalAlcOrg += limpiarValorNum(f[idxAlcanceOrg]);
             if (idxImpresiones !== -1) totalImp += limpiarValorNum(f[idxImpresiones]);
+            // CAMBIO 1: Instagram lee directamente la columna exactamente llamada "interacciones"
             if (idxInteracciones !== -1) totalInt += limpiarValorNum(f[idxInteracciones]);
             if (idxNuevosSeguidores !== -1) totalNuevosSeg += limpiarValorNum(f[idxNuevosSeguidores]);
         });
@@ -646,7 +708,87 @@ function renderizarModuloRedes() {
         document.getElementById('kpi-interacciones').innerText = totalInt.toLocaleString();
         document.getElementById('kpi-seguidores-exactos').innerText = totalNuevosSeg.toLocaleString();
 
+        // CAMBIOS 6 & 7: Lógica de Video Más Visualizado del Mes / Tabla para TikTok
+        if (redActiva === 'TikTok') {
+            renderTikTokTopVideos(filasFiltradas, filas);
+        }
+
         renderGraficosRedes(filasFiltradas, filas);
+    }
+}
+
+/* =============================================================
+   RENDERIZADO DE TIKTOK TOP VIDEOS (CAMBIOS 6 Y 7)
+============================================================= */
+function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
+    const mesSel = document.getElementById('filtro-mes').value;
+    const cardMes = document.getElementById('card-tiktok-top-video-mes');
+    const cardTabla = document.getElementById('card-tiktok-top-videos-tabla');
+
+    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['titulo', 'título']);
+    const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'vistas', 'reproducciones']);
+
+    if (idxTitulo === -1 || idxViews === -1) {
+        cardMes.classList.add('hidden');
+        cardTabla.classList.add('hidden');
+        return;
+    }
+
+    if (mesSel !== 'todos') {
+        // CAMBIO 6: Un solo mes seleccionado -> Ficha del video más visualizado
+        cardTabla.classList.add('hidden');
+        cardMes.classList.remove('hidden');
+
+        let maxViews = -1;
+        let topTitulo = '-';
+
+        filasFiltradas.forEach(f => {
+            const views = limpiarValorNum(f[idxViews]);
+            const titulo = f[idxTitulo] ? f[idxTitulo].toString().trim() : '';
+            if (views > maxViews && titulo !== '') {
+                maxViews = views;
+                topTitulo = titulo;
+            }
+        });
+
+        if (maxViews >= 0) {
+            document.getElementById('tiktok-top-titulo').innerText = escapeHtml(topTitulo);
+            document.getElementById('tiktok-top-views').innerText = `${maxViews.toLocaleString()} visualizaciones`;
+        } else {
+            document.getElementById('tiktok-top-titulo').innerText = 'Sin registros para este período';
+            document.getElementById('tiktok-top-views').innerText = '0 visualizaciones';
+        }
+    } else {
+        // CAMBIO 7: "Todos los meses" -> Tabla/Listado de videos más vistos ordenados de mayor a menor
+        cardMes.classList.add('hidden');
+        cardTabla.classList.remove('hidden');
+
+        const listaVideos = [];
+        filasFiltradas.forEach(f => {
+            const titulo = f[idxTitulo] ? f[idxTitulo].toString().trim() : '';
+            const views = limpiarValorNum(f[idxViews]);
+            if (titulo !== '') {
+                listaVideos.push({ titulo, views });
+            }
+        });
+
+        listaVideos.sort((a, b) => b.views - a.views);
+
+        const tbody = document.getElementById('tabla-tiktok-top-body');
+        tbody.innerHTML = '';
+
+        if (listaVideos.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="2" class="p-3 text-center text-gray-500">No se encontraron videos registrados.</td></tr>`;
+        } else {
+            listaVideos.forEach(v => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 font-medium text-gray-800">${escapeHtml(v.titulo)}</td>
+                        <td class="p-3 text-right font-bold text-blue-600">${v.views.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+        }
     }
 }
 
@@ -693,10 +835,12 @@ function renderGraficosRedes(filasFiltradas, todasLasFilas) {
         { label: `Proyección ${anioProyectado} (Ene-Dic)`, data: dataProyeccion, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
     ]);
 
-    crearOActualizarChart('chart-alcance', 'bar', mesesLabels, [
-        { label: 'Alcance Total', data: dataAlc, backgroundColor: '#8b5cf6' },
-        { label: 'Alcance Orgánico', data: dataAlcOrg, backgroundColor: '#10b981' }
-    ]);
+    if (redActiva !== 'YouTube') {
+        crearOActualizarChart('chart-alcance', 'bar', mesesLabels, [
+            { label: 'Alcance Total', data: dataAlc, backgroundColor: '#8b5cf6' },
+            { label: 'Alcance Orgánico', data: dataAlcOrg, backgroundColor: '#10b981' }
+        ]);
+    }
 
     renderGraficoSeguidoresPorRed(mesesLabels);
 
@@ -711,6 +855,48 @@ function renderGraficosRedes(filasFiltradas, todasLasFilas) {
             { label: 'Interacciones', data: dataIntVideo, borderColor: '#6366f1', fill: false }
         ]);
     }
+
+    // CAMBIO 5: Agregar Gráfico de Género para Instagram
+    if (redActiva === 'Instagram') {
+        renderGraficoGeneroInstagram(filasFiltradas, todasLasFilas);
+    }
+}
+
+/* =============================================================
+   RENDERIZADO DE GRÁFICO DE GÉNERO DE INSTAGRAM (CAMBIO 5)
+============================================================= */
+function renderGraficoGeneroInstagram(filasFiltradas, todasLasFilas) {
+    const idxGenero = obtenerIndiceColumna(todasLasFilas, ['genero', 'género']);
+    if (idxGenero === -1) return;
+
+    const conteoGenero = {};
+
+    filasFiltradas.forEach(f => {
+        const valRaw = f[idxGenero];
+        if (valRaw !== null && valRaw !== undefined && valRaw.toString().trim() !== '') {
+            const val = valRaw.toString().trim();
+            // Normalizar primera letra en mayúscula conservando el nombre real
+            const claveClara = val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
+            conteoGenero[claveClara] = (conteoGenero[claveClara] || 0) + 1;
+        }
+    });
+
+    const labels = Object.keys(conteoGenero);
+    const data = Object.values(conteoGenero);
+
+    const coloresGenericos = ['#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#6366f1'];
+    const backgroundColors = labels.map((l, i) => {
+        if (l.toLowerCase() === 'mujer' || l.toLowerCase() === 'femenino') return '#ec4899';
+        if (l.toLowerCase() === 'hombre' || l.toLowerCase() === 'masculino') return '#3b82f6';
+        return coloresGenericos[i % coloresGenericos.length];
+    });
+
+    crearOActualizarChart('chart-genero', 'doughnut', labels, [
+        {
+            data: data,
+            backgroundColor: backgroundColors
+        }
+    ]);
 }
 
 function renderGraficoSeguidoresPorRed(mesesLabels) {
@@ -800,7 +986,9 @@ function crearOActualizarChart(canvasId, type, labels, datasets) {
     if (chartInstances[canvasId]) {
         chartInstances[canvasId].destroy();
     }
-    const ctx = document.getElementById(canvasId).getContext('2d');
+    const canvasElem = document.getElementById(canvasId);
+    if (!canvasElem) return;
+    const ctx = canvasElem.getContext('2d');
     chartInstances[canvasId] = new Chart(ctx, {
         type: type,
         data: { labels: labels, datasets: datasets },
