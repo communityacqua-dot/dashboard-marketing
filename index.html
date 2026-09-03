@@ -263,7 +263,7 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <h3 class="text-lg font-bold">Consolidado de Presupuesto y Estados de Cuenta</h3>
-                        <p class="text-xs text-gray-500 mt-1">Sincronizado con estados de cuenta para ejecutado y plataformas.</p>
+                        <p class="text-xs text-gray-500 mt-1">Alimentado directamente desde las pestañas oficiales de Presupuesto.</p>
                     </div>
                     <button onclick="solicitarAsignadoTotal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow">
                         <i class="fa-solid fa-pen-to-square mr-1"></i> Ingresar Asignado Total
@@ -365,19 +365,13 @@
 </div>
 
 <!-- =============================================================
-     SCRIPT PRINCIPAL CON SEPARACIÓN ESTRICTA DE FUENTES DE DATOS
+     SCRIPT PRINCIPAL CON ÚNICA FUENTE DE DATOS (EXCEL 1)
 ============================================================== -->
 <script>
-// FUENTE 1 — DATOS PRINCIPALES DEL DASHBOARD
+// FUENTE ÚNICA — DATOS DEL DASHBOARD (EXCEL 1)
 const URL_FUENTE_PRINCIPAL = 'https://script.google.com/macros/s/AKfycbzaYdXgo9yvjXzajv9vVb2tYml8TphKv_B2VRi_N_aBxWhmIVu4jeY4OszRgGS0Mbz1/exec';
 
-// FUENTE 2 — ESTADO DE CUENTA
-const URL_FUENTE_ESTADO_CUENTA = 'https://script.google.com/macros/s/AKfycby_7d7UG_wwPCZIYH9AgDELIGJ2DQprawQ50Op3LtCb-vw1poFgQ6CSdN3Veyz66sFfeA/exec';
-
-// ALMACENAMIENTO DE DATOS SEPARADO
 let rawDataPrincipal = {};
-let rawDataEstadoCuenta = {};
-
 let redActiva = '';
 let chartInstances = {};
 let asignadoTotalManual = localStorage.getItem('presupuesto_asignado_total') || 0;
@@ -455,7 +449,7 @@ function renderizarTabsRedes() {
 }
 
 /* =============================================================
-   OBTENER HOJA INSENSIBLE A MAYÚSCULAS/ESPACIOS POR FUENTE
+   OBTENER HOJA INSENSIBLE A MAYÚSCULAS/ESPACIOS (EXCEL 1)
 ============================================================= */
 function obtenerHojaPrincipalInsensible(busqueda) {
     if (!rawDataPrincipal) return [];
@@ -464,42 +458,20 @@ function obtenerHojaPrincipalInsensible(busqueda) {
     return claveEncontrada ? rawDataPrincipal[claveEncontrada] : [];
 }
 
-function obtenerHojaEstadoCuentaInsensible(busqueda) {
-    if (!rawDataEstadoCuenta) return [];
-
-    // 1. Si el objeto raíz viene como un arreglo directo o con estructura estándar de hojas
-    if (Array.isArray(rawDataEstadoCuenta)) return rawDataEstadoCuenta;
-
-    const keys = Object.keys(rawDataEstadoCuenta);
-    if (keys.length === 0) return [];
-
-    const keyLimpia = busqueda.toLowerCase().replace(/\s+/g, '');
-    const claveEncontrada = keys.find(k => k.toLowerCase().replace(/\s+/g, '') === keyLimpia);
-
-    if (claveEncontrada) return rawDataEstadoCuenta[claveEncontrada];
-
-    // Si viene dentro de un wrapper de objetos o la primera hoja disponible
-    return rawDataEstadoCuenta[keys[0]] || [];
-}
-
 /* =============================================================
-   CARGAR DATOS DESDE AMBAS FUENTES DE MANERA INDEPENDIENTE
+   CARGAR DATOS DESDE EXCEL 1
 ============================================================= */
 async function cargarDatosSheets() {
     const loader = document.getElementById('loader-status');
     loader.classList.remove('hidden');
 
-    const p1 = fetch(URL_FUENTE_PRINCIPAL)
-        .then(res => res.json())
-        .then(data => { rawDataPrincipal = data; })
-        .catch(err => console.error('Error al cargar Fuente Principal:', err));
+    try {
+        const response = await fetch(URL_FUENTE_PRINCIPAL);
+        rawDataPrincipal = await response.json();
+    } catch (err) {
+        console.error('Error al cargar datos del Excel 1:', err);
+    }
 
-    const p2 = fetch(URL_FUENTE_ESTADO_CUENTA)
-        .then(res => res.json())
-        .then(data => { rawDataEstadoCuenta = data; })
-        .catch(err => console.error('Error al cargar Estado de Cuenta:', err));
-
-    await Promise.allSettled([p1, p2]);
     loader.classList.add('hidden');
     actualizarTodo();
 }
@@ -540,7 +512,7 @@ function actualizarTodo() {
 }
 
 /* =============================================================
-   REDES SOCIALES (EXCLUSIVAMENTE FUENTE PRINCIPAL)
+   REDES SOCIALES (EXCLUSIVAMENTE EXCEL 1)
 ============================================================= */
 function renderizarModuloRedes() {
     const cuenta = document.getElementById('filtro-cuenta').value;
@@ -642,26 +614,6 @@ function renderizarModuloRedes() {
 }
 
 /* =============================================================
-   LÓGICA DE VALIDACIÓN DE FECHA DE PROYECCIÓN
-============================================================= */
-function debeMostrarProyeccionSiguienteAnio() {
-    const ahora = new Date();
-    const anioActual = ahora.getFullYear();
-
-    if (anioActual === 2026) {
-        return true;
-    }
-
-    const mesActual = ahora.getMonth();
-    const diaActual = ahora.getDate();
-
-    if (mesActual > 8) return true;
-    if (mesActual === 8 && diaActual >= 1) return true;
-
-    return false;
-}
-
-/* =============================================================
    RENDERIZADO DE GRÁFICOS PARA REDES SOCIALES
 ============================================================= */
 function renderGraficosRedes(filas) {
@@ -681,8 +633,8 @@ function renderGraficosRedes(filas) {
         }
     });
 
-    const anioActual = new Date().getFullYear();
-    const anioProyectado = debeMostrarProyeccionSiguienteAnio() ? anioActual + 1 : anioActual;
+    const anioSel = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
+    const anioProyectado = anioSel + 1;
 
     document.getElementById('titulo-chart-inversion').innerText = `PROYECCIÓN REDES SOCIALES ${anioProyectado}`;
 
@@ -813,7 +765,7 @@ function crearOActualizarChart(canvasId, type, labels, datasets) {
 }
 
 /* =============================================================
-   POST IMPULSADOS (EXCLUSIVAMENTE FUENTE PRINCIPAL)
+   POST IMPULSADOS (EXCLUSIVAMENTE EXCEL 1)
 ============================================================= */
 function renderizarModuloPosts() {
     const cuenta = document.getElementById('filtro-cuenta').value;
@@ -879,7 +831,7 @@ function cerrarVisorImagen() {
 }
 
 /* =============================================================
-   CAMPAÑAS (EXCLUSIVAMENTE FUENTE PRINCIPAL)
+   CAMPAÑAS (EXCLUSIVAMENTE EXCEL 1)
 ============================================================= */
 function normalizarCampana(valor) {
     return (valor || '').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -1044,128 +996,61 @@ function solicitarAsignadoTotal() {
 }
 
 /* =============================================================
-   CORRECCIÓN DEL MÓDULO PRESUPUESTO
-   1. REDES SOCIALES
-   2. PLATAFORMAS EXTERNAS
-   3. EJECUTADO TOTAL = REDES SOCIALES + PLATAFORMAS EXTERNAS
+   MÓDULO PRESUPUESTO (EXCLUSIVAMENTE DESDE EXCEL 1)
+   1. Pestaña 'Presupuesto' -> Fichas Presupuesto & Redes Sociales
+   2. Pestaña 'Plataformas Externas' -> Ficha Plataformas Ext.
+   3. Ejecutado Total = Redes Sociales + Plataformas Externas
 ============================================================= */
 function renderizarModuloPresupuesto() {
-    // Obtener datos del Estado de Cuenta (URL 2 EXCLUSIVAMENTE)
-    const filasEstadosCuenta = obtenerHojaEstadoCuentaInsensible('Estado de Cuenta');
-    
     const anioSel = document.getElementById('filtro-anio').value;
     const mesSel = document.getElementById('filtro-mes').value;
 
+    // 1. OBTENER DATOS DE LA PESTAÑA "Presupuesto" DEL EXCEL 1
+    const filasPresupuesto = obtenerHojaPrincipalInsensible('Presupuesto');
+    const filasFiltradasPres = filtrarFilas(filasPresupuesto, 0, 1);
+
     let totalRedesSociales = 0;
-    let totalPlataformasExternas = 0;
-
-    // Patrones regex para identificación clara
-    const regexRedes = /(facebk|facebook|meta\b|meta\s*platforms|instagram|tiktok)/i;
-    const regexPlataformas = /(google|google\s*one|google\s*services|monday\.com|emastered|restream|suno|canva|adobe|zoom)/i;
-
-    // Conjunto para evitar duplicaciones de registros asociados/auxiliares
-    const cobrosProcesados = new Set();
-
-    if (filasEstadosCuenta && filasEstadosCuenta.length > 0) {
-        // Omitir cabecera si existe
-        const primerFila = filasEstadosCuenta[0];
-        const inicioIdx = (primerFila && isNaN(limpiarValorNum(primerFila[4] !== undefined ? primerFila[4] : primerFila[3]))) ? 1 : 0;
-
-        for (let i = inicioIdx; i < filasEstadosCuenta.length; i++) {
-            const row = filasEstadosCuenta[i];
-            if (!row || row.length === 0) continue;
-
-            // Extraer Descripción (Columna B / Índice 1) y Monto (Columna E / Índice 4)
-            let descripcion = '';
-            let monto = 0;
-            let fechaTexto = '';
-
-            if (Array.isArray(row)) {
-                fechaTexto = (row[0] || '').toString().trim();
-                descripcion = (row[1] || '').toString().trim();
-                
-                // Mapeo seguro a la Columna E (Monto) ignorando Columna F (Monto factura)
-                monto = row.length > 4 ? limpiarValorNum(row[4]) : (row.length > 2 ? limpiarValorNum(row[2]) : 0);
-            } else if (typeof row === 'object') {
-                descripcion = (row.DESCRIPCION || row.descripcion || row.DESCRIPCIÓN || row['DESCRIPCIÓN'] || row['COLUMNA B'] || '').toString().trim();
-                monto = limpiarValorNum(row.MONTO || row.monto || row['MONTO'] || row['COLUMNA E']);
-                fechaTexto = (row.HORA || row.hora || row.FECHA || row.fecha || row['COLUMNA A'] || '').toString().trim();
-            }
-
-            if (monto <= 0 || !descripcion) continue;
-
-            // Validación de Filtro Año / Mes sobre los registros del Estado de Cuenta
-            if (fechaTexto) {
-                if (fechaTexto.includes('202') || fechaTexto.includes('201')) {
-                    if (!fechaTexto.includes(anioSel)) continue;
-                }
-                if (mesSel !== 'todos') {
-                    const mesLower = mesSel.toLowerCase();
-                    const fechaLower = fechaTexto.toLowerCase();
-                    if (!fechaLower.includes(mesLower) && !fechaLower.includes(mesLower.substring(0, 3))) {
-                        // Si no hay texto directo de mes, no descartamos si la fecha viene en formato simple
-                    }
-                }
-            }
-
-            // Normalización para desduplicar registros auxiliares (ej. D09 CXCMoVisa FACEBK vs D01 FACEBK)
-            const descUpper = descripcion.toUpperCase();
-            
-            // Extracción de identificador de transacción si existe (ej: *7AWW3LDMW2)
-            const idMatch = descUpper.match(/\*([A-Z0-9]+)/);
-            const idTransaccion = idMatch ? idMatch[1] : '';
-
-            const claveUnica = idTransaccion 
-                ? `${idTransaccion}_${monto}`
-                : `${descUpper.replace(/^(D\d+\s*|CXCMOVISA\s*)/i, '')}_${monto}`;
-
-            if (cobrosProcesados.has(claveUnica)) {
-                // Omitir movimiento relacionado / duplicado
-                continue;
-            }
-
-            // CLASIFICACIÓN
-            if (regexRedes.test(descripcion)) {
-                totalRedesSociales += monto;
-                cobrosProcesados.add(claveUnica);
-            } else if (regexPlataformas.test(descripcion)) {
-                totalPlataformasExternas += monto;
-                cobrosProcesados.add(claveUnica);
-            }
-            // Los movimientos no identificados quedan fuera de ambas categorías
-        }
-    }
-
-    // EJECUTADO TOTAL = REDES SOCIALES + PLATAFORMAS EXTERNAS
-    const ejecutadoTotal = totalRedesSociales + totalPlataformasExternas;
-
-    // Datos de cuentas del primer Excel para las fichas de presupuestos por entidad
-    const filasPres = obtenerHojaPrincipalInsensible('Presupuesto');
-    const filasFiltradasPres = filtrarFilas(filasPres, 0, 1);
-
-    let acquaroni = 0, aztec = 0, mercadeo = 0;
+    let totalAcquaroni = 0;
+    let totalAztec = 0;
+    let totalMercadeo = 0;
 
     filasFiltradasPres.forEach(f => {
-        acquaroni += limpiarValorNum(f[4]);
-        aztec += limpiarValorNum(f[5]);
-        mercadeo += limpiarValorNum(f[6]);
+        totalRedesSociales += limpiarValorNum(f[3]); // Redes Sociales
+        totalAcquaroni += limpiarValorNum(f[4]);     // Repuestos Acquaroni
+        totalAztec += limpiarValorNum(f[5]);         // AZtec Oils
+        totalMercadeo += limpiarValorNum(f[6]);      // Mercadeo
     });
+
+    // 2. OBTENER DATOS DE LA PESTAÑA "Plataformas Externas" DEL EXCEL 1
+    const filasPlataformas = obtenerHojaPrincipalInsensible('Plataformas Externas');
+    const filasFiltradasPlat = filtrarFilas(filasPlataformas, 0, 1);
+
+    let totalPlataformasExternas = 0;
+    filasFiltradasPlat.forEach(f => {
+        // Intenta leer el monto de las columnas comunes de valores/importes
+        const monto = f.length > 4 ? limpiarValorNum(f[4]) : (f.length > 2 ? limpiarValorNum(f[2]) : limpiarValorNum(f[3]));
+        totalPlataformasExternas += monto;
+    });
+
+    // 3. EJECUTADO TOTAL = REDES SOCIALES + PLATAFORMAS EXTERNAS
+    const ejecutadoTotal = totalRedesSociales + totalPlataformasExternas;
 
     // Actualización de Fichas en Pantalla
     document.getElementById('pres-asignado').innerText = `Q ${limpiarValorNum(asignadoTotalManual).toFixed(2)}`;
     document.getElementById('pres-ejecutado').innerText = `Q ${ejecutadoTotal.toFixed(2)}`;
     document.getElementById('pres-redes-soc').innerText = `Q ${totalRedesSociales.toFixed(2)}`;
-    document.getElementById('pres-acquaroni').innerText = `Q ${acquaroni.toFixed(2)}`;
-    document.getElementById('pres-aztec').innerText = `Q ${aztec.toFixed(2)}`;
-    document.getElementById('pres-mercadeo').innerText = `Q ${mercadeo.toFixed(2)}`;
+    document.getElementById('pres-acquaroni').innerText = `Q ${totalAcquaroni.toFixed(2)}`;
+    document.getElementById('pres-aztec').innerText = `Q ${totalAztec.toFixed(2)}`;
+    document.getElementById('pres-mercadeo').innerText = `Q ${totalMercadeo.toFixed(2)}`;
     document.getElementById('pres-plataformas-m4').innerText = `Q ${totalPlataformasExternas.toFixed(2)}`;
 
-    renderGraficosPresupuesto(ejecutadoTotal, totalRedesSociales, totalPlataformasExternas);
+    renderGraficosPresupuesto(ejecutadoTotal, totalRedesSociales, totalPlataformasExternas, filasPresupuesto);
 }
 
-function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
+function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupuesto) {
     const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     
+    // Gráfico de Dona: Porcentajes Ejecutados
     const total = ejecutado || 1;
     const pctRedes = ((redes / total) * 100).toFixed(1);
     const pctPlat = ((plataformas / total) * 100).toFixed(1);
@@ -1174,16 +1059,36 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas) {
         { data: [redes, plataformas], backgroundColor: ['#8b5cf6', '#6366f1'] }
     ]);
 
-    const anioActual = new Date().getFullYear();
-    const anioProyectado = debeMostrarProyeccionSiguienteAnio() ? anioActual + 1 : anioActual;
+    // Detectar dinámicamente Año Seleccionado y Año Siguiente
+    const anioSel = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
+    const anioProyectado = anioSel + 1;
 
-    document.getElementById('titulo-proyeccion-presupuesto').innerText = `PROYECCIÓN PRESUPUESTO ${anioProyectado}`;
+    document.getElementById('titulo-proyeccion-presupuesto').innerText = `Proyección de Presupuesto ${anioProyectado}`;
 
+    // Obtener valores mensuales reales del año seleccionado desde la pestaña "Presupuesto"
+    let valoresMensualesReales = new Array(12).fill(0);
+    if (filasPresupuesto && filasPresupuesto.length > 1) {
+        filasPresupuesto.slice(1).forEach(f => {
+            const rowAnio = f[0] ? f[0].toString().trim() : '';
+            if (rowAnio === anioSel.toString()) {
+                const idxMes = obtenerIndiceMes(f[1]);
+                if (idxMes !== -1) {
+                    // Suma el valor total registrado para cada mes
+                    const valMes = limpiarValorNum(f[3]) + limpiarValorNum(f[4]) + limpiarValorNum(f[5]) + limpiarValorNum(f[6]);
+                    valoresMensualesReales[idxMes] += valMes;
+                }
+            }
+        });
+    }
+
+    // Calcular Proyección dinámica para el próximo año basándose en datos reales mensuales
     let proyeccionPresupuesto = new Array(12).fill(0);
-    const baseMensual = (ejecutado > 0 ? ejecutado / 12 : 1000) * 1.10;
+    const sumaReal = valoresMensualesReales.reduce((a, b) => a + b, 0);
+    const promedioMensual = sumaReal > 0 ? sumaReal / 12 : 1000;
 
     for (let i = 0; i < 12; i++) {
-        proyeccionPresupuesto[i] = parseFloat((baseMensual * (1 + (i * 0.005))).toFixed(2));
+        const baseMes = valoresMensualesReales[i] > 0 ? valoresMensualesReales[i] : promedioMensual;
+        proyeccionPresupuesto[i] = parseFloat((baseMes * 1.05).toFixed(2)); // Factor de proyección 5% sobre real
     }
 
     crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
