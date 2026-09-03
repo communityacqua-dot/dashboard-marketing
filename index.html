@@ -144,6 +144,7 @@
                         <p id="kpi-tiempo-reproduccion" class="text-xl font-extrabold text-indigo-600 mt-1">0 hrs</p>
                     </div>
 
+                    <!-- NUEVA FICHA YOUTUBE: NUEVOS ESPECTADORES DE CONTENIDO -->
                     <div id="card-kpi-nuevos-espectadores" class="bg-white p-4 rounded-xl border shadow-sm hidden">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Nuevos Espectadores de Contenido</p>
                         <p id="kpi-nuevos-espectadores" class="text-xl font-extrabold text-cyan-600 mt-1">0</p>
@@ -171,15 +172,15 @@
                         <p id="tiktok-top-views" class="text-2xl font-black text-blue-600">0 visualizaciones</p>
                     </div>
 
-                    <!-- Tabla para Todos los Meses -->
+                    <!-- TABLA TOP 5 VIDEOS MÁS VISTOS -->
                     <div id="card-tiktok-top-videos-tabla" class="bg-white p-5 rounded-xl border shadow-sm hidden">
-                        <h4 class="text-sm font-bold text-gray-700 mb-4">Videos Más Vistos del Período</h4>
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">TOP 5 VIDEOS MÁS VISTOS DEL MES</h4>
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left border-collapse">
                                 <thead class="bg-gray-50 text-xs text-gray-500 uppercase border-b">
                                     <tr>
                                         <th class="p-3 w-12 text-center">#</th>
-                                        <th class="p-3">Título del video</th>
+                                        <th class="p-3">Video / Titular</th>
                                         <th class="p-3 text-right">Visualizaciones</th>
                                     </tr>
                                 </thead>
@@ -695,7 +696,7 @@ function renderizarModuloRedes() {
         const idxAlcanceOrg = obtenerIndiceColumna(filas, ['alcance organico', 'alcance orgánico']);
         const idxImpresiones = obtenerIndiceColumna(filas, ['impresiones']);
         
-        // 1. INSTAGRAM — LECTURA DIRECTA DE COLUMNA "interacciones" POR ENCABEZADO
+        // 1. INSTAGRAM — LECTURA DIRECTA DE COLUMNA "interacciones" POR ENCABEZADO EXACTO
         const idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
         
         const idxTiempoRepro = obtenerIndiceColumna(filas, [
@@ -751,7 +752,7 @@ function renderizarModuloRedes() {
         
         document.getElementById('kpi-seguidores-exactos').innerText = totalNuevosSeg.toLocaleString();
 
-        // 2. TIKTOK — TABLA DE VIDEOS MÁS VISTOS
+        // 2. TIKTOK — TABLA TOP 5 VIDEOS MÁS VISTOS
         if (redActiva === 'TikTok') {
             renderTikTokTopVideos(filasFiltradas, filas);
         }
@@ -761,15 +762,14 @@ function renderizarModuloRedes() {
 }
 
 /* =============================================================
-   2. TIKTOK — TABLA DE VIDEOS MÁS VISTOS DEL PERÍODO
+   2. TIKTOK — TABLA TOP 5 VIDEOS MÁS VISTOS DEL MES / PERÍODO
 ============================================================= */
 function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
-    const mesSel = document.getElementById('filtro-mes').value;
     const cardMes = document.getElementById('card-tiktok-top-video-mes');
     const cardTabla = document.getElementById('card-tiktok-top-videos-tabla');
 
     // Detección dinámica de columnas por encabezado
-    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['titulo del video', 'título del video', 'titulo de video', 'título de video', 'titulo', 'título', 'nombre del video']);
+    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['video / titular', 'video/titular', 'titulo del video', 'título del video', 'titulo de video', 'título de video', 'titulo', 'título', 'nombre del video', 'publicacion', 'publicación']);
     const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'vistas', 'reproducciones']);
 
     if (idxTitulo === -1 || idxViews === -1) {
@@ -778,64 +778,38 @@ function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
         return;
     }
 
-    if (mesSel !== 'todos') {
-        cardTabla.classList.add('hidden');
-        cardMes.classList.remove('hidden');
+    cardMes.classList.add('hidden');
+    cardTabla.classList.remove('hidden');
 
-        let maxViews = -1;
-        let topTitulo = '-';
-
-        filasFiltradas.forEach(f => {
-            const views = limpiarValorNum(f[idxViews]);
-            const titulo = f[idxTitulo] ? f[idxTitulo].toString().trim() : '';
-            if (views > maxViews && titulo !== '') {
-                maxViews = views;
-                topTitulo = titulo;
-            }
-        });
-
-        if (maxViews >= 0 && topTitulo !== '-') {
-            document.getElementById('tiktok-top-titulo').innerText = escapeHtml(topTitulo);
-            document.getElementById('tiktok-top-views').innerText = `${maxViews.toLocaleString()} visualizaciones`;
-        } else {
-            document.getElementById('tiktok-top-titulo').innerText = 'Sin registros para este período';
-            document.getElementById('tiktok-top-views').innerText = '0 visualizaciones';
+    const listaVideos = [];
+    filasFiltradas.forEach(f => {
+        const titulo = f[idxTitulo] ? f[idxTitulo].toString().trim() : '';
+        const views = limpiarValorNum(f[idxViews]);
+        if (titulo !== '') {
+            listaVideos.push({ titulo, views });
         }
+    });
+
+    // Ordenar de mayor a menor según Visualizaciones
+    listaVideos.sort((a, b) => b.views - a.views);
+
+    const tbody = document.getElementById('tabla-tiktok-top-body');
+    tbody.innerHTML = '';
+
+    if (listaVideos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-500">No se encontraron videos registrados.</td></tr>`;
     } else {
-        // "TODOS LOS MESES" -> Tabla ordenada de mayor a menor visualizaciones
-        cardMes.classList.add('hidden');
-        cardTabla.classList.remove('hidden');
-
-        const listaVideos = [];
-        filasFiltradas.forEach(f => {
-            const titulo = f[idxTitulo] ? f[idxTitulo].toString().trim() : '';
-            const views = limpiarValorNum(f[idxViews]);
-            if (titulo !== '') {
-                listaVideos.push({ titulo, views });
-            }
+        // TOP 5 MÁS VISTOS
+        const top5Videos = listaVideos.slice(0, 5);
+        top5Videos.forEach((v, index) => {
+            tbody.innerHTML += `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-3 font-bold text-gray-400 text-center">${index + 1}</td>
+                    <td class="p-3 font-medium text-gray-800">${escapeHtml(v.titulo)}</td>
+                    <td class="p-3 text-right font-bold text-blue-600">${v.views.toLocaleString()}</td>
+                </tr>
+            `;
         });
-
-        // Ordenar de mayor a menor según Visualizaciones
-        listaVideos.sort((a, b) => b.views - a.views);
-
-        const tbody = document.getElementById('tabla-tiktok-top-body');
-        tbody.innerHTML = '';
-
-        if (listaVideos.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-500">No se encontraron videos registrados.</td></tr>`;
-        } else {
-            // Mostrar los 10 videos más visualizados del período
-            const topVideos = listaVideos.slice(0, 10);
-            topVideos.forEach((v, index) => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50">
-                        <td class="p-3 font-bold text-gray-400 text-center">${index + 1}</td>
-                        <td class="p-3 font-medium text-gray-800">${escapeHtml(v.titulo)}</td>
-                        <td class="p-3 text-right font-bold text-blue-600">${v.views.toLocaleString()}</td>
-                    </tr>
-                `;
-            });
-        }
     }
 }
 
