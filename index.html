@@ -124,28 +124,28 @@
                         <p id="kpi-ctr" class="text-xl font-extrabold text-green-600 mt-1">0.00%</p>
                     </div>
 
-                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                    <div id="card-kpi-alcance" class="bg-white p-4 rounded-xl border shadow-sm">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Alcance Total</p>
                         <p id="kpi-alcance" class="text-xl font-extrabold text-purple-600 mt-1">0</p>
                     </div>
 
-                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                    <div id="card-kpi-alcance-organico" class="bg-white p-4 rounded-xl border shadow-sm">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Alcance Orgánico</p>
                         <p id="kpi-alcance-organico" class="text-xl font-extrabold text-emerald-600 mt-1">0</p>
                     </div>
 
-                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                    <div id="card-kpi-impresiones" class="bg-white p-4 rounded-xl border shadow-sm">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Impresiones</p>
                         <p id="kpi-impresiones" class="text-xl font-extrabold text-orange-600 mt-1">0</p>
                     </div>
 
-                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                    <div id="card-kpi-interacciones" class="bg-white p-4 rounded-xl border shadow-sm">
                         <p id="lbl-kpi-interacciones" class="text-xs text-gray-500 font-semibold uppercase">Interacciones</p>
                         <p id="kpi-interacciones" class="text-xl font-extrabold text-gray-700 mt-1">0</p>
                     </div>
 
                     <div id="card-kpi-seguidores" class="bg-white p-4 rounded-xl border shadow-sm">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Total Seguidores</p>
+                        <p id="lbl-kpi-seguidores" class="text-xs text-gray-500 font-semibold uppercase">Total Seguidores</p>
                         <p id="kpi-seguidores-exactos" class="text-xl font-extrabold text-teal-600 mt-1">0</p>
                     </div>
                 </div>
@@ -502,6 +502,22 @@ function limpiarValorNum(val) {
 }
 
 /* =============================================================
+   OBTENER ÍNDICE DE COLUMNA POR NOMBRE (INSENSIBLE A MAYÚSCULAS/ESPACIOS)
+============================================================= */
+function obtenerIndiceColumna(filas, nombresPosibles) {
+    if (!filas || filas.length === 0) return -1;
+    const encabezados = filas[0].map(h => h ? h.toString().toLowerCase().trim().replace(/\s+/g, ' ') : '');
+    const opciones = Array.isArray(nombresPosibles) ? nombresPosibles : [nombresPosibles];
+    
+    for (const opción of opciones) {
+        const buscado = opción.toLowerCase().trim().replace(/\s+/g, ' ');
+        const idx = encabezados.findIndex(e => e === buscado || e.includes(buscado));
+        if (idx !== -1) return idx;
+    }
+    return -1;
+}
+
+/* =============================================================
    ACTUALIZAR TODO
 ============================================================= */
 function actualizarTodo() {
@@ -567,38 +583,59 @@ function renderizarModuloRedes() {
         kpisLive.classList.add('hidden');
         kpisEstandar.classList.remove('hidden');
 
-        let totalInv = 0, totalAlc = 0, totalAlcOrg = 0, totalImp = 0, totalInt = 0;
-        let countCtr = 0, sumCtr = 0;
-        let ultimoSeguidores = 0;
+        // Visibilidad adaptativa de Fichas según la Red Social
+        const cardCtr = document.getElementById('card-kpi-ctr');
+        const cardAlcanceOrg = document.getElementById('card-kpi-alcance-organico');
+        const cardInversion = document.getElementById('card-kpi-inversion');
+        const lblSeguidores = document.getElementById('lbl-kpi-seguidores');
 
-        if (redActiva === 'Facebook') {
-            document.getElementById('lbl-kpi-interacciones').innerText = 'INTERACCIONES DE FACEBOOK';
-        } else {
-            document.getElementById('lbl-kpi-interacciones').innerText = 'INTERACCIONES';
+        // Restablecer visibilidad
+        cardCtr.classList.remove('hidden');
+        cardAlcanceOrg.classList.remove('hidden');
+        cardInversion.classList.remove('hidden');
+        lblSeguidores.innerText = 'NUEVOS SEGUIDORES';
+
+        if (redActiva === 'TikTok') {
+            // CAMBIOS 5 y 6: Eliminar CTR y Alcance Orgánico en TikTok
+            cardCtr.classList.add('hidden');
+            cardAlcanceOrg.classList.add('hidden');
+        } else if (redActiva === 'YouTube') {
+            // CAMBIOS 10 y 11: Eliminar CTR y Alcance Orgánico en YouTube
+            cardCtr.classList.add('hidden');
+            cardAlcanceOrg.classList.add('hidden');
+            lblSeguidores.innerText = 'SUSCRIPTORES GANADOS';
         }
 
+        // Mapeo dinámico de Índices por Nombre Exacto de Encabezado en Excel 1
+        const idxInversion = obtenerIndiceColumna(filas, ['inversion', 'inversión']);
+        const idxCtr = obtenerIndiceColumna(filas, ['ctr', 'ctr promedio']);
+        const idxAlcance = obtenerIndiceColumna(filas, ['alcance', 'alcance total']);
+        const idxAlcanceOrg = obtenerIndiceColumna(filas, ['alcance organico', 'alcance orgánico']);
+        const idxImpresiones = obtenerIndiceColumna(filas, ['impresiones']);
+        const idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
+        const idxNuevosSeguidores = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
+
+        let totalInv = 0, totalAlc = 0, totalAlcOrg = 0, totalImp = 0, totalInt = 0, totalNuevosSeg = 0;
+        let countCtr = 0, sumCtr = 0;
+
+        document.getElementById('lbl-kpi-interacciones').innerText = 'INTERACCIONES';
+
         filasFiltradas.forEach(f => {
-            if (redActiva === 'TikTok') {
-                totalInv += limpiarValorNum(f[2]);
-                totalAlc += limpiarValorNum(f[3]);
-                totalImp += limpiarValorNum(f[4]);
-                totalInt += limpiarValorNum(f[5]);
-                ultimoSeguidores = limpiarValorNum(f[6]);
-            } else if (redActiva === 'Instagram' || redActiva === 'Facebook') {
-                totalInv += limpiarValorNum(f[2]);
-                sumCtr += limpiarValorNum(f[3]);
-                if (limpiarValorNum(f[3]) > 0) countCtr++;
-                totalAlc += limpiarValorNum(f[4]);
-                totalAlcOrg += limpiarValorNum(f[5]);
-                totalImp += limpiarValorNum(f[6]);
-                totalInt += limpiarValorNum(f[7]);
-                ultimoSeguidores = limpiarValorNum(f[8]);
-            } else {
-                totalAlc += limpiarValorNum(f[2]);
-                totalImp += limpiarValorNum(f[3]);
-                totalInt += limpiarValorNum(f[4]);
-                ultimoSeguidores = limpiarValorNum(f[5]);
+            if (idxInversion !== -1) totalInv += limpiarValorNum(f[idxInversion]);
+            
+            if (idxCtr !== -1) {
+                const ctrVal = limpiarValorNum(f[idxCtr]);
+                if (ctrVal > 0) {
+                    sumCtr += ctrVal;
+                    countCtr++;
+                }
             }
+            
+            if (idxAlcance !== -1) totalAlc += limpiarValorNum(f[idxAlcance]);
+            if (idxAlcanceOrg !== -1) totalAlcOrg += limpiarValorNum(f[idxAlcanceOrg]);
+            if (idxImpresiones !== -1) totalImp += limpiarValorNum(f[idxImpresiones]);
+            if (idxInteracciones !== -1) totalInt += limpiarValorNum(f[idxInteracciones]);
+            if (idxNuevosSeguidores !== -1) totalNuevosSeg += limpiarValorNum(f[idxNuevosSeguidores]);
         });
 
         document.getElementById('kpi-inversion').innerText = `Q ${totalInv.toFixed(2)}`;
@@ -607,29 +644,34 @@ function renderizarModuloRedes() {
         document.getElementById('kpi-alcance-organico').innerText = totalAlcOrg.toLocaleString();
         document.getElementById('kpi-impresiones').innerText = totalImp.toLocaleString();
         document.getElementById('kpi-interacciones').innerText = totalInt.toLocaleString();
-        document.getElementById('kpi-seguidores-exactos').innerText = ultimoSeguidores.toLocaleString();
+        document.getElementById('kpi-seguidores-exactos').innerText = totalNuevosSeg.toLocaleString();
 
-        renderGraficosRedes(filasFiltradas);
+        renderGraficosRedes(filasFiltradas, filas);
     }
 }
 
 /* =============================================================
    RENDERIZADO DE GRÁFICOS PARA REDES SOCIALES
 ============================================================= */
-function renderGraficosRedes(filas) {
+function renderGraficosRedes(filasFiltradas, todasLasFilas) {
     const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     let dataInv = new Array(12).fill(0);
     let dataAlc = new Array(12).fill(0);
     let dataAlcOrg = new Array(12).fill(0);
     let dataIntVideo = new Array(12).fill(0);
 
-    filas.forEach(f => {
+    const idxInv = obtenerIndiceColumna(todasLasFilas, ['inversion', 'inversión']);
+    const idxAlc = obtenerIndiceColumna(todasLasFilas, ['alcance', 'alcance total']);
+    const idxAlcOrg = obtenerIndiceColumna(todasLasFilas, ['alcance organico', 'alcance orgánico']);
+    const idxInt = obtenerIndiceColumna(todasLasFilas, ['interacciones']);
+
+    filasFiltradas.forEach(f => {
         const idxMes = obtenerIndiceMes(f[1]);
         if (idxMes !== -1) {
-            dataInv[idxMes] = limpiarValorNum(f[2]);
-            dataAlc[idxMes] = limpiarValorNum(f[4]);
-            dataAlcOrg[idxMes] = limpiarValorNum(f[5]);
-            dataIntVideo[idxMes] = limpiarValorNum(f[7] || f[5]);
+            if (idxInv !== -1) dataInv[idxMes] = limpiarValorNum(f[idxInv]);
+            if (idxAlc !== -1) dataAlc[idxMes] = limpiarValorNum(f[idxAlc]);
+            if (idxAlcOrg !== -1) dataAlcOrg[idxMes] = limpiarValorNum(f[idxAlcOrg]);
+            if (idxInt !== -1) dataIntVideo[idxMes] = limpiarValorNum(f[idxInt]);
         }
     });
 
@@ -678,23 +720,23 @@ function renderGraficoSeguidoresPorRed(mesesLabels) {
     let mapasHojas = [];
     if (cuenta === 'acquaroni') {
         mapasHojas = [
-            { red: 'Facebook', hoja: 'Facebook Repuestos Acquaroni', color: '#1877f2', colSeg: 8 },
-            { red: 'Instagram', hoja: 'Instagram Repuestos Acquaroni', color: '#e1306c', colSeg: 8 },
-            { red: 'TikTok', hoja: 'Tiktok Repuestos Acquaroni', color: '#000000', colSeg: 6 },
-            { red: 'YouTube', hoja: 'Youtube Repuestos Acquaroni', color: '#ff0000', colSeg: 5 }
+            { red: 'Facebook', hoja: 'Facebook Repuestos Acquaroni', color: '#1877f2' },
+            { red: 'Instagram', hoja: 'Instagram Repuestos Acquaroni', color: '#e1306c' },
+            { red: 'TikTok', hoja: 'Tiktok Repuestos Acquaroni', color: '#000000' },
+            { red: 'YouTube', hoja: 'Youtube Repuestos Acquaroni', color: '#ff0000' }
         ];
     } else if (cuenta === 'aztec') {
         mapasHojas = [
-            { red: 'Facebook', hoja: 'Facebook de AZtec Oils', color: '#1877f2', colSeg: 8 },
-            { red: 'Instagram', hoja: 'Instagram de AZtec Oils', color: '#e1306c', colSeg: 8 },
-            { red: 'TikTok', hoja: 'Tiktok de AZtec Oils', color: '#000000', colSeg: 6 }
+            { red: 'Facebook', hoja: 'Facebook de AZtec Oils', color: '#1877f2' },
+            { red: 'Instagram', hoja: 'Instagram de AZtec Oils', color: '#e1306c' },
+            { red: 'TikTok', hoja: 'Tiktok de AZtec Oils', color: '#000000' }
         ];
     } else if (cuenta === 'ultra') {
         mapasHojas = [
-            { red: 'Facebook', hoja: 'Facebook Ultra Parts', color: '#1877f2', colSeg: 8 },
-            { red: 'Instagram', hoja: 'Instagram Ultra Parts', color: '#e1306c', colSeg: 8 },
-            { red: 'TikTok', hoja: 'Tiktok Ultra Parts', color: '#000000', colSeg: 6 },
-            { red: 'YouTube', hoja: 'Youtube Ultra Parts', color: '#ff0000', colSeg: 5 }
+            { red: 'Facebook', hoja: 'Facebook Ultra Parts', color: '#1877f2' },
+            { red: 'Instagram', hoja: 'Instagram Ultra Parts', color: '#e1306c' },
+            { red: 'TikTok', hoja: 'Tiktok Ultra Parts', color: '#000000' },
+            { red: 'YouTube', hoja: 'Youtube Ultra Parts', color: '#ff0000' }
         ];
     }
 
@@ -705,12 +747,14 @@ function renderGraficoSeguidoresPorRed(mesesLabels) {
         let serieSeguidoresReal = new Array(12).fill(0);
 
         if (filas && filas.length > 1) {
+            const idxSeg = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
+            
             filas.slice(1).forEach(row => {
                 const rowAnio = row[0] ? row[0].toString().trim() : '';
                 if (rowAnio === anioSel) {
                     const idxMes = obtenerIndiceMes(row[1]);
-                    if (idxMes !== -1) {
-                        serieSeguidoresReal[idxMes] = limpiarValorNum(row[item.colSeg]);
+                    if (idxMes !== -1 && idxSeg !== -1) {
+                        serieSeguidoresReal[idxMes] = limpiarValorNum(row[idxSeg]);
                     }
                 }
             });
@@ -997,13 +1041,8 @@ function solicitarAsignadoTotal() {
 
 /* =============================================================
    MÓDULO PRESUPUESTO (EXCLUSIVAMENTE DESDE EXCEL 1)
-   FUENTES EXACTAS SOLICITADAS:
-   - Ficha "Plataformas Ext.": Excel 1 -> Plataformas Externas -> Monto Ejecutado
-   - Ficha "Redes Sociales": Excel 1 -> Presupuesto -> Redes Sociales
-   - Ficha "Ejecutado Total": Excel 1 -> Presupuesto -> Ejecutado Total
 ============================================================= */
 function renderizarModuloPresupuesto() {
-    // 1. OBTENER DATOS Y ENCABEZADOS DE LA PESTAÑA "Presupuesto" DEL EXCEL 1
     const filasPresupuesto = obtenerHojaPrincipalInsensible('Presupuesto');
     const encabezadosPres = filasPresupuesto && filasPresupuesto.length > 0 ? filasPresupuesto[0].map(e => (e || '').toString().trim().toLowerCase()) : [];
     
@@ -1029,7 +1068,6 @@ function renderizarModuloPresupuesto() {
         if (idxMercadeo !== -1) totalMercadeo += limpiarValorNum(f[idxMercadeo]);
     });
 
-    // 2. OBTENER DATOS Y ENCABEZADOS DE LA PESTAÑA "Plataformas Externas" DEL EXCEL 1
     const filasPlataformas = obtenerHojaPrincipalInsensible('Plataformas Externas');
     const encabezadosPlat = filasPlataformas && filasPlataformas.length > 0 ? filasPlataformas[0].map(e => (e || '').toString().trim().toLowerCase()) : [];
     const idxMontoEjecutadoPlat = encabezadosPlat.findIndex(e => e === 'monto ejecutado');
@@ -1043,7 +1081,6 @@ function renderizarModuloPresupuesto() {
         }
     });
 
-    // Actualización de Fichas en Pantalla con sus correspondientes fuentes exactas
     document.getElementById('pres-asignado').innerText = `Q ${limpiarValorNum(asignadoTotalManual).toFixed(2)}`;
     document.getElementById('pres-ejecutado').innerText = `Q ${ejecutadoTotal.toFixed(2)}`;
     document.getElementById('pres-redes-soc').innerText = `Q ${totalRedesSociales.toFixed(2)}`;
@@ -1058,7 +1095,6 @@ function renderizarModuloPresupuesto() {
 function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupuesto) {
     const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     
-    // Gráfico de Dona: Porcentajes Ejecutados
     const total = ejecutado || 1;
     const pctRedes = ((redes / total) * 100).toFixed(1);
     const pctPlat = ((plataformas / total) * 100).toFixed(1);
@@ -1067,13 +1103,11 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupues
         { data: [redes, plataformas], backgroundColor: ['#8b5cf6', '#6366f1'] }
     ]);
 
-    // Detectar dinámicamente Año Seleccionado y Año Siguiente
     const anioSel = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
     const anioProyectado = anioSel + 1;
 
     document.getElementById('titulo-proyeccion-presupuesto').innerText = `Proyección de Presupuesto ${anioProyectado}`;
 
-    // Obtener valores mensuales reales del año seleccionado desde la pestaña "Presupuesto"
     let valoresMensualesReales = new Array(12).fill(0);
     if (filasPresupuesto && filasPresupuesto.length > 1) {
         filasPresupuesto.slice(1).forEach(f => {
@@ -1081,7 +1115,6 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupues
             if (rowAnio === anioSel.toString()) {
                 const idxMes = obtenerIndiceMes(f[1]);
                 if (idxMes !== -1) {
-                    // Suma el valor total registrado para cada mes
                     const valMes = limpiarValorNum(f[3]) + limpiarValorNum(f[4]) + limpiarValorNum(f[5]) + limpiarValorNum(f[6]);
                     valoresMensualesReales[idxMes] += valMes;
                 }
@@ -1089,14 +1122,13 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupues
         });
     }
 
-    // Calcular Proyección dinámica para el próximo año basándose en datos reales mensuales
     let proyeccionPresupuesto = new Array(12).fill(0);
     const sumaReal = valoresMensualesReales.reduce((a, b) => a + b, 0);
     const promedioMensual = sumaReal > 0 ? sumaReal / 12 : 1000;
 
     for (let i = 0; i < 12; i++) {
         const baseMes = valoresMensualesReales[i] > 0 ? valoresMensualesReales[i] : promedioMensual;
-        proyeccionPresupuesto[i] = parseFloat((baseMes * 1.05).toFixed(2)); // Factor de proyección 5% sobre real
+        proyeccionPresupuesto[i] = parseFloat((baseMes * 1.05).toFixed(2));
     }
 
     crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
