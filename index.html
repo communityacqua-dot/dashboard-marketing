@@ -14,9 +14,9 @@
 
 <div class="flex h-screen overflow-hidden">
 
-    <!-- ========================================== -->
-    <!-- SIDEBAR                                    -->
-    <!-- ========================================== -->
+    <!-- =========================================================
+         SIDEBAR
+    ========================================================== -->
     <aside class="w-64 bg-slate-900 text-white flex flex-col justify-between p-4 shadow-lg">
         <div>
             <div class="mb-8 flex items-center gap-3">
@@ -28,73 +28,57 @@
             </div>
 
             <nav class="space-y-2">
-                <button onclick="cambiarModulo('redes')" id="btn-nav-redes" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium">
+                <button onclick="cambiarModulo('redes')" id="btn-nav-redes" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white font-medium transition">
                     <i class="fa-solid fa-chart-simple"></i>
                     Redes Sociales
                 </button>
 
-                <button onclick="cambiarModulo('posts')" id="btn-nav-posts" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium">
+                <button onclick="cambiarModulo('posts')" id="btn-nav-posts" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition">
                     <i class="fa-solid fa-rocket"></i>
                     Post Impulsados
                 </button>
 
-                <button onclick="cambiarModulo('presupuesto')" id="btn-nav-presupuesto" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium">
+                <button onclick="cambiarModulo('campanas')" id="btn-nav-campanas" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    Campañas
+                </button>
+
+                <button onclick="cambiarModulo('presupuesto')" id="btn-nav-presupuesto" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition">
                     <i class="fa-solid fa-wallet"></i>
                     Presupuesto
-                </button>
-
-                <button onclick="cambiarModulo('plataformas')" id="btn-nav-plataformas" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium">
-                    <i class="fa-solid fa-layer-group"></i>
-                    Plataformas
-                </button>
-
-                <button onclick="cambiarModulo('campanas')" id="btn-nav-campanas" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium">
-                    <i class="fa-solid fa-bullhorn"></i>
-                    Campañas R.A
                 </button>
             </nav>
         </div>
 
-        <div class="text-xs text-gray-500 border-t border-slate-800 pt-4 text-center">
-            Estado: <span id="estado-conexion" class="text-green-400 font-semibold">Conectado</span>
+        <div class="text-xs text-gray-500 border-t border-slate-800 pt-4 flex justify-between items-center">
+            <span>Dashboard R.A v3.6</span>
+            <span id="loader-status" class="text-blue-400 text-xs hidden">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+            </span>
         </div>
     </aside>
 
-
-    <!-- ========================================== -->
-    <!-- CONTENIDO PRINCIPAL                        -->
-    <!-- ========================================== -->
+    <!-- =========================================================
+         ÁREA PRINCIPAL
+    ========================================================== -->
     <main class="flex-1 flex flex-col overflow-y-auto">
 
-        <!-- HEADER CON FILTROS GLOBALES -->
-        <header class="bg-white border-b px-8 py-4 flex flex-wrap justify-between items-center gap-4 sticky top-0 z-10 shadow-sm">
-            <div>
-                <h2 id="titulo-seccion" class="text-2xl font-bold text-gray-800">Redes Sociales</h2>
-                <p class="text-sm text-gray-500">Métricas consolidadas de rendimiento</p>
-            </div>
+        <header class="bg-white border-b px-8 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10 shadow-sm">
+            <h2 id="titulo-seccion" class="text-xl font-bold text-gray-800">Redes Sociales</h2>
 
             <div class="flex items-center gap-4">
-                <!-- Filtro Cuenta -->
-                <div>
-                    <label class="block text-xs text-gray-500 font-semibold mb-1">Cuenta/Marca</label>
-                    <select id="filtro-cuenta" onchange="aplicarFiltrosGlobales()" class="border rounded-lg px-3 py-1.5 text-sm font-medium bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="TODAS">Todas las cuentas</option>
+                <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
+                    <i class="fa-solid fa-calendar text-gray-400"></i>
+                    <select id="filtro-anio" onchange="actualizarTodo()" class="bg-transparent text-sm font-semibold focus:outline-none">
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
                     </select>
                 </div>
 
-                <!-- Filtro Año -->
-                <div>
-                    <label class="block text-xs text-gray-500 font-semibold mb-1">Año</label>
-                    <select id="filtro-anio" onchange="aplicarFiltrosGlobales()" class="border rounded-lg px-3 py-1.5 text-sm font-medium bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <!-- Opciones dinámicas -->
-                    </select>
-                </div>
-
-                <!-- Filtro Mes -->
-                <div>
-                    <label class="block text-xs text-gray-500 font-semibold mb-1">Mes</label>
-                    <select id="filtro-mes" onchange="aplicarFiltrosGlobales()" class="border rounded-lg px-3 py-1.5 text-sm font-medium bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="TODOS">Todos los meses</option>
+                <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
+                    <i class="fa-solid fa-filter text-gray-400"></i>
+                    <select id="filtro-mes" onchange="actualizarTodo()" class="bg-transparent text-sm font-semibold focus:outline-none">
+                        <option value="todos">Todos los Meses</option>
                         <option value="Enero">Enero</option>
                         <option value="Febrero">Febrero</option>
                         <option value="Marzo">Marzo</option>
@@ -109,296 +93,278 @@
                         <option value="Diciembre">Diciembre</option>
                     </select>
                 </div>
+
+                <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
+                    <i class="fa-solid fa-building text-gray-400"></i>
+                    <select id="filtro-cuenta" onchange="cambiarCuentaPrincipal()" class="bg-transparent text-sm font-semibold focus:outline-none">
+                        <option value="acquaroni">Repuestos Acquaroni</option>
+                        <option value="aztec">AZtec Oils</option>
+                        <option value="ultra">Ultra Parts</option>
+                    </select>
+                </div>
             </div>
         </header>
 
-        <!-- AREA DE MODULOS -->
-        <div class="p-8">
+        <div class="p-8 space-y-8">
 
-            <!-- ========================================== -->
-            <!-- MODULO 1: REDES SOCIALES (SLIDER)          -->
-            <!-- ========================================== -->
-            <section id="modulo-redes" class="modulo-contenido space-y-6">
+            <!-- =================================================
+                 MÓDULO 1: REDES SOCIALES
+            ================================================== -->
+            <section id="mod-redes" class="modulo-seccion space-y-6">
+                <div id="tabs-redes" class="flex gap-2 border-b pb-2"></div>
 
-                <!-- CONTROLES DEL SLIDER -->
-                <div class="flex justify-between items-center bg-white p-4 rounded-xl border shadow-sm">
-                    <button onclick="moverSlide(-1)" class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold flex items-center gap-2 text-sm">
-                        <i class="fa-solid fa-chevron-left"></i> Anterior
-                    </button>
-
-                    <div class="flex items-center gap-3">
-                        <span id="slide-icono" class="text-2xl"></span>
-                        <h3 id="slide-titulo" class="text-xl font-bold text-gray-800"></h3>
+                <div id="kpis-estandar" class="grid grid-cols-1 md:grid-cols-7 gap-4">
+                    <div id="card-kpi-inversion" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Inversión Total</p>
+                        <p id="kpi-inversion" class="text-xl font-extrabold text-blue-600 mt-1">Q 0.00</p>
                     </div>
 
-                    <button onclick="moverSlide(1)" class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold flex items-center gap-2 text-sm">
-                        Siguiente <i class="fa-solid fa-chevron-right"></i>
-                    </button>
+                    <div id="card-kpi-ctr" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">CTR Promedio</p>
+                        <p id="kpi-ctr" class="text-xl font-extrabold text-green-600 mt-1">0.00%</p>
+                    </div>
+
+                    <div id="card-kpi-alcance" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Alcance Total</p>
+                        <p id="kpi-alcance" class="text-xl font-extrabold text-purple-600 mt-1">0</p>
+                    </div>
+
+                    <div id="card-kpi-alcance-organico" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Alcance Orgánico</p>
+                        <p id="kpi-alcance-organico" class="text-xl font-extrabold text-emerald-600 mt-1">0</p>
+                    </div>
+
+                    <div id="card-kpi-impresiones" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Impresiones</p>
+                        <p id="kpi-impresiones" class="text-xl font-extrabold text-orange-600 mt-1">0</p>
+                    </div>
+
+                    <div id="card-kpi-tiempo-reproduccion" class="bg-white p-4 rounded-xl border shadow-sm hidden">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Tiempo de Reproducción</p>
+                        <p id="kpi-tiempo-reproduccion" class="text-xl font-extrabold text-indigo-600 mt-1">0 hrs</p>
+                    </div>
+
+                    <div id="card-kpi-interacciones" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p id="lbl-kpi-interacciones" class="text-xs text-gray-500 font-semibold uppercase">Interacciones</p>
+                        <p id="kpi-interacciones" class="text-xl font-extrabold text-gray-700 mt-1">0</p>
+                    </div>
+
+                    <div id="card-kpi-seguidores" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p id="lbl-kpi-seguidores" class="text-xs text-gray-500 font-semibold uppercase">Total Seguidores</p>
+                        <p id="kpi-seguidores-exactos" class="text-xl font-extrabold text-teal-600 mt-1">0</p>
+                    </div>
                 </div>
 
-                <!-- CONTENEDOR DE SLIDES -->
-                <div class="relative overflow-hidden">
-
-                    <!-- SLIDE 1: FACEBOOK -->
-                    <div id="slide-facebook" class="slide-item transition-all duration-300 space-y-6">
-                        <!-- METRICAS PRINCIPALES -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Seguidores</p>
-                                <h4 id="fb-seguidores" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Alcance Total</p>
-                                <h4 id="fb-alcance" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Impresiones</p>
-                                <h4 id="fb-impresiones" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Interacciones</p>
-                                <h4 id="fb-interacciones" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                        </div>
-
-                        <!-- GRAFICAS FACEBOOK -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <h4 class="font-bold text-gray-700 mb-4 text-sm">Alcance Total vs Orgánico</h4>
-                                <div class="h-64">
-                                    <canvas id="chart-fb-alcance"></canvas>
-                                </div>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <h4 class="font-bold text-gray-700 mb-4 text-sm">Visitas a la página</h4>
-                                <div class="h-64">
-                                    <canvas id="chart-fb-visitas"></canvas>
-                                </div>
-                            </div>
-                        </div>
+                <!-- TIKTOK VIDEO MÁS VISUALIZADO / LISTADO -->
+                <div id="seccion-tiktok-top-videos" class="hidden">
+                    <!-- Ficha para Mes Específico -->
+                    <div id="card-tiktok-top-video-mes" class="bg-white p-5 rounded-xl border shadow-sm hidden">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Video más visualizado del mes</p>
+                        <blockquote id="tiktok-top-titulo" class="text-lg font-bold text-gray-800 italic border-l-4 border-blue-600 pl-3 py-1 mb-2">
+                            -
+                        </blockquote>
+                        <p id="tiktok-top-views" class="text-2xl font-black text-blue-600">0 visualizaciones</p>
                     </div>
 
-                    <!-- SLIDE 2: INSTAGRAM -->
-                    <div id="slide-instagram" class="slide-item hidden transition-all duration-300 space-y-6">
-                        <!-- METRICAS PRINCIPALES -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Seguidores</p>
-                                <h4 id="ig-seguidores" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Alcance Total</p>
-                                <h4 id="ig-alcance" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Interacciones</p>
-                                <h4 id="ig-interacciones" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                        </div>
-
-                        <!-- GRAFICAS INSTAGRAM -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <h4 class="font-bold text-gray-700 mb-4 text-sm">Alcance Total vs Orgánico</h4>
-                                <div class="h-64">
-                                    <canvas id="chart-ig-alcance"></canvas>
-                                </div>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <h4 class="font-bold text-gray-700 mb-4 text-sm">Distribución por Género</h4>
-                                <div class="h-64">
-                                    <canvas id="chart-ig-genero"></canvas>
-                                </div>
-                            </div>
+                    <!-- Tabla para Todos los Meses -->
+                    <div id="card-tiktok-top-videos-tabla" class="bg-white p-5 rounded-xl border shadow-sm hidden">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">Videos Más Vistos del Período</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left border-collapse">
+                                <thead class="bg-gray-50 text-xs text-gray-500 uppercase border-b">
+                                    <tr>
+                                        <th class="p-3 w-12 text-center">#</th>
+                                        <th class="p-3">Título del video</th>
+                                        <th class="p-3 text-right">Visualizaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-tiktok-top-body" class="divide-y"></tbody>
+                            </table>
                         </div>
                     </div>
-
-                    <!-- SLIDE 3: TIKTOK -->
-                    <div id="slide-tiktok" class="slide-item hidden transition-all duration-300 space-y-6">
-                        <!-- METRICAS PRINCIPALES -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Seguidores</p>
-                                <h4 id="tk-seguidores" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Visualizaciones Totales</p>
-                                <h4 id="tk-visualizaciones" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Interacciones</p>
-                                <h4 id="tk-interacciones" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                        </div>
-
-                        <!-- DESTACADO Y TABLA DE VIDEOS MAS VISTOS DE TIKTOK -->
-                        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
-                            <div id="tk-destacado-container" class="p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg border border-pink-100 hidden">
-                                <p class="text-xs font-bold text-pink-600 uppercase tracking-wider mb-1"><i class="fa-solid fa-trophy mr-1"></i> Video más visualizado del mes</p>
-                                <h5 id="tk-destacado-titulo" class="font-bold text-gray-800 text-base">---</h5>
-                                <p id="tk-destacado-views" class="text-lg font-black text-purple-700 mt-1">0 visualizaciones</p>
-                            </div>
-
-                            <div id="tk-tabla-container" class="space-y-3">
-                                <h4 class="font-bold text-gray-700 text-sm flex items-center gap-2">
-                                    <i class="fa-solid fa-list-ol text-pink-500"></i> Videos más visualizados
-                                </h4>
-                                <div class="overflow-x-auto">
-                                    <table class="w-full text-left text-sm">
-                                        <thead class="bg-gray-50 border-b text-gray-500 text-xs uppercase">
-                                            <tr>
-                                                <th class="p-3 w-12 text-center">#</th>
-                                                <th class="p-3">Título del video</th>
-                                                <th class="p-3 text-right">Visualizaciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tk-tabla-body" class="divide-y text-gray-700">
-                                            <!-- Contenido Dinámico -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SLIDE 4: YOUTUBE -->
-                    <div id="slide-youtube" class="slide-item hidden transition-all duration-300 space-y-6">
-                        <!-- METRICAS PRINCIPALES -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Suscriptores</p>
-                                <h4 id="yt-suscriptores" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Visualizaciones</p>
-                                <h4 id="yt-visualizaciones" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tiempo de reproducción</p>
-                                <h4 id="yt-tiemporep" class="text-2xl font-black text-slate-800 mt-2">0 hrs</h4>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl border shadow-sm">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Nuevos espectadores de contenido</p>
-                                <h4 id="yt-nuevosespectadores" class="text-2xl font-black text-slate-800 mt-2">0</h4>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
-            </section>
+                <!-- TIKTOK LIVE KPIS -->
+                <div id="kpis-tiktok-live" class="grid grid-cols-1 md:grid-cols-6 gap-4 hidden">
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Visualizaciones</p>
+                        <p id="kpi-live-views" class="text-xl font-extrabold text-blue-600 mt-1">0</p>
+                    </div>
 
-            <!-- ========================================== -->
-            <!-- MODULO 2: POST IMPULSADOS                  -->
-            <!-- ========================================== -->
-            <section id="modulo-posts" class="modulo-contenido hidden space-y-6">
-                <div class="bg-white p-6 rounded-xl border shadow-sm">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Métricas de Post Impulsados</h3>
-                    <div id="posts-contenedor" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <!-- Carga Dinámica -->
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Donadores</p>
+                        <p id="kpi-live-donadores" class="text-xl font-extrabold text-purple-600 mt-1">0</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Diamantes</p>
+                        <p id="kpi-live-diamantes" class="text-xl font-extrabold text-yellow-600 mt-1">0</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Seguidores Nuevos</p>
+                        <p id="kpi-live-seguidores" class="text-xl font-extrabold text-green-600 mt-1">0</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Comentarios</p>
+                        <p id="kpi-live-comentarios" class="text-xl font-extrabold text-indigo-600 mt-1">0</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Me Gusta</p>
+                        <p id="kpi-live-likes" class="text-xl font-extrabold text-pink-600 mt-1">0</p>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DE GRÁFICOS DINÁMICOS REDES SOCIALES -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-white p-5 rounded-xl border shadow-sm">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
+                            <span id="titulo-chart-inversion">Inversión Mensual vs Proyección</span>
+                            <span class="text-xs font-normal text-blue-500" id="tag-proyeccion-inv">Enero - Diciembre</span>
+                        </h4>
+                        <div class="h-64">
+                            <canvas id="chart-inversion"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="container-chart-alcance" class="bg-white p-5 rounded-xl border shadow-sm">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">Alcance Total vs Orgánico</h4>
+                        <div class="h-64">
+                            <canvas id="chart-alcance"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border shadow-sm">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">Crecimiento Mensual de Seguidores por Red</h4>
+                        <div class="h-64">
+                            <canvas id="chart-seguidores"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="container-chart-extra" class="bg-white p-5 rounded-xl border shadow-sm">
+                        <h4 id="titulo-chart-extra" class="text-sm font-bold text-gray-700 mb-4">Métricas Complementarias</h4>
+                        <div class="h-64">
+                            <canvas id="chart-extra"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="container-chart-genero" class="bg-white p-5 rounded-xl border shadow-sm hidden">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">Distribución por Género</h4>
+                        <div class="h-64">
+                            <canvas id="chart-genero"></canvas>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- ========================================== -->
-            <!-- MODULO 3: PRESUPUESTO                      -->
-            <!-- ========================================== -->
-            <section id="modulo-presupuesto" class="modulo-contenido hidden space-y-6">
-                <!-- CONTROLES PRESUPUESTO -->
-                <div class="bg-white p-6 rounded-xl border shadow-sm flex flex-wrap items-center justify-between gap-4">
+            <!-- =================================================
+                 MÓDULO 2: POST IMPULSADOS
+            ================================================== -->
+            <section id="mod-posts" class="modulo-seccion hidden space-y-6">
+                <h3 class="text-lg font-bold">Publicaciones Promocionadas</h3>
+
+                <div class="bg-white rounded-xl border shadow-sm p-4 overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+                            <tr>
+                                <th class="p-3">Vista Previa</th>
+                                <th class="p-3">Año / Mes</th>
+                                <th class="p-3">Publicación</th>
+                                <th class="p-3">Red Social</th>
+                                <th class="p-3">Reproducciones</th>
+                                <th class="p-3">Alcance</th>
+                                <th class="p-3">Conversaciones</th>
+                                <th class="p-3">Inversión (Q)</th>
+                                <th class="p-3">CPC</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-posts-body" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 MÓDULO 3: CAMPAÑAS
+            ================================================== -->
+            <section id="mod-campanas" class="modulo-seccion hidden space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold">Gestión de Campañas</h3>
+                    <p class="text-sm text-gray-500 mt-1">Selecciona una campaña para ver sus posts, artes y métricas.</p>
+                </div>
+
+                <div id="contenedor-campanas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </section>
+
+            <!-- =================================================
+                 MÓDULO 4: PRESUPUESTO & ESTADOS DE CUENTA
+            ================================================== -->
+            <section id="mod-presupuesto" class="modulo-seccion hidden space-y-6">
+                <div class="flex justify-between items-center">
                     <div>
-                        <h3 class="text-lg font-bold text-gray-800">Inversión vs Presupuesto Asignado</h3>
-                        <p class="text-sm text-gray-500">Gestión financiera por marca y período</p>
+                        <h3 class="text-lg font-bold">Consolidado de Presupuesto y Estados de Cuenta</h3>
+                        <p class="text-xs text-gray-500 mt-1">Alimentado directamente desde las pestañas oficiales de Presupuesto.</p>
+                    </div>
+                    <button onclick="solicitarAsignadoTotal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow">
+                        <i class="fa-solid fa-pen-to-square mr-1"></i> Ingresar Asignado Total
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-blue-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Asignado Total</p>
+                        <p id="pres-asignado" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
                     </div>
 
-                    <div class="flex items-center gap-3">
-                        <label class="text-sm font-semibold text-gray-600">Presupuesto Asignado ($):</label>
-                        <input type="number" id="input-presupuesto-monto" onchange="guardarPresupuestoLocal()" placeholder="0.00" class="border rounded-lg px-3 py-1.5 text-sm w-32 focus:ring-2 focus:ring-blue-500">
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-green-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Ejecutado Total</p>
+                        <p id="pres-ejecutado" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-purple-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Redes Sociales</p>
+                        <p id="pres-redes-soc" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-red-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Repuestos Acquaroni</p>
+                        <p id="pres-acquaroni" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-yellow-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">AZtec Oils</p>
+                        <p id="pres-aztec" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-orange-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Mercadeo</p>
+                        <p id="pres-mercadeo" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-indigo-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Plataformas Ext.</p>
+                        <p id="pres-plataformas-m4" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
                     </div>
                 </div>
 
-                <!-- CARDS RESUMEN PRESUPUESTO -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- GRÁFICO DE PRESUPUESTO CON PROYECCIÓN Y PORCENTAJES -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div class="bg-white p-5 rounded-xl border shadow-sm">
-                        <p class="text-xs font-bold text-gray-400 uppercase">Presupuesto Asignado</p>
-                        <h4 id="presupuesto-asignado-lbl" class="text-2xl font-black text-blue-600 mt-1">$0.00</h4>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl border shadow-sm">
-                        <p class="text-xs font-bold text-gray-400 uppercase">Inversión Ejecutada</p>
-                        <h4 id="presupuesto-ejecutado-lbl" class="text-2xl font-black text-emerald-600 mt-1">$0.00</h4>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl border shadow-sm">
-                        <p class="text-xs font-bold text-gray-400 uppercase">Diferencia / Saldo</p>
-                        <h4 id="presupuesto-diferencia-lbl" class="text-2xl font-black text-slate-800 mt-1">$0.00</h4>
-                    </div>
-                </div>
-
-                <!-- GRAFICA PRESUPUESTO -->
-                <div class="bg-white p-6 rounded-xl border shadow-sm">
-                    <h4 class="font-bold text-gray-700 mb-4 text-sm">Comparativo Inversión vs Presupuesto</h4>
-                    <div class="h-72">
-                        <canvas id="chart-presupuesto"></canvas>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ========================================== -->
-            <!-- MODULO 4: PLATAFORMAS                      -->
-            <!-- ========================================== -->
-            <section id="modulo-plataformas" class="modulo-contenido hidden space-y-6">
-                <div class="bg-white p-6 rounded-xl border shadow-sm">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Carga de Assets por Plataforma</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                        <!-- CARD SUBIDA FACEBOOK -->
-                        <div class="border rounded-xl p-4 bg-gray-50 space-y-3">
-                            <h4 class="font-bold text-blue-600 flex items-center gap-2">
-                                <i class="fa-brands fa-facebook"></i> Facebook Asset
-                            </h4>
-                            <input type="file" id="file-fb-img" accept="image/*" class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                            <div class="mt-2 border rounded-lg h-40 bg-white flex items-center justify-center overflow-hidden">
-                                <img id="preview-fb-img" src="" alt="Preview Facebook" class="max-h-full object-contain hidden">
-                                <span id="nodata-fb-img" class="text-xs text-gray-400">Sin imágen cargada</span>
-                            </div>
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">Ejecución Mensual y Porcentajes</h4>
+                        <div class="h-64">
+                            <canvas id="chart-presupuesto-mensual"></canvas>
                         </div>
-
-                        <!-- CARD SUBIDA INSTAGRAM -->
-                        <div class="border rounded-xl p-4 bg-gray-50 space-y-3">
-                            <h4 class="font-bold text-pink-600 flex items-center gap-2">
-                                <i class="fa-brands fa-instagram"></i> Instagram Asset
-                            </h4>
-                            <input type="file" id="file-ig-img" accept="image/*" class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100">
-                            <div class="mt-2 border rounded-lg h-40 bg-white flex items-center justify-center overflow-hidden">
-                                <img id="preview-ig-img" src="" alt="Preview Instagram" class="max-h-full object-contain hidden">
-                                <span id="nodata-ig-img" class="text-xs text-gray-400">Sin imágen cargada</span>
-                            </div>
-                        </div>
-
                     </div>
-                </div>
-            </section>
 
-            <!-- ========================================== -->
-            <!-- MODULO 5: CAMPAÑAS R.A                     -->
-            <!-- ========================================== -->
-            <section id="modulo-campanas" class="modulo-contenido hidden space-y-6">
-                <div class="bg-white p-6 rounded-xl border shadow-sm">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Campañas Publicitarias R.A</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
-                                <tr>
-                                    <th class="p-3">Nombre Campaña</th>
-                                    <th class="p-3">Plataforma</th>
-                                    <th class="p-3">Estado</th>
-                                    <th class="p-3 text-right">Inversión</th>
-                                    <th class="p-3 text-center">Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabla-campanas-body" class="divide-y">
-                                <!-- Datos dinámicos -->
-                            </tbody>
-                        </table>
+                    <div class="bg-white p-5 rounded-xl border shadow-sm">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
+                            <span id="titulo-proyeccion-presupuesto">Proyección de Presupuesto Año Próximo</span>
+                            <span class="text-xs font-normal text-blue-500" id="tag-proyeccion-pres-sub">Enero - Diciembre</span>
+                        </h4>
+                        <div class="h-64">
+                            <canvas id="chart-presupuesto-proyeccion"></canvas>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -407,695 +373,1003 @@
     </main>
 </div>
 
-<!-- MODAL DESGLOSE CAMPAÑAS -->
-<div id="modal-campana-desglose" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 space-y-4">
-        <div class="flex justify-between items-center border-b pb-3">
-            <h3 id="modal-campana-titulo" class="font-bold text-lg text-gray-800">Detalle Campaña</h3>
-            <button onclick="cerrarModalCampana()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-        </div>
-        <div id="modal-campana-contenido" class="space-y-3 text-sm text-gray-600">
-            <!-- Detalles -->
-        </div>
-        <div class="text-right pt-2">
-            <button onclick="cerrarModalCampana()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300">Cerrar</button>
-        </div>
+<!-- =============================================================
+     MODAL VISOR DE IMÁGENES A PANTALLA COMPLETA
+============================================================== -->
+<div id="modal-visor-imagen" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4 cursor-pointer" onclick="cerrarVisorImagen()">
+    <div class="relative max-w-4xl max-h-[90vh]">
+        <img id="img-visor-full" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain">
+        <button class="absolute -top-10 right-0 text-white text-xl font-bold">
+            <i class="fa-solid fa-xmark"></i> Cerrar
+        </button>
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- SCRIPTS LOGICA & CONEXION                  -->
-<!-- ========================================== -->
+<!-- =============================================================
+     MODAL CAMPAÑA
+============================================================== -->
+<div id="modal-campana" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-6xl w-full max-h-[92vh] overflow-y-auto shadow-2xl">
+        <div class="sticky top-0 z-20 bg-white border-b px-6 py-5">
+            <div class="flex justify-between items-start gap-4">
+                <div>
+                    <h3 id="modal-campana-titulo" class="text-xl font-bold text-gray-800"></h3>
+                    <p id="modal-campana-subtitulo" class="text-sm text-gray-500 mt-1"></p>
+                </div>
+                <button onclick="cerrarModalCampana()" class="text-gray-400 hover:text-gray-700 transition">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="modal-campana-contenido" class="p-6 space-y-6"></div>
+    </div>
+</div>
+
+<!-- =============================================================
+     SCRIPT PRINCIPAL CON ÚNICA FUENTE DE DATOS (EXCEL 1)
+============================================================== -->
 <script>
-    // URL DE PUBLICACIÓN DEL GOOGLE SHEETS EN FORMATO CSV O GOOGLE APPS SCRIPT JSON
-    // Reemplazar la URL a continuación con la URL real desplegada desde Google Sheets / Google Apps Script
-    const API_SHEET_URL = "https://script.google.com/macros/s/AKfycbx_ejemplo_remplaza_con_tu_endpoint/exec";
+// FUENTE ÚNICA — DATOS DEL DASHBOARD (EXCEL 1)
+const URL_FUENTE_PRINCIPAL = 'https://script.google.com/macros/s/AKfycbzaYdXgo9yvjXzajv9vVb2tYml8TphKv_B2VRi_N_aBxWhmIVu4jeY4OszRgGS0Mbz1/exec';
 
-    // ESTADO GLOBAL
-    let datosGsheet = {
-        Facebook: [],
-        Instagram: [],
-        Tiktok: [],
-        Youtube: [],
-        Campanas: [],
-        Posts: []
-    };
+let rawDataPrincipal = {};
+let redActiva = '';
+let chartInstances = {};
+let asignadoTotalManual = localStorage.getItem('presupuesto_asignado_total') || 0;
 
-    let marcasDisponibles = [];
-    let aniosDisponibles = [];
-
-    // SLIDER ESTADO
-    const slidesConfig = [
-        { id: 'slide-facebook', titulo: 'Facebook Metrics', icono: 'fa-brands fa-facebook text-blue-600' },
-        { id: 'slide-instagram', titulo: 'Instagram Metrics', icono: 'fa-brands fa-instagram text-pink-600' },
-        { id: 'slide-tiktok', titulo: 'TikTok Metrics', icono: 'fa-brands fa-tiktok text-black' },
-        { id: 'slide-youtube', titulo: 'YouTube Metrics', icono: 'fa-brands fa-youtube text-red-600' }
-    ];
-    let currentSlideIndex = 0;
-
-    // GRAFICOS INSTANCIAS
-    let chartInstances = {};
-
-    // AL CARGAR EL DOM
-    document.addEventListener("DOMContentLoaded", async () => {
-        inicializarPlataformasSubida();
-        await cargarDatosGoogleSheets();
-        inicializarFiltrosUI();
-        aplicarFiltrosGlobales();
-        renderizarSlideActual();
+/* =============================================================
+   CAMBIAR MÓDULO
+============================================================= */
+function cambiarModulo(moduloId) {
+    document.querySelectorAll('.modulo-seccion').forEach(sec => sec.classList.add('hidden'));
+    document.querySelectorAll('.btn-nav').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('hover:bg-slate-800', 'text-gray-300');
     });
 
-    // ----------------------------------------------------
-    // CARGA DE DATOS DE GOOGLE SHEETS
-    // ----------------------------------------------------
-    async function cargarDatosGoogleSheets() {
-        try {
-            const resp = await fetch(API_SHEET_URL);
-            if (resp.ok) {
-                const json = await resp.json();
-                if (json) {
-                    datosGsheet = normalizarDatosSheets(json);
-                    document.getElementById('estado-conexion').textContent = "Conectado";
-                    document.getElementById('estado-conexion').className = "text-green-400 font-semibold";
+    document.getElementById(`mod-${moduloId}`).classList.remove('hidden');
+    const btnActivo = document.getElementById(`btn-nav-${moduloId}`);
+    if (btnActivo) {
+        btnActivo.classList.add('bg-blue-600', 'text-white');
+    }
+
+    const titulos = {
+        redes: 'Redes Sociales',
+        posts: 'Post Impulsados',
+        campanas: 'Campañas',
+        presupuesto: 'Consolidado de Presupuesto'
+    };
+    document.getElementById('titulo-seccion').innerText = titulos[moduloId];
+}
+
+/* =============================================================
+   CAMBIO DE CUENTA
+============================================================= */
+function cambiarCuentaPrincipal() {
+    renderizarTabsRedes();
+    actualizarTodo();
+}
+
+/* =============================================================
+   TABS REDES
+============================================================= */
+function renderizarTabsRedes() {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const contenedorTabs = document.getElementById('tabs-redes');
+    contenedorTabs.innerHTML = '';
+
+    let redes = [];
+    if (cuenta === 'acquaroni') {
+        redes = ['Facebook', 'Instagram', 'TikTok Live', 'TikTok', 'YouTube'];
+    } else if (cuenta === 'aztec') {
+        redes = ['Facebook', 'Instagram', 'TikTok'];
+    } else if (cuenta === 'ultra') {
+        redes = ['Facebook', 'Instagram', 'TikTok', 'YouTube'];
+    }
+
+    redActiva = redes[0];
+
+    redes.forEach(red => {
+        const button = document.createElement('button');
+        button.className = `px-4 py-2 text-sm font-semibold rounded-lg transition ${
+            red === redActiva ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-100'
+        }`;
+        button.innerText = red;
+
+        button.onclick = () => {
+            redActiva = red;
+            document.querySelectorAll('#tabs-redes button').forEach(b => {
+                b.className = 'px-4 py-2 text-sm font-semibold rounded-lg transition text-gray-500 hover:bg-gray-100';
+            });
+            button.className = 'px-4 py-2 text-sm font-semibold rounded-lg transition bg-blue-100 text-blue-700';
+            renderizarModuloRedes();
+        };
+
+        contenedorTabs.appendChild(button);
+    });
+}
+
+/* =============================================================
+   OBTENER HOJA INSENSIBLE A MAYÚSCULAS/ESPACIOS (EXCEL 1)
+============================================================= */
+function obtenerHojaPrincipalInsensible(busqueda) {
+    if (!rawDataPrincipal) return [];
+    const keyLimpia = busqueda.toLowerCase().replace(/\s+/g, '');
+    const claveEncontrada = Object.keys(rawDataPrincipal).find(k => k.toLowerCase().replace(/\s+/g, '') === keyLimpia);
+    return claveEncontrada ? rawDataPrincipal[claveEncontrada] : [];
+}
+
+/* =============================================================
+   CARGAR DATOS DESDE EXCEL 1
+============================================================= */
+async function cargarDatosSheets() {
+    const loader = document.getElementById('loader-status');
+    loader.classList.remove('hidden');
+
+    try {
+        const response = await fetch(URL_FUENTE_PRINCIPAL);
+        rawDataPrincipal = await response.json();
+    } catch (err) {
+        console.error('Error al cargar datos del Excel 1:', err);
+    }
+
+    loader.classList.add('hidden');
+    actualizarTodo();
+}
+
+/* =============================================================
+   FILTRO GENERAL
+============================================================= */
+function filtrarFilas(filas, indexAnio = 0, indexMes = 1) {
+    if (!filas || filas.length <= 1) return [];
+
+    const anioSel = document.getElementById('filtro-anio').value;
+    const mesSel = document.getElementById('filtro-mes').value;
+
+    return filas.slice(1).filter(row => {
+        const anioMatch = !row[indexAnio] || row[indexAnio].toString().trim() === anioSel;
+        const mesMatch = mesSel === 'todos' || (row[indexMes] && row[indexMes].toString().toLowerCase().trim() === mesSel.toLowerCase());
+        return anioMatch && mesMatch;
+    });
+}
+
+/* =============================================================
+   LIMPIAR NÚMEROS
+============================================================= */
+function limpiarValorNum(val) {
+    if (val === null || val === undefined || val === '') return 0;
+    const num = parseFloat(val.toString().replace(/[^0-9.-]+/g, ''));
+    return isNaN(num) ? 0 : num;
+}
+
+/* =============================================================
+   OBTENER ÍNDICE DE COLUMNA POR NOMBRE (EXACTO / INSENSIBLE)
+============================================================= */
+function obtenerIndiceColumna(filas, nombresPosibles) {
+    if (!filas || filas.length === 0) return -1;
+    const encabezados = filas[0].map(h => h ? h.toString().toLowerCase().trim().replace(/\s+/g, ' ') : '');
+    const opciones = Array.isArray(nombresPosibles) ? nombresPosibles : [nombresPosibles];
+    
+    for (const opcion of opciones) {
+        const buscado = opcion.toLowerCase().trim().replace(/\s+/g, ' ');
+        const idxExacto = encabezados.findIndex(e => e === buscado);
+        if (idxExacto !== -1) return idxExacto;
+    }
+
+    for (const opcion of opciones) {
+        const buscado = opcion.toLowerCase().trim().replace(/\s+/g, ' ');
+        const idxParcial = encabezados.findIndex(e => e.includes(buscado));
+        if (idxParcial !== -1) return idxParcial;
+    }
+    return -1;
+}
+
+/* =============================================================
+   ACTUALIZAR TODO
+============================================================= */
+function actualizarTodo() {
+    renderizarModuloRedes();
+    renderizarModuloPosts();
+    renderizarModuloCampanas();
+    renderizarModuloPresupuesto();
+}
+
+/* =============================================================
+   REDES SOCIALES (EXCLUSIVAMENTE EXCEL 1)
+============================================================= */
+function renderizarModuloRedes() {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    let nombreHoja = '';
+
+    if (cuenta === 'acquaroni') {
+        if (redActiva === 'Facebook') nombreHoja = 'Facebook Repuestos Acquaroni';
+        else if (redActiva === 'Instagram') nombreHoja = 'Instagram Repuestos Acquaroni';
+        else if (redActiva === 'TikTok Live') nombreHoja = 'Tiktok live Repuestos Acquaroni';
+        else if (redActiva === 'TikTok') nombreHoja = 'Tiktok Repuestos Acquaroni';
+        else if (redActiva === 'YouTube') nombreHoja = 'Youtube Repuestos Acquaroni';
+    } else if (cuenta === 'aztec') {
+        if (redActiva === 'Facebook') nombreHoja = 'Facebook de AZtec Oils';
+        else if (redActiva === 'Instagram') nombreHoja = 'Instagram de AZtec Oils';
+        else if (redActiva === 'TikTok') nombreHoja = 'Tiktok de AZtec Oils';
+    } else if (cuenta === 'ultra') {
+        if (redActiva === 'Facebook') nombreHoja = 'Facebook Ultra Parts';
+        else if (redActiva === 'Instagram') nombreHoja = 'Instagram Ultra Parts';
+        else if (redActiva === 'TikTok') nombreHoja = 'Tiktok Ultra Parts';
+        else if (redActiva === 'YouTube') nombreHoja = 'Youtube Ultra Parts';
+    }
+
+    const filas = obtenerHojaPrincipalInsensible(nombreHoja);
+    const filasFiltradas = filtrarFilas(filas, 0, 1);
+
+    const kpisEstandar = document.getElementById('kpis-estandar');
+    const kpisLive = document.getElementById('kpis-tiktok-live');
+    const containerGenero = document.getElementById('container-chart-genero');
+    const containerAlcance = document.getElementById('container-chart-alcance');
+    const seccionTikTokTop = document.getElementById('seccion-tiktok-top-videos');
+
+    if (containerGenero) containerGenero.classList.add('hidden');
+    if (containerAlcance) containerAlcance.classList.remove('hidden');
+    if (seccionTikTokTop) seccionTikTokTop.classList.add('hidden');
+
+    if (redActiva === 'TikTok Live') {
+        kpisEstandar.classList.add('hidden');
+        kpisLive.classList.remove('hidden');
+
+        let tViews = 0, tDon = 0, tDiam = 0, tSeg = 0, tCom = 0, tLikes = 0;
+        filasFiltradas.forEach(f => {
+            tViews += limpiarValorNum(f[2]);
+            tDon += limpiarValorNum(f[3]);
+            tDiam += limpiarValorNum(f[4]);
+            tSeg += limpiarValorNum(f[5]);
+            tCom += limpiarValorNum(f[6]);
+            tLikes += limpiarValorNum(f[7]);
+        });
+
+        document.getElementById('kpi-live-views').innerText = tViews.toLocaleString();
+        document.getElementById('kpi-live-donadores').innerText = tDon.toLocaleString();
+        document.getElementById('kpi-live-diamantes').innerText = tDiam.toLocaleString();
+        document.getElementById('kpi-live-seguidores').innerText = tSeg.toLocaleString();
+        document.getElementById('kpi-live-comentarios').innerText = tCom.toLocaleString();
+        document.getElementById('kpi-live-likes').innerText = tLikes.toLocaleString();
+
+        renderGraficosTikTokLive(filasFiltradas);
+    } else {
+        kpisLive.classList.add('hidden');
+        kpisEstandar.classList.remove('hidden');
+
+        const cardCtr = document.getElementById('card-kpi-ctr');
+        const cardAlcance = document.getElementById('card-kpi-alcance');
+        const cardAlcanceOrg = document.getElementById('card-kpi-alcance-organico');
+        const cardImpresiones = document.getElementById('card-kpi-impresiones');
+        const cardTiempoRepro = document.getElementById('card-kpi-tiempo-reproduccion');
+        const cardInteracciones = document.getElementById('card-kpi-interacciones');
+        const cardInversion = document.getElementById('card-kpi-inversion');
+        const lblSeguidores = document.getElementById('lbl-kpi-seguidores');
+
+        // Restablecer visibilidad por defecto
+        cardCtr.classList.remove('hidden');
+        cardAlcance.classList.remove('hidden');
+        cardAlcanceOrg.classList.remove('hidden');
+        cardImpresiones.classList.remove('hidden');
+        if (cardTiempoRepro) cardTiempoRepro.classList.add('hidden');
+        cardInteracciones.classList.remove('hidden');
+        cardInversion.classList.remove('hidden');
+        lblSeguidores.innerText = 'NUEVOS SEGUIDORES';
+
+        if (redActiva === 'Instagram') {
+            // 2. INSTAGRAM — IMPRESIONES ELIMINADAS
+            cardImpresiones.classList.add('hidden');
+            if (containerGenero) containerGenero.classList.remove('hidden');
+        } else if (redActiva === 'TikTok') {
+            // 3. TIKTOK — ELIMINAR FICHA/GRÁFICA DE ALCANCE TOTAL VS ORGÁNICO Y OTRAS
+            cardCtr.classList.add('hidden');
+            cardAlcanceOrg.classList.add('hidden');
+            cardAlcance.classList.add('hidden');
+            cardImpresiones.classList.add('hidden');
+            if (containerAlcance) containerAlcance.classList.add('hidden');
+            if (seccionTikTokTop) seccionTikTokTop.classList.remove('hidden');
+        } else if (redActiva === 'YouTube') {
+            // 7. YOUTUBE — FICHAS ELIMINADAS (Alcance Total, Impresiones, Interacciones)
+            cardCtr.classList.add('hidden');
+            cardAlcanceOrg.classList.add('hidden');
+            cardAlcance.classList.add('hidden');
+            cardImpresiones.classList.add('hidden');
+            cardInteracciones.classList.add('hidden');
+            
+            // 6. YOUTUBE — AGREGAR "TIEMPO DE REPRODUCCIÓN"
+            if (cardTiempoRepro) cardTiempoRepro.classList.remove('hidden');
+            
+            lblSeguidores.innerText = 'SUSCRIPTORES GANADOS';
+            
+            // 7. YOUTUBE — ELIMINAR GRÁFICO "Alcance Total vs Orgánico"
+            if (containerAlcance) containerAlcance.classList.add('hidden');
+        }
+
+        // Mapeo dinámico de Índices por Nombre Exacto
+        const idxInversion = obtenerIndiceColumna(filas, ['inversion', 'inversión']);
+        const idxCtr = obtenerIndiceColumna(filas, ['ctr', 'ctr promedio']);
+        const idxAlcance = obtenerIndiceColumna(filas, ['alcance', 'alcance total']);
+        const idxAlcanceOrg = obtenerIndiceColumna(filas, ['alcance organico', 'alcance orgánico']);
+        const idxImpresiones = obtenerIndiceColumna(filas, ['impresiones']);
+        
+        // 1. INSTAGRAM — LECTURA DIRECTA DE COLUMNA "interacciones"
+        const idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
+        
+        // 6. YOUTUBE — TIEMPO DE REPRODUCCIÓN
+        const idxTiempoRepro = obtenerIndiceColumna(filas, [
+            'tiempo de reproduccion', 'tiempo de reproducción', 'tiempo de reproduccion (horas)', 
+            'tiempo de reproducción (horas)', 'horas de reproduccion', 'horas de reproducción', 
+            'tiempo de reproduccion (hrs)', 'tiempo de reproducción (hrs)', 'tiempo reproduccion'
+        ]);
+        
+        const idxNuevosSeguidores = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
+
+        let totalInv = 0, totalAlc = 0, totalAlcOrg = 0, totalImp = 0, totalInt = 0, totalTiempoRepro = 0, totalNuevosSeg = 0;
+        let countCtr = 0, sumCtr = 0;
+
+        document.getElementById('lbl-kpi-interacciones').innerText = 'INTERACCIONES';
+
+        filasFiltradas.forEach(f => {
+            if (idxInversion !== -1) totalInv += limpiarValorNum(f[idxInversion]);
+            
+            if (idxCtr !== -1) {
+                const ctrVal = limpiarValorNum(f[idxCtr]);
+                if (ctrVal > 0) {
+                    sumCtr += ctrVal;
+                    countCtr++;
                 }
-            } else {
-                usarEstructuraVacia();
             }
-        } catch (e) {
-            console.warn("No se pudo conectar al endpoint directo. Se utiliza estructura de respuesta segura.", e);
-            usarEstructuraVacia();
-        }
-    }
-
-    function usarEstructuraVacia() {
-        document.getElementById('estado-conexion').textContent = "Modo Conectado / Esperando Sheet";
-        document.getElementById('estado-conexion').className = "text-yellow-400 font-semibold";
-    }
-
-    function normalizarDatosSheets(data) {
-        let resultado = {
-            Facebook: [],
-            Instagram: [],
-            Tiktok: [],
-            Youtube: [],
-            Campanas: [],
-            Posts: []
-        };
-
-        const obtenerHojaInsensible = (nombre) => {
-            const keys = Object.keys(data);
-            const keyEncontrada = keys.find(k => k.trim().toLowerCase() === nombre.trim().toLowerCase());
-            return keyEncontrada ? data[keyEncontrada] : [];
-        };
-
-        resultado.Facebook = normalizarFilas(obtenerHojaInsensible('Facebook'));
-        resultado.Instagram = normalizarFilas(obtenerHojaInsensible('Instagram'));
-        resultado.Tiktok = normalizarFilas(obtenerHojaInsensible('Tiktok'));
-        resultado.Youtube = normalizarFilas(obtenerHojaInsensible('Youtube'));
-        resultado.Campanas = normalizarFilas(obtenerHojaInsensible('Campanas'));
-        resultado.Posts = normalizarFilas(obtenerHojaInsensible('Posts'));
-
-        return resultado;
-    }
-
-    // Normaliza filas del Excel/Google Sheets creando un objeto con claves en minúscula sin espacios ni acentos
-    function normalizarFilas(filas) {
-        if (!Array.isArray(filas) || filas.length === 0) return [];
-        return filas.map(fila => {
-            let nFila = {};
-            Object.keys(fila).forEach(key => {
-                const keyLimpia = key.toString().trim().toLowerCase()
-                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                nFila[keyLimpia] = fila[key];
-            });
-            return nFila;
-        });
-    }
-
-    // Busca valor en una fila probando múltiples variantes de nombre de columna
-    function obtenerValorColumna(fila, aliasLista) {
-        if (!fila) return 0;
-        const keys = Object.keys(fila);
-        for (let alias of aliasLista) {
-            const aliasLimpio = alias.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            const keyEncontrada = keys.find(k => k === aliasLimpio);
-            if (keyEncontrada !== undefined && fila[keyEncontrada] !== null && fila[keyEncontrada] !== "") {
-                return fila[keyEncontrada];
-            }
-        }
-        return 0;
-    }
-
-    function parsearNumero(val) {
-        if (typeof val === 'number') return val;
-        if (!val) return 0;
-        let str = val.toString().replace(/,/g, '').replace(/\$/g, '').trim();
-        let num = parseFloat(str);
-        return isNaN(num) ? 0 : num;
-    }
-
-    // ----------------------------------------------------
-    // FILTROS GLOBALES DE UI
-    // ----------------------------------------------------
-    function inicializarFiltrosUI() {
-        let marcasSet = new Set();
-        let aniosSet = new Set();
-
-        const procesarLista = (lista) => {
-            lista.forEach(item => {
-                let marca = obtenerValorColumna(item, ['cuenta', 'marca', 'brand', 'account']);
-                let anio = obtenerValorColumna(item, ['anio', 'year', 'ano']);
-                if (marca && marca !== 0) marcasSet.add(marca.toString().trim());
-                if (anio && anio !== 0) aniosSet.add(anio.toString().trim());
-            });
-        };
-
-        procesarLista(datosGsheet.Facebook);
-        procesarLista(datosGsheet.Instagram);
-        procesarLista(datosGsheet.Tiktok);
-        procesarLista(datosGsheet.Youtube);
-
-        marcasDisponibles = Array.from(marcasSet);
-        aniosDisponibles = Array.from(aniosSet);
-
-        if (aniosDisponibles.length === 0) {
-            const anioActual = new Date().getFullYear().toString();
-            aniosDisponibles.push(anioActual);
-        }
-
-        const selectCuenta = document.getElementById('filtro-cuenta');
-        selectCuenta.innerHTML = '<option value="TODAS">Todas las cuentas</option>';
-        marcasDisponibles.forEach(m => {
-            selectCuenta.innerHTML += `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`;
-        });
-
-        const selectAnio = document.getElementById('filtro-anio');
-        selectAnio.innerHTML = '';
-        aniosDisponibles.sort((a, b) => b - a).forEach(a => {
-            selectAnio.innerHTML += `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`;
-        });
-    }
-
-    function aplicarFiltrosGlobales() {
-        const cuenta = document.getElementById('filtro-cuenta').value;
-        const anio = document.getElementById('filtro-anio').value;
-        const mes = document.getElementById('filtro-mes').value;
-
-        renderizarFacebook(cuenta, anio, mes);
-        renderizarInstagram(cuenta, anio, mes);
-        renderizarTikTok(cuenta, anio, mes);
-        renderizarYouTube(cuenta, anio, mes);
-        renderizarPresupuesto(cuenta, anio, mes);
-        renderizarModuloPosts(cuenta, anio, mes);
-        renderizarCampanas(cuenta, anio, mes);
-    }
-
-    function filtrarFila(item, cuentaSel, anioSel, mesSel) {
-        let cuenta = obtenerValorColumna(item, ['cuenta', 'marca', 'brand', 'account']);
-        let anio = obtenerValorColumna(item, ['anio', 'year', 'ano']);
-        let mes = obtenerValorColumna(item, ['mes', 'month']);
-
-        if (cuentaSel !== 'TODAS' && cuenta.toString().trim().toLowerCase() !== cuentaSel.trim().toLowerCase()) {
-            return false;
-        }
-        if (anioSel && anio.toString().trim() !== anioSel.trim()) {
-            return false;
-        }
-        if (mesSel !== 'TODOS' && mes.toString().trim().toLowerCase() !== mesSel.trim().toLowerCase()) {
-            return false;
-        }
-        return true;
-    }
-
-    // ----------------------------------------------------
-    // MODULO: REDES SOCIALES (SLIDER)
-    // ----------------------------------------------------
-    function moverSlide(direccion) {
-        currentSlideIndex += direccion;
-        if (currentSlideIndex < 0) currentSlideIndex = slidesConfig.length - 1;
-        if (currentSlideIndex >= slidesConfig.length) currentSlideIndex = 0;
-        renderizarSlideActual();
-    }
-
-    function renderizarSlideActual() {
-        slidesConfig.forEach((cfg, idx) => {
-            const el = document.getElementById(cfg.id);
-            if (idx === currentSlideIndex) {
-                el.classList.remove('hidden');
-            } else {
-                el.classList.add('hidden');
-            }
-        });
-
-        const actual = slidesConfig[currentSlideIndex];
-        document.getElementById('slide-titulo').textContent = actual.titulo;
-        document.getElementById('slide-icono').className = actual.icono;
-    }
-
-    // ----------------------------------------------------
-    // RENDER: FACEBOOK
-    // ----------------------------------------------------
-    function renderizarFacebook(cuenta, anio, mes) {
-        const filas = datosGsheet.Facebook.filter(item => filtrarFila(item, cuenta, anio, mes));
-
-        let seguidores = 0;
-        let alcance = 0;
-        let impresiones = 0;
-        let interacciones = 0;
-
-        let visitasArray = [];
-        let alcanceTotalArr = [];
-        let alcanceOrganicoArr = [];
-        let etiquetasMeses = [];
-
-        filas.forEach(f => {
-            seguidores += parsearNumero(obtenerValorColumna(f, ['seguidores', 'followers']));
-            alcance += parsearNumero(obtenerValorColumna(f, ['alcance', 'reach', 'alcance total']));
-            impresiones += parsearNumero(obtenerValorColumna(f, ['impresiones', 'impressions']));
-            interacciones += parsearNumero(obtenerValorColumna(f, ['interacciones', 'interactions']));
-
-            visitasArray.push(parsearNumero(obtenerValorColumna(f, ['visitas', 'visitas a la pagina', 'page_views'])));
-            alcanceTotalArr.push(parsearNumero(obtenerValorColumna(f, ['alcance', 'alcance total'])));
-            alcanceOrganicoArr.push(parsearNumero(obtenerValorColumna(f, ['alcance organico', 'organico'])));
-            etiquetasMeses.push(obtenerValorColumna(f, ['mes']) || 'Mes');
-        });
-
-        document.getElementById('fb-seguidores').textContent = seguidores.toLocaleString();
-        document.getElementById('fb-alcance').textContent = alcance.toLocaleString();
-        document.getElementById('fb-impresiones').textContent = impresiones.toLocaleString();
-        document.getElementById('fb-interacciones').textContent = interacciones.toLocaleString();
-
-        crearOActualizarChart('chart-fb-alcance', 'line', {
-            labels: etiquetasMeses.length ? etiquetasMeses : ['Ene'],
-            datasets: [
-                { label: 'Alcance Total', data: alcanceTotalArr, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true },
-                { label: 'Alcance Orgánico', data: alcanceOrganicoArr, borderColor: '#10b981', backgroundColor: 'transparent' }
-            ]
-        });
-
-        crearOActualizarChart('chart-fb-visitas', 'bar', {
-            labels: etiquetasMeses.length ? etiquetasMeses : ['Ene'],
-            datasets: [{ label: 'Visitas', data: visitasArray, backgroundColor: '#6366f1' }]
-        });
-    }
-
-    // ----------------------------------------------------
-    // RENDER: INSTAGRAM
-    // ----------------------------------------------------
-    function renderizarInstagram(cuenta, anio, mes) {
-        const filas = datosGsheet.Instagram.filter(item => filtrarFila(item, cuenta, anio, mes));
-
-        let seguidores = 0;
-        let alcance = 0;
-        let interacciones = 0;
-
-        let alcanceTotalArr = [];
-        let alcanceOrganicoArr = [];
-        let etiquetasMeses = [];
-
-        let generosCount = { 'Femenino': 0, 'Masculino': 0, 'Otro': 0 };
-
-        filas.forEach(f => {
-            seguidores += parsearNumero(obtenerValorColumna(f, ['seguidores', 'followers']));
-            alcance += parsearNumero(obtenerValorColumna(f, ['alcance', 'reach', 'alcance total']));
             
-            // REGLA CLAVE 1 y 2: Instagram lee DIRECTAMENTE la columna "interacciones"
-            interacciones += parsearNumero(obtenerValorColumna(f, ['interacciones']));
-
-            alcanceTotalArr.push(parsearNumero(obtenerValorColumna(f, ['alcance', 'alcance total'])));
-            alcanceOrganicoArr.push(parsearNumero(obtenerValorColumna(f, ['alcance organico', 'organico'])));
-            etiquetasMeses.push(obtenerValorColumna(f, ['mes']) || 'Mes');
-
-            // Conteo de columna genero
-            let gen = obtenerValorColumna(f, ['genero', 'gender']);
-            if (gen) {
-                let gStr = gen.toString().trim().toLowerCase();
-                if (gStr.includes('f') || gStr.includes('muj')) generosCount['Femenino']++;
-                else if (gStr.includes('m') || gStr.includes('hom')) generosCount['Masculino']++;
-                else generosCount['Otro']++;
-            }
+            if (idxAlcance !== -1) totalAlc += limpiarValorNum(f[idxAlcance]);
+            if (idxAlcanceOrg !== -1) totalAlcOrg += limpiarValorNum(f[idxAlcanceOrg]);
+            if (idxImpresiones !== -1) totalImp += limpiarValorNum(f[idxImpresiones]);
+            if (idxInteracciones !== -1) totalInt += limpiarValorNum(f[idxInteracciones]);
+            if (idxTiempoRepro !== -1) totalTiempoRepro += limpiarValorNum(f[idxTiempoRepro]);
+            if (idxNuevosSeguidores !== -1) totalNuevosSeg += limpiarValorNum(f[idxNuevosSeguidores]);
         });
 
-        document.getElementById('ig-seguidores').textContent = seguidores.toLocaleString();
-        document.getElementById('ig-alcance').textContent = alcance.toLocaleString();
-        document.getElementById('ig-interacciones').textContent = interacciones.toLocaleString();
+        document.getElementById('kpi-inversion').innerText = `Q ${totalInv.toFixed(2)}`;
+        document.getElementById('kpi-ctr').innerText = `${(countCtr ? sumCtr / countCtr : 0).toFixed(2)}%`;
+        document.getElementById('kpi-alcance').innerText = totalAlc.toLocaleString();
+        document.getElementById('kpi-alcance-organico').innerText = totalAlcOrg.toLocaleString();
+        document.getElementById('kpi-impresiones').innerText = totalImp.toLocaleString();
+        document.getElementById('kpi-interacciones').innerText = totalInt.toLocaleString();
+        
+        const elemTiempo = document.getElementById('kpi-tiempo-reproduccion');
+        if (elemTiempo) elemTiempo.innerText = `${totalTiempoRepro.toLocaleString()} hrs`;
+        
+        document.getElementById('kpi-seguidores-exactos').innerText = totalNuevosSeg.toLocaleString();
 
-        crearOActualizarChart('chart-ig-alcance', 'line', {
-            labels: etiquetasMeses.length ? etiquetasMeses : ['Ene'],
-            datasets: [
-                { label: 'Alcance Total', data: alcanceTotalArr, borderColor: '#ec4899', backgroundColor: 'rgba(236, 72, 153, 0.1)', fill: true },
-                { label: 'Alcance Orgánico', data: alcanceOrganicoArr, borderColor: '#8b5cf6', backgroundColor: 'transparent' }
-            ]
-        });
-
-        crearOActualizarChart('chart-ig-genero', 'doughnut', {
-            labels: ['Femenino', 'Masculino', 'Otro'],
-            datasets: [{
-                data: [generosCount['Femenino'], generosCount['Masculino'], generosCount['Otro']],
-                backgroundColor: ['#ec4899', '#3b82f6', '#9ca3af']
-            }]
-        });
-    }
-
-    // ----------------------------------------------------
-    // RENDER: TIKTOK
-    // ----------------------------------------------------
-    function renderizarTikTok(cuenta, anio, mes) {
-        const filas = datosGsheet.Tiktok.filter(item => filtrarFila(item, cuenta, anio, mes));
-
-        let seguidores = 0;
-        let visualizacionesTotales = 0;
-        let interacciones = 0;
-
-        let videosProcesados = [];
-
-        filas.forEach(f => {
-            seguidores += parsearNumero(obtenerValorColumna(f, ['seguidores', 'followers']));
-            
-            let views = parsearNumero(obtenerValorColumna(f, ['visualizaciones', 'views', 'reproducciones']));
-            visualizacionesTotales += views;
-
-            interacciones += parsearNumero(obtenerValorColumna(f, ['interacciones', 'interactions']));
-
-            let titulo = obtenerValorColumna(f, ['titulo', 'title', 'nombre del video', 'video']);
-            if (titulo || views > 0) {
-                videosProcesados.push({
-                    titulo: titulo ? titulo.toString() : 'Video sin título',
-                    visualizaciones: views
-                });
-            }
-        });
-
-        document.getElementById('tk-seguidores').textContent = seguidores.toLocaleString();
-        document.getElementById('tk-visualizaciones').textContent = visualizacionesTotales.toLocaleString();
-        document.getElementById('tk-interacciones').textContent = interacciones.toLocaleString();
-
-        // Ordenar videos de mayor a menor por visualizaciones
-        videosProcesados.sort((a, b) => b.visualizaciones - a.visualizaciones);
-
-        const destacadoContainer = document.getElementById('tk-destacado-container');
-        const tablaBody = document.getElementById('tk-tabla-body');
-        tablaBody.innerHTML = '';
-
-        if (mes !== 'TODOS') {
-            // MODO MES ESPECÍFICO: MOSTRAR DESTACADO
-            destacadoContainer.classList.remove('hidden');
-            if (videosProcesados.length > 0) {
-                const topVideo = videosProcesados[0];
-                document.getElementById('tk-destacado-titulo').textContent = topVideo.titulo;
-                document.getElementById('tk-destacado-views').textContent = `${topVideo.visualizaciones.toLocaleString()} visualizaciones`;
-            } else {
-                document.getElementById('tk-destacado-titulo').textContent = 'Sin datos registradas';
-                document.getElementById('tk-destacado-views').textContent = '0 visualizaciones';
-            }
-        } else {
-            // MODO TODOS LOS MESES: OCULTAR DESTACADO CABECERA
-            destacadoContainer.classList.add('hidden');
+        // 4 y 5. TIKTOK — VIDEOS MÁS VISUALIZADOS / TODOS LOS MESES
+        if (redActiva === 'TikTok') {
+            renderTikTokTopVideos(filasFiltradas, filas);
         }
 
-        // TABLA DINÁMICA DE VIDEOS (Top 10)
-        const top10 = videosProcesados.slice(0, 10);
-        if (top10.length === 0) {
-            tablaBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-gray-400 italic">No hay registros de videos disponibles.</td></tr>`;
+        renderGraficosRedes(filasFiltradas, filas);
+    }
+}
+
+/* =============================================================
+   4 y 5. TIKTOK — VIDEOS MÁS VISUALIZADOS (MES Y TODOS LOS MESES)
+============================================================= */
+function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
+    const mesSel = document.getElementById('filtro-mes').value;
+    const cardMes = document.getElementById('card-tiktok-top-video-mes');
+    const cardTabla = document.getElementById('card-tiktok-top-videos-tabla');
+
+    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['titulo', 'título']);
+    const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'vistas', 'reproducciones']);
+
+    if (idxTitulo === -1 || idxViews === -1) {
+        cardMes.classList.add('hidden');
+        cardTabla.classList.add('hidden');
+        return;
+    }
+
+    if (mesSel !== 'todos') {
+        // 4. MES ESPECÍFICO -> Ficha "Video más visualizado del mes"
+        cardTabla.classList.add('hidden');
+        cardMes.classList.remove('hidden');
+
+        let maxViews = -1;
+        let topTitulo = '-';
+
+        filasFiltradas.forEach(f => {
+            const views = limpiarValorNum(f[idxViews]);
+            const titulo = f[idxTitulo] ? f[idxTitulo].toString().trim() : '';
+            if (views > maxViews && titulo !== '') {
+                maxViews = views;
+                topTitulo = titulo;
+            }
+        });
+
+        if (maxViews >= 0 && topTitulo !== '-') {
+            document.getElementById('tiktok-top-titulo').innerText = escapeHtml(topTitulo);
+            document.getElementById('tiktok-top-views').innerText = `${maxViews.toLocaleString()} visualizaciones`;
         } else {
-            top10.forEach((vid, idx) => {
-                tablaBody.innerHTML += `
-                    <tr class="hover:bg-gray-50 border-b border-gray-100">
-                        <td class="p-3 text-center font-bold text-gray-400">${idx + 1}</td>
-                        <td class="p-3 font-medium text-gray-800">${escapeHtml(vid.titulo)}</td>
-                        <td class="p-3 text-right font-bold text-pink-600">${vid.visualizaciones.toLocaleString()}</td>
+            document.getElementById('tiktok-top-titulo').innerText = 'Sin registros para este período';
+            document.getElementById('tiktok-top-views').innerText = '0 visualizaciones';
+        }
+    } else {
+        // 5. "TODOS LOS MESES" -> Tabla ordenada de mayor a menor visualizaciones
+        cardMes.classList.add('hidden');
+        cardTabla.classList.remove('hidden');
+
+        const listaVideos = [];
+        filasFiltradas.forEach(f => {
+            const titulo = f[idxTitulo] ? f[idxTitulo].toString().trim() : '';
+            const views = limpiarValorNum(f[idxViews]);
+            if (titulo !== '') {
+                listaVideos.push({ titulo, views });
+            }
+        });
+
+        // Ordenar de mayor a menor
+        listaVideos.sort((a, b) => b.views - a.views);
+
+        const tbody = document.getElementById('tabla-tiktok-top-body');
+        tbody.innerHTML = '';
+
+        if (listaVideos.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-500">No se encontraron videos registrados.</td></tr>`;
+        } else {
+            // Mostrar hasta los 10 más vistos o todos los disponibles
+            const topVideos = listaVideos.slice(0, 10);
+            topVideos.forEach((v, index) => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 font-bold text-gray-400 text-center">${index + 1}</td>
+                        <td class="p-3 font-medium text-gray-800">${escapeHtml(v.titulo)}</td>
+                        <td class="p-3 text-right font-bold text-blue-600">${v.views.toLocaleString()}</td>
                     </tr>
                 `;
             });
         }
     }
+}
 
-    // ----------------------------------------------------
-    // RENDER: YOUTUBE
-    // ----------------------------------------------------
-    function renderizarYouTube(cuenta, anio, mes) {
-        const filas = datosGsheet.Youtube.filter(item => filtrarFila(item, cuenta, anio, mes));
+/* =============================================================
+   RENDERIZADO DE GRÁFICOS PARA REDES SOCIALES
+============================================================= */
+function renderGraficosRedes(filasFiltradas, todasLasFilas) {
+    const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    let dataInv = new Array(12).fill(0);
+    let dataAlc = new Array(12).fill(0);
+    let dataAlcOrg = new Array(12).fill(0);
+    let dataIntVideo = new Array(12).fill(0);
 
-        let suscriptores = 0;
-        let visualizaciones = 0;
-        let tiempoRep = 0;
-        let nuevosEspectadores = 0;
+    const idxInv = obtenerIndiceColumna(todasLasFilas, ['inversion', 'inversión']);
+    const idxAlc = obtenerIndiceColumna(todasLasFilas, ['alcance', 'alcance total']);
+    const idxAlcOrg = obtenerIndiceColumna(todasLasFilas, ['alcance organico', 'alcance orgánico']);
+    const idxInt = obtenerIndiceColumna(todasLasFilas, ['interacciones']);
 
-        filas.forEach(f => {
-            suscriptores += parsearNumero(obtenerValorColumna(f, ['suscriptores', 'subscribers']));
-            visualizaciones += parsearNumero(obtenerValorColumna(f, ['visualizaciones', 'views']));
+    filasFiltradas.forEach(f => {
+        const idxMes = obtenerIndiceMes(f[1]);
+        if (idxMes !== -1) {
+            if (idxInv !== -1) dataInv[idxMes] = limpiarValorNum(f[idxInv]);
+            if (idxAlc !== -1) dataAlc[idxMes] = limpiarValorNum(f[idxAlc]);
+            if (idxAlcOrg !== -1) dataAlcOrg[idxMes] = limpiarValorNum(f[idxAlcOrg]);
+            if (idxInt !== -1) dataIntVideo[idxMes] = limpiarValorNum(f[idxInt]);
+        }
+    });
+
+    const anioSel = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
+    const anioProyectado = anioSel + 1;
+
+    document.getElementById('titulo-chart-inversion').innerText = `PROYECCIÓN REDES SOCIALES ${anioProyectado}`;
+
+    let dataProyeccion = new Array(12).fill(0);
+    const sumaHist = dataInv.reduce((a, b) => a + b, 0);
+    const basePromedio = (sumaHist > 0 ? sumaHist / 12 : 500) * 1.15;
+
+    for (let i = 0; i < 12; i++) {
+        dataProyeccion[i] = parseFloat((basePromedio * (1 + (i * 0.01))).toFixed(2));
+    }
+
+    crearOActualizarChart('chart-inversion', 'line', mesesLabels, [
+        { label: 'Inversión Real (Q)', data: dataInv, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
+        { label: `Proyección ${anioProyectado} (Ene-Dic)`, data: dataProyeccion, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
+    ]);
+
+    if (redActiva !== 'YouTube' && redActiva !== 'TikTok') {
+        crearOActualizarChart('chart-alcance', 'bar', mesesLabels, [
+            { label: 'Alcance Total', data: dataAlc, backgroundColor: '#8b5cf6' },
+            { label: 'Alcance Orgánico', data: dataAlcOrg, backgroundColor: '#10b981' }
+        ]);
+    }
+
+    renderGraficoSeguidoresPorRed(mesesLabels);
+
+    if (redActiva === 'TikTok' || redActiva === 'YouTube') {
+        document.getElementById('titulo-chart-extra').innerText = 'Interacciones por Video / Contenido';
+        crearOActualizarChart('chart-extra', 'bar', mesesLabels, [
+            { label: 'Interacciones', data: dataIntVideo, backgroundColor: '#ec4899' }
+        ]);
+    } else {
+        document.getElementById('titulo-chart-extra').innerText = 'Interacciones Generales';
+        crearOActualizarChart('chart-extra', 'line', mesesLabels, [
+            { label: 'Interacciones', data: dataIntVideo, borderColor: '#6366f1', fill: false }
+        ]);
+    }
+
+    // 8. INSTAGRAM — GRÁFICO DE GÉNERO
+    if (redActiva === 'Instagram') {
+        renderGraficoGeneroInstagram(filasFiltradas, todasLasFilas);
+    }
+}
+
+/* =============================================================
+   8. INSTAGRAM — GRÁFICO DE GÉNERO
+============================================================= */
+function renderGraficoGeneroInstagram(filasFiltradas, todasLasFilas) {
+    const idxGenero = obtenerIndiceColumna(todasLasFilas, ['genero', 'género']);
+    if (idxGenero === -1) return;
+
+    const conteoGenero = {};
+
+    filasFiltradas.forEach(f => {
+        const valRaw = f[idxGenero];
+        if (valRaw !== null && valRaw !== undefined && valRaw.toString().trim() !== '') {
+            const val = valRaw.toString().trim();
+            const claveClara = val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
+            conteoGenero[claveClara] = (conteoGenero[claveClara] || 0) + 1;
+        }
+    });
+
+    const labels = Object.keys(conteoGenero);
+    const data = Object.values(conteoGenero);
+
+    const coloresGenericos = ['#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#6366f1'];
+    const backgroundColors = labels.map((l, i) => {
+        if (l.toLowerCase() === 'mujer' || l.toLowerCase() === 'femenino') return '#ec4899';
+        if (l.toLowerCase() === 'hombre' || l.toLowerCase() === 'masculino') return '#3b82f6';
+        return coloresGenericos[i % coloresGenericos.length];
+    });
+
+    crearOActualizarChart('chart-genero', 'doughnut', labels, [
+        {
+            data: data,
+            backgroundColor: backgroundColors
+        }
+    ]);
+}
+
+function renderGraficoSeguidoresPorRed(mesesLabels) {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const anioSel = document.getElementById('filtro-anio').value;
+
+    let mapasHojas = [];
+    if (cuenta === 'acquaroni') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook Repuestos Acquaroni', color: '#1877f2' },
+            { red: 'Instagram', hoja: 'Instagram Repuestos Acquaroni', color: '#e1306c' },
+            { red: 'TikTok', hoja: 'Tiktok Repuestos Acquaroni', color: '#000000' },
+            { red: 'YouTube', hoja: 'Youtube Repuestos Acquaroni', color: '#ff0000' }
+        ];
+    } else if (cuenta === 'aztec') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook de AZtec Oils', color: '#1877f2' },
+            { red: 'Instagram', hoja: 'Instagram de AZtec Oils', color: '#e1306c' },
+            { red: 'TikTok', hoja: 'Tiktok de AZtec Oils', color: '#000000' }
+        ];
+    } else if (cuenta === 'ultra') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook Ultra Parts', color: '#1877f2' },
+            { red: 'Instagram', hoja: 'Instagram Ultra Parts', color: '#e1306c' },
+            { red: 'TikTok', hoja: 'Tiktok Ultra Parts', color: '#000000' },
+            { red: 'YouTube', hoja: 'Youtube Ultra Parts', color: '#ff0000' }
+        ];
+    }
+
+    const datasets = [];
+
+    mapasHojas.forEach(item => {
+        const filas = obtenerHojaPrincipalInsensible(item.hoja);
+        let serieSeguidoresReal = new Array(12).fill(0);
+
+        if (filas && filas.length > 1) {
+            const idxSeg = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
             
-            // REGLAS 10 & 11: Tiempo de reproducción y Nuevos espectadores
-            tiempoRep += parsearNumero(obtenerValorColumna(f, ['tiempo de reproduccion', 'tiempo de reproduccion (horas)', 'tiemporeproduccion', 'watch time']));
-            nuevosEspectadores += parsearNumero(obtenerValorColumna(f, ['nuevos espectadores de contenido', 'nuevos espectadores', 'new viewers', 'nuevosespectadores']));
-        });
-
-        document.getElementById('yt-suscriptores').textContent = suscriptores.toLocaleString();
-        document.getElementById('yt-visualizaciones').textContent = visualizaciones.toLocaleString();
-        document.getElementById('yt-tiemporep').textContent = `${tiempoRep.toLocaleString()} hrs`;
-        document.getElementById('yt-nuevosespectadores').textContent = nuevosEspectadores.toLocaleString();
-    }
-
-    // ----------------------------------------------------
-    // MODULO: PRESUPUESTO
-    // ----------------------------------------------------
-    function renderizarPresupuesto(cuenta, anio, mes) {
-        // Cargar presupuesto local guardado
-        const key = `presupuesto_${cuenta}_${anio}_${mes}`;
-        const guardado = localStorage.getItem(key) || "0";
-        document.getElementById('input-presupuesto-monto').value = guardado;
-
-        let asignado = parseFloat(guardado) || 0;
-
-        // Inversión ejecutada desde campañas
-        const campanasFiltradas = datosGsheet.Campanas.filter(item => filtrarFila(item, cuenta, anio, mes));
-        let ejecutado = 0;
-        campanasFiltradas.forEach(c => {
-            ejecutado += parsearNumero(obtenerValorColumna(c, ['inversion', 'monto', 'costo', 'spent']));
-        });
-
-        let diferencia = asignado - ejecutado;
-
-        document.getElementById('presupuesto-asignado-lbl').textContent = `$${asignado.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-        document.getElementById('presupuesto-ejecutado-lbl').textContent = `$${ejecutado.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-        
-        const difLbl = document.getElementById('presupuesto-diferencia-lbl');
-        difLbl.textContent = `$${diferencia.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-        if (diferencia < 0) {
-            difLbl.className = "text-2xl font-black text-red-600 mt-1";
-        } else {
-            difLbl.className = "text-2xl font-black text-slate-800 mt-1";
-        }
-
-        crearOActualizarChart('chart-presupuesto', 'bar', {
-            labels: ['Presupuesto Asignado', 'Inversión Ejecutada'],
-            datasets: [{
-                label: 'Monto en USD',
-                data: [asignado, ejecutado],
-                backgroundColor: ['#3b82f6', '#10b981']
-            }]
-        });
-    }
-
-    function guardarPresupuestoLocal() {
-        const cuenta = document.getElementById('filtro-cuenta').value;
-        const anio = document.getElementById('filtro-anio').value;
-        const mes = document.getElementById('filtro-mes').value;
-        const val = document.getElementById('input-presupuesto-monto').value;
-
-        const key = `presupuesto_${cuenta}_${anio}_${mes}`;
-        localStorage.setItem(key, val);
-        renderizarPresupuesto(cuenta, anio, mes);
-    }
-
-    // ----------------------------------------------------
-    // MODULO: POST IMPULSADOS
-    // ----------------------------------------------------
-    function renderizarModuloPosts(cuenta, anio, mes) {
-        const contenedor = document.getElementById('posts-contenedor');
-        contenedor.innerHTML = '';
-
-        const postsFiltrados = datosGsheet.Posts.filter(item => filtrarFila(item, cuenta, anio, mes));
-
-        if (postsFiltrados.length === 0) {
-            contenedor.innerHTML = `<div class="col-span-full text-center text-gray-400 py-8">No se encontraron posts impulsados para el filtro seleccionado.</div>`;
-            return;
-        }
-
-        postsFiltrados.forEach(p => {
-            let titulo = obtenerValorColumna(p, ['post', 'titulo', 'nombre', 'contenido']) || 'Post Sin Nombre';
-            let inversion = parsearNumero(obtenerValorColumna(p, ['inversion', 'costo', 'monto']));
-            let alcance = parsearNumero(obtenerValorColumna(p, ['alcance', 'reach']));
-            let interacciones = parsearNumero(obtenerValorColumna(p, ['interacciones', 'interactions']));
-
-            contenedor.innerHTML += `
-                <div class="border rounded-xl p-4 bg-gray-50 space-y-2">
-                    <h4 class="font-bold text-gray-800 text-sm truncate">${escapeHtml(titulo)}</h4>
-                    <div class="text-xs text-gray-500 space-y-1">
-                        <p class="flex justify-between"><span>Inversión:</span> <strong class="text-gray-700">$${inversion.toLocaleString()}</strong></p>
-                        <p class="flex justify-between"><span>Alcance:</span> <strong class="text-gray-700">${alcance.toLocaleString()}</strong></p>
-                        <p class="flex justify-between"><span>Interacciones:</span> <strong class="text-gray-700">${interacciones.toLocaleString()}</strong></p>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    // ----------------------------------------------------
-    // MODULO: PLATAFORMAS (ASSETS)
-    // ----------------------------------------------------
-    function inicializarPlataformasSubida() {
-        const setupUpload = (fileId, imgId, noDataId, storageKey) => {
-            const input = document.getElementById(fileId);
-            const img = document.getElementById(imgId);
-            const nodata = document.getElementById(noDataId);
-
-            const saved = localStorage.getItem(storageKey);
-            if (saved) {
-                img.src = saved;
-                img.classList.remove('hidden');
-                nodata.classList.add('hidden');
-            }
-
-            input.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(evt) {
-                        const base64 = evt.target.result;
-                        img.src = base64;
-                        img.classList.remove('hidden');
-                        nodata.classList.add('hidden');
-                        localStorage.setItem(storageKey, base64);
-                    };
-                    reader.readAsDataURL(file);
+            filas.slice(1).forEach(row => {
+                const rowAnio = row[0] ? row[0].toString().trim() : '';
+                if (rowAnio === anioSel) {
+                    const idxMes = obtenerIndiceMes(row[1]);
+                    if (idxMes !== -1 && idxSeg !== -1) {
+                        serieSeguidoresReal[idxMes] = limpiarValorNum(row[idxSeg]);
+                    }
                 }
             });
-        };
-
-        setupUpload('file-fb-img', 'preview-fb-img', 'nodata-fb-img', 'asset_fb_img');
-        setupUpload('file-ig-img', 'preview-ig-img', 'nodata-ig-img', 'asset_ig_img');
-    }
-
-    // ----------------------------------------------------
-    // MODULO: CAMPAÑAS R.A
-    // ----------------------------------------------------
-    function renderizarCampanas(cuenta, anio, mes) {
-        const tbody = document.getElementById('tabla-campanas-body');
-        tbody.innerHTML = '';
-
-        const campanas = datosGsheet.Campanas.filter(item => filtrarFila(item, cuenta, anio, mes));
-
-        if (campanas.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">Sin campañas registradas para el filtro seleccionado.</td></tr>`;
-            return;
         }
 
-        campanas.forEach((c, index) => {
-            let nombre = obtenerValorColumna(c, ['campana', 'nombre', 'campaign']) || `Campaña ${index + 1}`;
-            let plataforma = obtenerValorColumna(c, ['plataforma', 'platform', 'red']) || 'Meta Ads';
-            let estado = obtenerValorColumna(c, ['estado', 'status']) || 'Activa';
-            let inversion = parsearNumero(obtenerValorColumna(c, ['inversion', 'monto', 'costo', 'spent']));
-
-            tbody.innerHTML += `
-                <tr class="hover:bg-gray-50 border-b">
-                    <td class="p-3 font-semibold text-gray-800">${escapeHtml(nombre)}</td>
-                    <td class="p-3 text-gray-600">${escapeHtml(plataforma)}</td>
-                    <td class="p-3"><span class="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">${escapeHtml(estado)}</span></td>
-                    <td class="p-3 text-right font-bold text-gray-800">$${inversion.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
-                    <td class="p-3 text-center">
-                        <button onclick="abrirDesgloseCampana(${index})" class="px-3 py-1 bg-blue-50 text-blue-600 text-xs rounded-lg font-bold hover:bg-blue-100">
-                            Ver Desglose
-                        </button>
-                    </td>
-                </tr>
-            `;
+        datasets.push({
+            label: item.red,
+            data: serieSeguidoresReal,
+            borderColor: item.color,
+            backgroundColor: item.color,
+            fill: false,
+            tension: 0.1
         });
-    }
+    });
 
-    function abrirDesgloseCampana(index) {
-        const cuenta = document.getElementById('filtro-cuenta').value;
-        const anio = document.getElementById('filtro-anio').value;
-        const mes = document.getElementById('filtro-mes').value;
+    crearOActualizarChart('chart-seguidores', 'line', mesesLabels, datasets);
+}
 
-        const campanas = datosGsheet.Campanas.filter(item => filtrarFila(item, cuenta, anio, mes));
-        const c = campanas[index];
-        if (!c) return;
+function renderGraficosTikTokLive(filas) {
+    const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    let dataSegLive = new Array(12).fill(0);
 
-        let nombre = obtenerValorColumna(c, ['campana', 'nombre', 'campaign']) || 'Campaña';
-        document.getElementById('modal-campana-titulo').textContent = nombre;
-
-        let html = '';
-        Object.keys(c).forEach(key => {
-            html += `<div class="flex justify-between border-b pb-1"><span class="font-semibold capitalize">${key}:</span> <span>${escapeHtml(c[key])}</span></div>`;
-        });
-
-        document.getElementById('modal-campana-contenido').innerHTML = html;
-        document.getElementById('modal-campana-desglose').classList.remove('hidden');
-    }
-
-    function cerrarModalCampana() {
-        document.getElementById('modal-campana-desglose').classList.add('hidden');
-    }
-
-    // ----------------------------------------------------
-    // CAMBIO DE MODULO DE NAVEGACION
-    // ----------------------------------------------------
-    function cambiarModulo(moduloId) {
-        document.querySelectorAll('.modulo-contenido').forEach(el => el.classList.add('hidden'));
-        document.querySelectorAll('.btn-nav').forEach(btn => {
-            btn.classList.remove('bg-blue-600', 'text-white');
-            btn.classList.add('hover:bg-slate-800', 'text-gray-300');
-        });
-
-        document.getElementById(`modulo-${moduloId}`).classList.remove('hidden');
-        const btnActivo = document.getElementById(`btn-nav-${moduloId}`);
-        btnActivo.classList.add('bg-blue-600', 'text-white');
-        btnActivo.classList.remove('hover:bg-slate-800', 'text-gray-300');
-
-        const titulos = {
-            'redes': 'Redes Sociales',
-            'posts': 'Post Impulsados',
-            'presupuesto': 'Presupuesto Financiero',
-            'plataformas': 'Assets de Plataformas',
-            'campanas': 'Campañas R.A'
-        };
-        document.getElementById('titulo-seccion').textContent = titulos[moduloId] || 'Dashboard';
-    }
-
-    // ----------------------------------------------------
-    // HELPER GRAFICOS CHART.JS
-    // ----------------------------------------------------
-    function crearOActualizarChart(canvasId, type, data) {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return;
-
-        if (chartInstances[canvasId]) {
-            chartInstances[canvasId].destroy();
+    filas.forEach(f => {
+        const idxMes = obtenerIndiceMes(f[1]);
+        if (idxMes !== -1) {
+            dataSegLive[idxMes] = limpiarValorNum(f[5]);
         }
+    });
 
-        chartInstances[canvasId] = new Chart(canvas, {
-            type: type,
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' }
+    document.getElementById('titulo-chart-extra').innerText = 'Porcentaje de Nuevos Seguidores por Live';
+    crearOActualizarChart('chart-extra', 'bar', mesesLabels, [
+        { label: '% Seguidores en Live', data: dataSegLive, backgroundColor: '#a855f7' }
+    ]);
+}
+
+function obtenerIndiceMes(nombreMes) {
+    if (!nombreMes) return -1;
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    return meses.indexOf(nombreMes.toString().toLowerCase().trim());
+}
+
+function crearOActualizarChart(canvasId, type, labels, datasets) {
+    if (chartInstances[canvasId]) {
+        chartInstances[canvasId].destroy();
+    }
+    const canvasElem = document.getElementById(canvasId);
+    if (!canvasElem) return;
+    const ctx = canvasElem.getContext('2d');
+    chartInstances[canvasId] = new Chart(ctx, {
+        type: type,
+        data: { labels: labels, datasets: datasets },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+}
+
+/* =============================================================
+   POST IMPULSADOS (EXCLUSIVAMENTE EXCEL 1)
+============================================================= */
+function renderizarModuloPosts() {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const nombreHoja = cuenta === 'acquaroni' ? 'Post impulsados Repuestos Acquaroni' : 'Post impulsados AZtec Oils';
+    const filas = obtenerHojaPrincipalInsensible(nombreHoja);
+    const filasFiltradas = filtrarFilas(filas, 0, 1);
+
+    const tbody = document.getElementById('tabla-posts-body');
+    tbody.innerHTML = '';
+
+    filasFiltradas.forEach((f, idx) => {
+        const postId = `post-img-${cuenta}-${idx}`;
+        const savedImage = localStorage.getItem(postId);
+
+        tbody.innerHTML += `
+            <tr>
+                <td class="p-3">
+                    <label class="cursor-pointer text-blue-500 hover:text-blue-700 font-semibold text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-image"></i> Cargar Imagen
+                        <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postId}', 'img-post-${idx}')">
+                    </label>
+                    <img id="img-post-${idx}" src="${savedImage || ''}" 
+                        class="w-12 h-12 object-cover rounded shadow-sm ${savedImage ? '' : 'hidden'} mt-1 cursor-pointer"
+                        onclick="abrirVisorImagen(this.src)">
+                </td>
+                <td class="p-3">${f[0]} / ${f[1] || '-'}</td>
+                <td class="p-3 font-medium">${escapeHtml(f[2] || '-')}</td>
+                <td class="p-3">${escapeHtml(f[3] || '-')}</td>
+                <td class="p-3">${limpiarValorNum(f[4]).toLocaleString()}</td>
+                <td class="p-3">${limpiarValorNum(f[5]).toLocaleString()}</td>
+                <td class="p-3">${limpiarValorNum(f[6]).toLocaleString()}</td>
+                <td class="p-3">Q ${limpiarValorNum(f[7]).toFixed(2)}</td>
+                <td class="p-3 font-bold text-blue-600">Q ${limpiarValorNum(f[8]).toFixed(2)}</td>
+            </tr>
+        `;
+    });
+}
+
+function guardarYMostrarImagenPost(e, storageKey, imgElementId) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const base64Img = evt.target.result;
+            localStorage.setItem(storageKey, base64Img);
+            const img = document.getElementById(imgElementId);
+            img.src = base64Img;
+            img.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function abrirVisorImagen(src) {
+    document.getElementById('img-visor-full').src = src;
+    document.getElementById('modal-visor-imagen').classList.remove('hidden');
+    document.getElementById('modal-visor-imagen').classList.add('flex');
+}
+
+function cerrarVisorImagen() {
+    document.getElementById('modal-visor-imagen').classList.add('hidden');
+    document.getElementById('modal-visor-imagen').classList.remove('flex');
+}
+
+/* =============================================================
+   CAMPAÑAS (EXCLUSIVAMENTE EXCEL 1)
+============================================================= */
+function normalizarCampana(valor) {
+    return (valor || '').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function prepararFilasCampanas(filas) {
+    if (!filas || filas.length <= 1) return [];
+    const anioSeleccionado = document.getElementById('filtro-anio').value;
+    const mesSeleccionado = document.getElementById('filtro-mes').value;
+
+    let campanaActual = '', anioActual = '', mesActual = '';
+    const resultado = [];
+
+    filas.slice(1).forEach(filaOriginal => {
+        const fila = [...filaOriginal];
+        if (fila[0]) anioActual = fila[0].toString().trim();
+        if (fila[1]) mesActual = fila[1].toString().trim();
+        if (fila[2]) campanaActual = fila[2].toString().trim();
+
+        fila[0] = fila[0] || anioActual;
+        fila[1] = fila[1] || mesActual;
+        fila[2] = fila[2] || campanaActual;
+
+        const coincideAnio = fila[0].toString().trim() === anioSeleccionado;
+        const coincideMes = mesSeleccionado === 'todos' || fila[1].toString().trim().toLowerCase() === mesSeleccionado.toLowerCase();
+
+        if (coincideAnio && coincideMes && fila[3]) {
+            resultado.push(fila);
+        }
+    });
+
+    return resultado;
+}
+
+function renderizarModuloCampanas() {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const nombreHoja = cuenta === 'acquaroni' ? 'Campañas Repuestos Acquaroni' : 'Campañas AZtec Oils';
+    const filas = obtenerHojaPrincipalInsensible(nombreHoja);
+    const filasCampanas = prepararFilasCampanas(filas);
+    const container = document.getElementById('contenedor-campanas');
+    container.innerHTML = '';
+
+    if (!filasCampanas.length) {
+        container.innerHTML = `<div class="col-span-full bg-white rounded-xl border p-10 text-center"><p class="font-semibold text-gray-600">No hay campañas disponibles.</p></div>`;
+        return;
+    }
+
+    const campanas = {};
+    filasCampanas.forEach(fila => {
+        const nombreCampana = fila[2].toString().trim();
+        const clave = normalizarCampana(nombreCampana);
+        if (!campanas[clave]) {
+            campanas[clave] = { nombre: nombreCampana, anio: fila[0], mes: fila[1], posts: [] };
+        }
+        campanas[clave].posts.push(fila);
+    });
+
+    Object.keys(campanas).forEach((clave, index) => {
+        const campana = campanas[clave];
+        const presupuestoTotal = campana.posts.reduce((t, f) => t + limpiarValorNum(f[7]), 0);
+        const portadaKey = `portada-campana-${cuenta}-${clave}`;
+        const savedPortada = localStorage.getItem(portadaKey);
+
+        container.innerHTML += `
+            <div class="bg-white rounded-xl border shadow-sm hover:shadow-lg transition overflow-hidden">
+                <div class="h-40 bg-gray-200 relative flex items-center justify-center overflow-hidden">
+                    <img id="cover-${index}" src="${savedPortada || ''}" class="absolute inset-0 w-full h-full object-cover ${savedPortada ? '' : 'hidden'}">
+                    <label class="absolute bottom-3 right-3 cursor-pointer bg-white/95 text-gray-700 px-3 py-2 rounded-lg text-xs font-bold shadow">
+                        Subir Portada
+                        <input type="file" class="hidden" accept="image/*" onchange="guardarPortadaCampana(event, '${portadaKey}', 'cover-${index}')">
+                    </label>
+                </div>
+                <div class="p-5">
+                    <h4 class="font-bold text-gray-800 text-base">${escapeHtml(campana.nombre)}</h4>
+                    <p class="text-xs text-gray-500 mt-1">${campana.anio} - ${campana.mes}</p>
+                    <p class="text-lg font-black text-blue-600 mt-3">Q ${presupuestoTotal.toFixed(2)}</p>
+                    <button onclick="abrirDesgloseCampana('${escapeHtml(campana.nombre)}')" class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-bold">
+                        Ver campaña
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function guardarPortadaCampana(e, storageKey, imgId) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            localStorage.setItem(storageKey, evt.target.result);
+            const img = document.getElementById(imgId);
+            img.src = evt.target.result;
+            img.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function abrirDesgloseCampana(nombreCampana) {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const nombreHoja = cuenta === 'acquaroni' ? 'Campañas Repuestos Acquaroni' : 'Campañas AZtec Oils';
+    const filas = obtenerHojaPrincipalInsensible(nombreHoja);
+    const filasCampanas = prepararFilasCampanas(filas);
+
+    const postsCampana = filasCampanas.filter(f => normalizarCampana(f[2]) === normalizarCampana(nombreCampana));
+    const container = document.getElementById('modal-campana-contenido');
+    container.innerHTML = '';
+
+    document.getElementById('modal-campana-titulo').innerText = `Campaña: ${nombreCampana}`;
+    document.getElementById('modal-campana-subtitulo').innerText = `${postsCampana.length} Posts registrados`;
+
+    postsCampana.forEach((f, idxPost) => {
+        const postImgKey = `img-ref-post-${cuenta}-${normalizarCampana(nombreCampana)}-${idxPost}`;
+        const savedPostImg = localStorage.getItem(postImgKey);
+
+        container.innerHTML += `
+            <div class="border rounded-xl p-4 bg-gray-50 flex flex-col md:flex-row gap-4 items-start">
+                <div class="w-full md:w-32 flex-shrink-0">
+                    <p class="text-xs text-gray-500 font-bold mb-1">Imagen Referencia</p>
+                    <div class="relative h-28 bg-gray-200 border rounded-lg flex items-center justify-center overflow-hidden">
+                        <img id="img-post-ref-${idxPost}" src="${savedPostImg || ''}" class="${savedPostImg ? '' : 'hidden'} w-full h-full object-cover cursor-pointer" onclick="abrirVisorImagen(this.src)">
+                        <label class="absolute inset-0 flex flex-col items-center justify-center bg-black/40 text-white text-xs opacity-0 hover:opacity-100 transition cursor-pointer p-1 text-center">
+                            <i class="fa-solid fa-upload text-sm mb-1"></i> Subir
+                            <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postImgKey}', 'img-post-ref-${idxPost}')">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex-1 w-full">
+                    <h4 class="font-bold text-gray-800 text-base">${escapeHtml(f[3] || 'Post')}</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-center">
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Reproducciones</p><p class="font-bold">${limpiarValorNum(f[4]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Alcance</p><p class="font-bold">${limpiarValorNum(f[5]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Conversaciones</p><p class="font-bold">${limpiarValorNum(f[6]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Presupuesto</p><p class="font-bold text-blue-600">Q ${limpiarValorNum(f[7]).toFixed(2)}</p></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    document.getElementById('modal-campana').classList.remove('hidden');
+    document.getElementById('modal-campana').classList.add('flex');
+}
+
+function cerrarModalCampana() {
+    document.getElementById('modal-campana').classList.add('hidden');
+    document.getElementById('modal-campana').classList.remove('flex');
+}
+
+/* =============================================================
+   MÓDULO PRESUPUESTO & ESTADO DE CUENTA
+============================================================= */
+function solicitarAsignadoTotal() {
+    const valor = prompt('Ingresa el monto del Asignado Total (Q):', asignadoTotalManual);
+    if (valor !== null) {
+        asignadoTotalManual = limpiarValorNum(valor);
+        localStorage.setItem('presupuesto_asignado_total', asignadoTotalManual);
+        renderizarModuloPresupuesto();
+    }
+}
+
+/* =============================================================
+   MÓDULO PRESUPUESTO (EXCLUSIVAMENTE DESDE EXCEL 1)
+============================================================= */
+function renderizarModuloPresupuesto() {
+    const filasPresupuesto = obtenerHojaPrincipalInsensible('Presupuesto');
+    const encabezadosPres = filasPresupuesto && filasPresupuesto.length > 0 ? filasPresupuesto[0].map(e => (e || '').toString().trim().toLowerCase()) : [];
+    
+    const idxEjecutadoTotal = encabezadosPres.findIndex(e => e === 'ejecutado total');
+    const idxRedesSociales = encabezadosPres.findIndex(e => e === 'redes sociales');
+    const idxAcquaroni = encabezadosPres.findIndex(e => e === 'repuestos acquaroni');
+    const idxAztec = encabezadosPres.findIndex(e => e === 'aztec oils');
+    const idxMercadeo = encabezadosPres.findIndex(e => e === 'mercadeo');
+
+    const filasFiltradasPres = filtrarFilas(filasPresupuesto, 0, 1);
+
+    let ejecutadoTotal = 0;
+    let totalRedesSociales = 0;
+    let totalAcquaroni = 0;
+    let totalAztec = 0;
+    let totalMercadeo = 0;
+
+    filasFiltradasPres.forEach(f => {
+        if (idxEjecutadoTotal !== -1) ejecutadoTotal += limpiarValorNum(f[idxEjecutadoTotal]);
+        if (idxRedesSociales !== -1) totalRedesSociales += limpiarValorNum(f[idxRedesSociales]);
+        if (idxAcquaroni !== -1) totalAcquaroni += limpiarValorNum(f[idxAcquaroni]);
+        if (idxAztec !== -1) totalAztec += limpiarValorNum(f[idxAztec]);
+        if (idxMercadeo !== -1) totalMercadeo += limpiarValorNum(f[idxMercadeo]);
+    });
+
+    const filasPlataformas = obtenerHojaPrincipalInsensible('Plataformas Externas');
+    const encabezadosPlat = filasPlataformas && filasPlataformas.length > 0 ? filasPlataformas[0].map(e => (e || '').toString().trim().toLowerCase()) : [];
+    const idxMontoEjecutadoPlat = encabezadosPlat.findIndex(e => e === 'monto ejecutado');
+
+    const filasFiltradasPlat = filtrarFilas(filasPlataformas, 0, 1);
+
+    let totalPlataformasExternas = 0;
+    filasFiltradasPlat.forEach(f => {
+        if (idxMontoEjecutadoPlat !== -1) {
+            totalPlataformasExternas += limpiarValorNum(f[idxMontoEjecutadoPlat]);
+        }
+    });
+
+    document.getElementById('pres-asignado').innerText = `Q ${limpiarValorNum(asignadoTotalManual).toFixed(2)}`;
+    document.getElementById('pres-ejecutado').innerText = `Q ${ejecutadoTotal.toFixed(2)}`;
+    document.getElementById('pres-redes-soc').innerText = `Q ${totalRedesSociales.toFixed(2)}`;
+    document.getElementById('pres-acquaroni').innerText = `Q ${totalAcquaroni.toFixed(2)}`;
+    document.getElementById('pres-aztec').innerText = `Q ${totalAztec.toFixed(2)}`;
+    document.getElementById('pres-mercadeo').innerText = `Q ${totalMercadeo.toFixed(2)}`;
+    document.getElementById('pres-plataformas-m4').innerText = `Q ${totalPlataformasExternas.toFixed(2)}`;
+
+    renderGraficosPresupuesto(ejecutadoTotal, totalRedesSociales, totalPlataformasExternas, filasPresupuesto);
+}
+
+function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupuesto) {
+    const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    
+    const total = ejecutado || 1;
+    const pctRedes = ((redes / total) * 100).toFixed(1);
+    const pctPlat = ((plataformas / total) * 100).toFixed(1);
+
+    crearOActualizarChart('chart-presupuesto-mensual', 'doughnut', [`Redes (${pctRedes}%)`, `Plataformas (${pctPlat}%)`], [
+        { data: [redes, plataformas], backgroundColor: ['#8b5cf6', '#6366f1'] }
+    ]);
+
+    const anioSel = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
+    const anioProyectado = anioSel + 1;
+
+    document.getElementById('titulo-proyeccion-presupuesto').innerText = `Proyección de Presupuesto ${anioProyectado}`;
+
+    let valoresMensualesReales = new Array(12).fill(0);
+    if (filasPresupuesto && filasPresupuesto.length > 1) {
+        filasPresupuesto.slice(1).forEach(f => {
+            const rowAnio = f[0] ? f[0].toString().trim() : '';
+            if (rowAnio === anioSel.toString()) {
+                const idxMes = obtenerIndiceMes(f[1]);
+                if (idxMes !== -1) {
+                    const valMes = limpiarValorNum(f[3]) + limpiarValorNum(f[4]) + limpiarValorNum(f[5]) + limpiarValorNum(f[6]);
+                    valoresMensualesReales[idxMes] += valMes;
                 }
             }
         });
     }
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.toString()
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+    let proyeccionPresupuesto = new Array(12).fill(0);
+    const sumaReal = valoresMensualesReales.reduce((a, b) => a + b, 0);
+    const promedioMensual = sumaReal > 0 ? sumaReal / 12 : 1000;
+
+    for (let i = 0; i < 12; i++) {
+        const baseMes = valoresMensualesReales[i] > 0 ? valoresMensualesReales[i] : promedioMensual;
+        proyeccionPresupuesto[i] = parseFloat((baseMes * 1.05).toFixed(2));
     }
+
+    crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
+        { label: `Proyección Estimada ${anioProyectado} (Ene-Dic)`, data: proyeccionPresupuesto, backgroundColor: '#3b82f6' }
+    ]);
+}
+
+function escapeHtml(valor) {
+    return (valor || '').toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+/* =============================================================
+   INICIALIZACIÓN
+============================================================= */
+window.addEventListener('DOMContentLoaded', () => {
+    renderizarTabsRedes();
+    cargarDatosSheets();
+});
 </script>
 
 </body>
