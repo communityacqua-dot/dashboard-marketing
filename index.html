@@ -1251,13 +1251,12 @@ function solicitarAsignadoTotal() {
 ============================================================= */
 function renderizarModuloPresupuesto() {
     const filasPresupuesto = obtenerHojaPrincipalInsensible('Presupuesto');
-    const encabezadosPres = filasPresupuesto && filasPresupuesto.length > 0 ? filasPresupuesto[0].map(e => (e || '').toString().trim().toLowerCase()) : [];
     
-    const idxEjecutadoTotal = encabezadosPres.findIndex(e => e === 'ejecutado total');
-    const idxRedesSociales = encabezadosPres.findIndex(e => e === 'redes sociales');
-    const idxAcquaroni = encabezadosPres.findIndex(e => e === 'repuestos acquaroni');
-    const idxAztec = encabezadosPres.findIndex(e => e === 'aztec oils');
-    const idxMercadeo = encabezadosPres.findIndex(e => e === 'mercadeo');
+    const idxEjecutadoTotal = obtenerIndiceColumna(filasPresupuesto, ['ejecutado total']);
+    const idxRedesSociales = obtenerIndiceColumna(filasPresupuesto, ['redes sociales']);
+    const idxAcquaroni = obtenerIndiceColumna(filasPresupuesto, ['presupuesto repuestos acquaroni']);
+    const idxAztec = obtenerIndiceColumna(filasPresupuesto, ['presupuesto aztec oils']);
+    const idxMercadeo = obtenerIndiceColumna(filasPresupuesto, ['mercadeo']);
 
     const filasFiltradasPres = filtrarFilas(filasPresupuesto, 0, 1);
 
@@ -1276,8 +1275,7 @@ function renderizarModuloPresupuesto() {
     });
 
     const filasPlataformas = obtenerHojaPrincipalInsensible('Plataformas Externas');
-    const encabezadosPlat = filasPlataformas && filasPlataformas.length > 0 ? filasPlataformas[0].map(e => (e || '').toString().trim().toLowerCase()) : [];
-    const idxMontoEjecutadoPlat = encabezadosPlat.findIndex(e => e === 'monto ejecutado');
+    const idxMontoEjecutadoPlat = obtenerIndiceColumna(filasPlataformas, ['monto ejecutado']);
 
     const filasFiltradasPlat = filtrarFilas(filasPlataformas, 0, 1);
 
