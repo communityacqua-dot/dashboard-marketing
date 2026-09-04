@@ -696,8 +696,19 @@ function renderizarModuloRedes() {
         const idxAlcanceOrg = obtenerIndiceColumna(filas, ['alcance organico', 'alcance orgánico']);
         const idxImpresiones = obtenerIndiceColumna(filas, ['impresiones']);
         
-        // 1. INSTAGRAM — LECTURA DIRECTA DE COLUMNA "interacciones" POR ENCABEZADO EXACTO
-        const idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
+        // INSTAGRAM — LECTURA DIRECTA POR COLUMNA SEGÚN LA CUENTA SELECCIONADA
+        let idxInteracciones = -1;
+        if (redActiva === 'Instagram') {
+            if (cuenta === 'acquaroni') {
+                idxInteracciones = 3; // Columna D
+            } else if (cuenta === 'aztec') {
+                idxInteracciones = 6; // Columna G
+            } else {
+                idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
+            }
+        } else {
+            idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
+        }
         
         const idxTiempoRepro = obtenerIndiceColumna(filas, [
             'tiempo de reproduccion', 'tiempo de reproducción', 'tiempo de reproduccion (horas)', 
@@ -826,7 +837,20 @@ function renderGraficosRedes(filasFiltradas, todasLasFilas) {
     const idxInv = obtenerIndiceColumna(todasLasFilas, ['inversion', 'inversión']);
     const idxAlc = obtenerIndiceColumna(todasLasFilas, ['alcance', 'alcance total']);
     const idxAlcOrg = obtenerIndiceColumna(todasLasFilas, ['alcance organico', 'alcance orgánico']);
-    const idxInt = obtenerIndiceColumna(todasLasFilas, ['interacciones']);
+    
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    let idxInt = -1;
+    if (redActiva === 'Instagram') {
+        if (cuenta === 'acquaroni') {
+            idxInt = 3; // Columna D
+        } else if (cuenta === 'aztec') {
+            idxInt = 6; // Columna G
+        } else {
+            idxInt = obtenerIndiceColumna(todasLasFilas, ['interacciones']);
+        }
+    } else {
+        idxInt = obtenerIndiceColumna(todasLasFilas, ['interacciones']);
+    }
 
     filasFiltradas.forEach(f => {
         const idxMes = obtenerIndiceMes(f[1]);
