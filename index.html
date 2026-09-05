@@ -223,45 +223,98 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN DE GRÁFICOS DINÁMICOS REDES SOCIALES -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <!-- SECCIÓN DE GRÁFICOS DINÁMICOS REDES SOCIALES POR PLATAFORMA -->
+                <div id="seccion-graficos-redes" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div class="bg-white p-5 rounded-xl border shadow-sm">
-                        <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
-                            <span id="titulo-chart-inversion">Inversión Mensual vs Proyección</span>
-                            <span class="text-xs font-normal text-blue-500" id="tag-proyeccion-inv">Enero - Diciembre</span>
-                        </h4>
+                        <h4 id="titulo-grafico-1" class="text-sm font-bold text-gray-700 mb-4">Gráfico 1</h4>
                         <div class="h-64">
-                            <canvas id="chart-inversion"></canvas>
-                        </div>
-                    </div>
-
-                    <div id="container-chart-alcance" class="bg-white p-5 rounded-xl border shadow-sm">
-                        <h4 class="text-sm font-bold text-gray-700 mb-4">Alcance Total vs Orgánico</h4>
-                        <div class="h-64">
-                            <canvas id="chart-alcance"></canvas>
+                            <canvas id="chart-redes-1"></canvas>
                         </div>
                     </div>
 
                     <div class="bg-white p-5 rounded-xl border shadow-sm">
-                        <h4 class="text-sm font-bold text-gray-700 mb-4">Crecimiento Mensual de Seguidores por Red</h4>
+                        <h4 id="titulo-grafico-2" class="text-sm font-bold text-gray-700 mb-4">Gráfico 2</h4>
                         <div class="h-64">
-                            <canvas id="chart-seguidores"></canvas>
+                            <canvas id="chart-redes-2"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN: RESUMEN GENERAL (CONSOLIDADO Y PROYECCIÓN) -->
+                <div id="seccion-resumen-general" class="space-y-8 hidden">
+                    
+                    <!-- KPIS GLOBALES -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-1">Desempeño Global y Alcance Total</h3>
+                        <p class="text-xs text-gray-500 mb-4">Consolidado en tiempo real de Facebook, Instagram, TikTok y YouTube.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-blue-600">
+                                <p class="text-xs text-gray-500 font-semibold uppercase">Alcance Total Acumulado</p>
+                                <p id="kpi-resumen-alcance" class="text-2xl font-extrabold text-blue-600 mt-1">0</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-orange-500">
+                                <p class="text-xs text-gray-500 font-semibold uppercase">Impresiones Totales</p>
+                                <p id="kpi-resumen-impresiones" class="text-2xl font-extrabold text-orange-500 mt-1">0</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-teal-500">
+                                <p class="text-xs text-gray-500 font-semibold uppercase">Crecimiento de Comunidad (Neto)</p>
+                                <p id="kpi-resumen-seguidores" class="text-2xl font-extrabold text-teal-600 mt-1">0</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-purple-600">
+                                <p class="text-xs text-gray-500 font-semibold uppercase">Interacciones Totales (Engagement)</p>
+                                <p id="kpi-resumen-interacciones" class="text-2xl font-extrabold text-purple-600 mt-1">0</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div id="container-chart-extra" class="bg-white p-5 rounded-xl border shadow-sm">
-                        <h4 id="titulo-chart-extra" class="text-sm font-bold text-gray-700 mb-4">Métricas Complementarias</h4>
-                        <div class="h-64">
-                            <canvas id="chart-extra"></canvas>
+                    <!-- PROYECCIÓN DEL AÑO SIGUIENTE -->
+                    <div class="border-t pt-6 space-y-6">
+                        <div>
+                            <h3 id="titulo-proyeccion-seccion" class="text-lg font-bold text-gray-800 mb-1">Proyección del Año Siguiente</h3>
+                            <p class="text-xs text-gray-500">Estimación basada dinámicamente en el ritmo de crecimiento histórico (Run Rate).</p>
+                        </div>
+
+                        <!-- TABLA Y GRÁFICOS DE PROYECCIÓN -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            
+                            <!-- TABLA AUDIENCIA PROYECTADA -->
+                            <div class="bg-white p-5 rounded-xl border shadow-sm flex flex-col justify-between">
+                                <h4 class="text-sm font-bold text-gray-700 mb-4">Meta de Seguidores / Suscriptores Netos por Red</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm text-left border-collapse">
+                                        <thead class="bg-gray-50 text-xs text-gray-500 uppercase border-b">
+                                            <tr>
+                                                <th class="p-2">Red Social</th>
+                                                <th class="p-2 text-right">Ganados Actual</th>
+                                                <th class="p-2 text-right">Est. Crecimiento</th>
+                                                <th class="p-2 text-right">Meta Proyectada</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabla-proyeccion-seguidores" class="divide-y font-medium text-xs"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- GRÁFICO ALCANCE E IMPRESIONES PROYECTADAS -->
+                            <div class="bg-white p-5 rounded-xl border shadow-sm">
+                                <h4 class="text-sm font-bold text-gray-700 mb-4">Alcance e Impresiones Proyectadas (Mensual)</h4>
+                                <div class="h-60">
+                                    <canvas id="chart-resumen-proyeccion-alcance"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- ENGAGEMENT ESPERADO Y TIKTOK LIVE -->
+                            <div class="bg-white p-5 rounded-xl border shadow-sm md:col-span-2">
+                                <h4 class="text-sm font-bold text-gray-700 mb-4">Volumen de Interacciones Esperadas por Trimestre</h4>
+                                <div class="h-64">
+                                    <canvas id="chart-resumen-proyeccion-engagement"></canvas>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
-                    <div id="container-chart-genero" class="bg-white p-5 rounded-xl border shadow-sm hidden">
-                        <h4 class="text-sm font-bold text-gray-700 mb-4">Distribución por Género</h4>
-                        <div class="h-64">
-                            <canvas id="chart-genero"></canvas>
-                        </div>
-                    </div>
                 </div>
             </section>
 
@@ -466,11 +519,11 @@ function renderizarTabsRedes() {
 
     let redes = [];
     if (cuenta === 'acquaroni') {
-        redes = ['Facebook', 'Instagram', 'TikTok Live', 'TikTok', 'YouTube'];
+        redes = ['Facebook', 'Instagram', 'TikTok Live', 'TikTok', 'YouTube', 'Resumen General'];
     } else if (cuenta === 'aztec') {
-        redes = ['Facebook', 'Instagram', 'TikTok'];
+        redes = ['Facebook', 'Instagram', 'TikTok', 'Resumen General'];
     } else if (cuenta === 'ultra') {
-        redes = ['Facebook', 'Instagram', 'TikTok', 'YouTube'];
+        redes = ['Facebook', 'Instagram', 'TikTok', 'YouTube', 'Resumen General'];
     }
 
     redActiva = redes[0];
@@ -585,6 +638,26 @@ function actualizarTodo() {
 ============================================================= */
 function renderizarModuloRedes() {
     const cuenta = document.getElementById('filtro-cuenta').value;
+    const kpisEstandar = document.getElementById('kpis-estandar');
+    const kpisLive = document.getElementById('kpis-tiktok-live');
+    const seccionTikTokTop = document.getElementById('seccion-tiktok-top-videos');
+    const seccionGraficos = document.getElementById('seccion-graficos-redes');
+    const seccionResumen = document.getElementById('seccion-resumen-general');
+
+    if (redActiva === 'Resumen General') {
+        kpisEstandar.classList.add('hidden');
+        kpisLive.classList.add('hidden');
+        if (seccionTikTokTop) seccionTikTokTop.classList.add('hidden');
+        if (seccionGraficos) seccionGraficos.classList.add('hidden');
+        if (seccionResumen) seccionResumen.classList.remove('hidden');
+
+        renderizarResumenGeneral();
+        return;
+    }
+
+    if (seccionResumen) seccionResumen.classList.add('hidden');
+    if (seccionGraficos) seccionGraficos.classList.remove('hidden');
+
     let nombreHoja = '';
 
     if (cuenta === 'acquaroni') {
@@ -607,14 +680,6 @@ function renderizarModuloRedes() {
     const filas = obtenerHojaPrincipalInsensible(nombreHoja);
     const filasFiltradas = filtrarFilas(filas, 0, 1);
 
-    const kpisEstandar = document.getElementById('kpis-estandar');
-    const kpisLive = document.getElementById('kpis-tiktok-live');
-    const containerGenero = document.getElementById('container-chart-genero');
-    const containerAlcance = document.getElementById('container-chart-alcance');
-    const seccionTikTokTop = document.getElementById('seccion-tiktok-top-videos');
-
-    if (containerGenero) containerGenero.classList.add('hidden');
-    if (containerAlcance) containerAlcance.classList.remove('hidden');
     if (seccionTikTokTop) seccionTikTokTop.classList.add('hidden');
 
     if (redActiva === 'TikTok Live') {
@@ -653,7 +718,7 @@ function renderizarModuloRedes() {
         const cardInversion = document.getElementById('card-kpi-inversion');
         const lblSeguidores = document.getElementById('lbl-kpi-seguidores');
 
-        // Restablecer visibilidad por defecto
+        // Restablecer visibilidad por defecto de FICHAS (SIN MODIFICACIONES)
         cardCtr.classList.remove('hidden');
         cardAlcance.classList.remove('hidden');
         cardAlcanceOrg.classList.remove('hidden');
@@ -666,13 +731,11 @@ function renderizarModuloRedes() {
 
         if (redActiva === 'Instagram') {
             cardImpresiones.classList.add('hidden');
-            if (containerGenero) containerGenero.classList.remove('hidden');
         } else if (redActiva === 'TikTok') {
             cardCtr.classList.add('hidden');
             cardAlcanceOrg.classList.add('hidden');
             cardAlcance.classList.add('hidden');
             cardImpresiones.classList.add('hidden');
-            if (containerAlcance) containerAlcance.classList.add('hidden');
             if (seccionTikTokTop) seccionTikTokTop.classList.remove('hidden');
         } else if (redActiva === 'YouTube') {
             cardCtr.classList.add('hidden');
@@ -685,27 +748,20 @@ function renderizarModuloRedes() {
             if (cardNuevosEspectadores) cardNuevosEspectadores.classList.remove('hidden');
             
             lblSeguidores.innerText = 'SUSCRIPTORES GANADOS';
-            
-            if (containerAlcance) containerAlcance.classList.add('hidden');
         }
 
-        // Mapeo dinámico de Índices por Nombre Exacto
+        // Mapeo dinámico de Índices por Nombre Exacto para FICHAS EXISTENTES
         const idxInversion = obtenerIndiceColumna(filas, ['inversion', 'inversión']);
         const idxCtr = obtenerIndiceColumna(filas, ['ctr', 'ctr promedio']);
         const idxAlcance = obtenerIndiceColumna(filas, ['alcance', 'alcance total']);
         const idxAlcanceOrg = obtenerIndiceColumna(filas, ['alcance organico', 'alcance orgánico']);
         const idxImpresiones = obtenerIndiceColumna(filas, ['impresiones']);
         
-        // INSTAGRAM — LECTURA DIRECTA POR COLUMNA SEGÚN LA CUENTA SELECCIONADA
         let idxInteracciones = -1;
         if (redActiva === 'Instagram') {
-            if (cuenta === 'acquaroni') {
-                idxInteracciones = 3; // Columna D
-            } else if (cuenta === 'aztec') {
-                idxInteracciones = 6; // Columna G
-            } else {
-                idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
-            }
+            if (cuenta === 'acquaroni') idxInteracciones = 3;
+            else if (cuenta === 'aztec') idxInteracciones = 6;
+            else idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
         } else {
             idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
         }
@@ -716,7 +772,6 @@ function renderizarModuloRedes() {
             'tiempo de reproduccion (hrs)', 'tiempo de reproducción (hrs)', 'tiempo reproduccion'
         ]);
 
-        // 3. YOUTUBE — LECTURA DIRECTA DE COLUMNA "nuevos espectadores de contenido"
         const idxNuevosEspectadores = obtenerIndiceColumna(filas, [
             'nuevos espectadores de contenido', 'nuevos espectadores', 'espectadores de contenido'
         ]);
@@ -748,6 +803,7 @@ function renderizarModuloRedes() {
             if (idxNuevosSeguidores !== -1) totalNuevosSeg += limpiarValorNum(f[idxNuevosSeguidores]);
         });
 
+        // ASIGNACIÓN A FICHAS (SIN MODIFICACIONES)
         document.getElementById('kpi-inversion').innerText = `Q ${totalInv.toFixed(2)}`;
         document.getElementById('kpi-ctr').innerText = `${(countCtr ? sumCtr / countCtr : 0).toFixed(2)}%`;
         document.getElementById('kpi-alcance').innerText = totalAlc.toLocaleString();
@@ -763,13 +819,313 @@ function renderizarModuloRedes() {
         
         document.getElementById('kpi-seguidores-exactos').innerText = totalNuevosSeg.toLocaleString();
 
-        // 2. TIKTOK — TABLA TOP 5 VIDEOS MÁS VISTOS
         if (redActiva === 'TikTok') {
             renderTikTokTopVideos(filasFiltradas, filas);
         }
 
-        renderGraficosRedes(filasFiltradas, filas);
+        renderNuevosGraficosEspecificos(filasFiltradas, filas);
     }
+}
+
+/* =============================================================
+   REEMPLAZO DE GRÁFICOS SOLICITADOS (FACEBOOK, INSTAGRAM, TIKTOK, YOUTUBE)
+============================================================= */
+function renderNuevosGraficosEspecificos(filasFiltradas, todasLasFilas) {
+    const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+    if (redActiva === 'Facebook') {
+        // 1. FACEBOOK
+        document.getElementById('titulo-grafico-1').innerText = 'Alcance vs. Impresiones';
+        document.getElementById('titulo-grafico-2').innerText = 'Alcance Orgánico vs. Pagado';
+
+        const idxAlc = obtenerIndiceColumna(todasLasFilas, ['alcance', 'alcance total']);
+        const idxImp = obtenerIndiceColumna(todasLasFilas, ['impresiones']);
+        const idxAlcOrg = obtenerIndiceColumna(todasLasFilas, ['alcance organico', 'alcance orgánico']);
+        const idxAlcPag = obtenerIndiceColumna(todasLasFilas, ['alcance pagado', 'alcance de pago']);
+
+        let dataAlc = new Array(12).fill(0);
+        let dataImp = new Array(12).fill(0);
+        let dataAlcOrg = new Array(12).fill(0);
+        let dataAlcPag = new Array(12).fill(0);
+
+        filasFiltradas.forEach(f => {
+            const m = obtenerIndiceMes(f[1]);
+            if (m !== -1) {
+                if (idxAlc !== -1) dataAlc[m] += limpiarValorNum(f[idxAlc]);
+                if (idxImp !== -1) dataImp[m] += limpiarValorNum(f[idxImp]);
+                if (idxAlcOrg !== -1) dataAlcOrg[m] += limpiarValorNum(f[idxAlcOrg]);
+                if (idxAlcPag !== -1) dataAlcPag[m] += limpiarValorNum(f[idxAlcPag]);
+            }
+        });
+
+        // Gráfico 1 - Líneas
+        crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
+            { label: 'Alcance Total', data: dataAlc, borderColor: '#8b5cf6', fill: false },
+            { label: 'Impresiones', data: dataImp, borderColor: '#f97316', fill: false }
+        ]);
+
+        // Gráfico 2 - Barras Agrupadas
+        crearOActualizarChart('chart-redes-2', 'bar', mesesLabels, [
+            { label: 'Alcance Orgánico', data: dataAlcOrg, backgroundColor: '#10b981' },
+            { label: 'Alcance Pagado', data: dataAlcPag, backgroundColor: '#3b82f6' }
+        ]);
+
+    } else if (redActiva === 'Instagram') {
+        // 2. INSTAGRAM
+        document.getElementById('titulo-grafico-1').innerText = 'Evolución del Rendimiento';
+        document.getElementById('titulo-grafico-2').innerText = 'Interacciones por Tipo';
+
+        const idxAlc = obtenerIndiceColumna(todasLasFilas, ['alcance', 'alcance total']);
+        const idxImp = obtenerIndiceColumna(todasLasFilas, ['impresiones']);
+        
+        const idxLikes = obtenerIndiceColumna(todasLasFilas, ['me gusta', 'likes']);
+        const idxCom = obtenerIndiceColumna(todasLasFilas, ['comentarios', 'comments']);
+        const idxSaves = obtenerIndiceColumna(todasLasFilas, ['guardados', 'saves']);
+        const idxShares = obtenerIndiceColumna(todasLasFilas, ['veces compartido', 'compartidos', 'shares']);
+
+        let dataAlc = new Array(12).fill(0);
+        let dataImp = new Array(12).fill(0);
+
+        let sumLikes = 0, sumCom = 0, sumSaves = 0, sumShares = 0;
+
+        filasFiltradas.forEach(f => {
+            const m = obtenerIndiceMes(f[1]);
+            if (m !== -1) {
+                if (idxAlc !== -1) dataAlc[m] += limpiarValorNum(f[idxAlc]);
+                if (idxImp !== -1) dataImp[m] += limpiarValorNum(f[idxImp]);
+            }
+            if (idxLikes !== -1) sumLikes += limpiarValorNum(f[idxLikes]);
+            if (idxCom !== -1) sumCom += limpiarValorNum(f[idxCom]);
+            if (idxSaves !== -1) sumSaves += limpiarValorNum(f[idxSaves]);
+            if (idxShares !== -1) sumShares += limpiarValorNum(f[idxShares]);
+        });
+
+        // Gráfico 1 - Líneas
+        crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
+            { label: 'Alcance', data: dataAlc, borderColor: '#e1306c', fill: false },
+            { label: 'Impresiones', data: dataImp, borderColor: '#f59e0b', fill: false }
+        ]);
+
+        // Gráfico 2 - Barras
+        crearOActualizarChart('chart-redes-2', 'bar', ['Me gusta', 'Comentarios', 'Guardados', 'Compartidos'], [
+            { label: 'Total Interacciones', data: [sumLikes, sumCom, sumSaves, sumShares], backgroundColor: ['#ec4899', '#3b82f6', '#8b5cf6', '#10b981'] }
+        ]);
+
+    } else if (redActiva === 'TikTok') {
+        // 3. TIKTOK
+        document.getElementById('titulo-grafico-1').innerText = 'Visualizaciones vs. Alcance';
+        document.getElementById('titulo-grafico-2').innerText = 'Retención y Calidad del Contenido';
+
+        const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones totales de videos', 'video views', 'visualizaciones', 'vistas']);
+        const idxAlc = obtenerIndiceColumna(todasLasFilas, ['alcance', 'alcance total']);
+        const idxWatchTime = obtenerIndiceColumna(todasLasFilas, ['tiempo promedio de reproduccion', 'tiempo promedio de reproducción', 'average watch time']);
+        const idxCompletion = obtenerIndiceColumna(todasLasFilas, ['porcentaje de video visto completo', 'completion rate', '% visto completo']);
+
+        let dataViews = new Array(12).fill(0);
+        let dataAlc = new Array(12).fill(0);
+        let dataWatchTime = new Array(12).fill(0);
+        let dataCompletion = new Array(12).fill(0);
+
+        filasFiltradas.forEach(f => {
+            const m = obtenerIndiceMes(f[1]);
+            if (m !== -1) {
+                if (idxViews !== -1) dataViews[m] += limpiarValorNum(f[idxViews]);
+                if (idxAlc !== -1) dataAlc[m] += limpiarValorNum(f[idxAlc]);
+                if (idxWatchTime !== -1) dataWatchTime[m] += limpiarValorNum(f[idxWatchTime]);
+                if (idxCompletion !== -1) dataCompletion[m] += limpiarValorNum(f[idxCompletion]);
+            }
+        });
+
+        // Gráfico 1 - Líneas
+        crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
+            { label: 'Visualizaciones Totales', data: dataViews, borderColor: '#000000', fill: false },
+            { label: 'Alcance', data: dataAlc, borderColor: '#2563eb', fill: false }
+        ]);
+
+        // Gráfico 2 - Barras
+        crearOActualizarChart('chart-redes-2', 'bar', mesesLabels, [
+            { label: 'Tiempo Prom. Reproducción (s)', data: dataWatchTime, backgroundColor: '#06b6d4' },
+            { label: '% Video Visto Completo', data: dataCompletion, backgroundColor: '#8b5cf6' }
+        ]);
+
+    } else if (redActiva === 'YouTube') {
+        // 4. YOUTUBE
+        document.getElementById('titulo-grafico-1').innerText = 'Visualizaciones vs. Impresiones';
+        document.getElementById('titulo-grafico-2').innerText = 'CTR — Eficiencia de Clics';
+
+        const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'views', 'vistas']);
+        const idxImp = obtenerIndiceColumna(todasLasFilas, ['impresiones']);
+        const idxCtr = obtenerIndiceColumna(todasLasFilas, ['ctr', 'ctr promedio', 'click-through rate']);
+
+        let dataViews = new Array(12).fill(0);
+        let dataImp = new Array(12).fill(0);
+        let dataCtr = new Array(12).fill(0);
+
+        filasFiltradas.forEach(f => {
+            const m = obtenerIndiceMes(f[1]);
+            if (m !== -1) {
+                if (idxViews !== -1) dataViews[m] += limpiarValorNum(f[idxViews]);
+                if (idxImp !== -1) dataImp[m] += limpiarValorNum(f[idxImp]);
+                if (idxCtr !== -1) dataCtr[m] += limpiarValorNum(f[idxCtr]);
+            }
+        });
+
+        // Gráfico 1 - Líneas
+        crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
+            { label: 'Visualizaciones (Views)', data: dataViews, borderColor: '#ff0000', fill: false },
+            { label: 'Impresiones', data: dataImp, borderColor: '#f97316', fill: false }
+        ]);
+
+        // Gráfico 2 - Barras
+        crearOActualizarChart('chart-redes-2', 'bar', mesesLabels, [
+            { label: 'CTR (%)', data: dataCtr, backgroundColor: '#10b981' }
+        ]);
+    }
+}
+
+/* =============================================================
+   NUEVA SECCIÓN: RESUMEN GENERAL (CONSOLIDADO Y PROYECCIÓN DINO)
+============================================================= */
+function renderizarResumenGeneral() {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const anioSel = document.getElementById('filtro-anio').value;
+    const mesSel = document.getElementById('filtro-mes').value;
+
+    let mapasHojas = [];
+    if (cuenta === 'acquaroni') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook Repuestos Acquaroni' },
+            { red: 'Instagram', hoja: 'Instagram Repuestos Acquaroni' },
+            { red: 'TikTok', hoja: 'Tiktok Repuestos Acquaroni' },
+            { red: 'YouTube', hoja: 'Youtube Repuestos Acquaroni' }
+        ];
+    } else if (cuenta === 'aztec') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook de AZtec Oils' },
+            { red: 'Instagram', hoja: 'Instagram de AZtec Oils' },
+            { red: 'TikTok', hoja: 'Tiktok de AZtec Oils' }
+        ];
+    } else if (cuenta === 'ultra') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook Ultra Parts' },
+            { red: 'Instagram', hoja: 'Instagram Ultra Parts' },
+            { red: 'TikTok', hoja: 'Tiktok Ultra Parts' },
+            { red: 'YouTube', hoja: 'Youtube Ultra Parts' }
+        ];
+    }
+
+    let globalAlcance = 0;
+    let globalImpresiones = 0;
+    let globalSeguidores = 0;
+    let globalInteracciones = 0;
+
+    const desgloseSeguidores = {};
+    
+    let histAlcanceMensual = new Array(12).fill(0);
+    let histImpresionesMensual = new Array(12).fill(0);
+    let histInteraccionesMensual = new Array(12).fill(0);
+
+    mapasHojas.forEach(item => {
+        const filas = obtenerHojaPrincipalInsensible(item.hoja);
+        const filasFiltradas = filtrarFilas(filas, 0, 1);
+
+        const idxAlc = obtenerIndiceColumna(filas, ['alcance', 'alcance total']);
+        const idxImp = obtenerIndiceColumna(filas, ['impresiones']);
+        const idxSeg = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
+        
+        let idxInt = -1;
+        if (item.red === 'Instagram') {
+            if (cuenta === 'acquaroni') idxInt = 3;
+            else if (cuenta === 'aztec') idxInt = 6;
+            else idxInt = obtenerIndiceColumna(filas, ['interacciones']);
+        } else {
+            idxInt = obtenerIndiceColumna(filas, ['interacciones']);
+        }
+
+        let totalSegRed = 0;
+
+        filasFiltradas.forEach(f => {
+            const m = obtenerIndiceMes(f[1]);
+
+            if (idxAlc !== -1) {
+                const val = limpiarValorNum(f[idxAlc]);
+                globalAlcance += val;
+                if (m !== -1) histAlcanceMensual[m] += val;
+            }
+            if (idxImp !== -1) {
+                const val = limpiarValorNum(f[idxImp]);
+                globalImpresiones += val;
+                if (m !== -1) histImpresionesMensual[m] += val;
+            }
+            if (idxSeg !== -1) {
+                const val = limpiarValorNum(f[idxSeg]);
+                globalSeguidores += val;
+                totalSegRed += val;
+            }
+            if (idxInt !== -1) {
+                const val = limpiarValorNum(f[idxInt]);
+                globalInteracciones += val;
+                if (m !== -1) histInteraccionesMensual[m] += val;
+            }
+        });
+
+        desgloseSeguidores[item.red] = totalSegRed;
+    });
+
+    document.getElementById('kpi-resumen-alcance').innerText = globalAlcance.toLocaleString();
+    document.getElementById('kpi-resumen-impresiones').innerText = globalImpresiones.toLocaleString();
+    document.getElementById('kpi-resumen-seguidores').innerText = globalSeguidores.toLocaleString();
+    document.getElementById('kpi-resumen-interacciones').innerText = globalInteracciones.toLocaleString();
+
+    // PROYECCIÓN DEL AÑO SIGUIENTE (DINÁMICA BASADA EN RUN RATE REAL)
+    const anioSiguiente = parseInt(anioSel) + 1;
+    document.getElementById('titulo-proyeccion-seccion').innerText = `Proyección del Año Siguiente (${anioSiguiente})`;
+
+    // TABLA PROYECCIÓN DE SEGUIDORES
+    const tbodySeg = document.getElementById('tabla-proyeccion-seguidores');
+    tbodySeg.innerHTML = '';
+
+    mapasHojas.forEach(item => {
+        const actual = desgloseSeguidores[item.red] || 0;
+        const estCrecimiento = Math.round(actual * 1.20); // Tasa estimada 20%
+        const meta = actual + estCrecimiento;
+
+        tbodySeg.innerHTML += `
+            <tr class="hover:bg-gray-50">
+                <td class="p-2 font-bold text-gray-700">${item.red}</td>
+                <td class="p-2 text-right font-medium text-gray-600">${actual.toLocaleString()}</td>
+                <td class="p-2 text-right font-semibold text-green-600">+${estCrecimiento.toLocaleString()}</td>
+                <td class="p-2 text-right font-black text-blue-600">${meta.toLocaleString()}</td>
+            </tr>
+        `;
+    });
+
+    // GRÁFICO ALCANCE E IMPRESIONES PROYECTADAS
+    const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    
+    let proyAlcance = histAlcanceMensual.map(v => Math.round((v > 0 ? v : globalAlcance / 12) * 1.15));
+    let proyImpresiones = histImpresionesMensual.map(v => Math.round((v > 0 ? v : globalImpresiones / 12) * 1.15));
+
+    crearOActualizarChart('chart-resumen-proyeccion-alcance', 'line', mesesLabels, [
+        { label: `Alcance Proyectado ${anioSiguiente}`, data: proyAlcance, borderColor: '#2563eb', fill: false },
+        { label: `Impresiones Proyectadas ${anioSiguiente}`, data: proyImpresiones, borderColor: '#f97316', fill: false }
+    ]);
+
+    // GRÁFICO VOLUMEN DE INTERACCIONES ESPERADAS POR TRIMESTRE
+    let sumQ1 = histInteraccionesMensual.slice(0, 3).reduce((a, b) => a + b, 0);
+    let sumQ2 = histInteraccionesMensual.slice(3, 6).reduce((a, b) => a + b, 0);
+    let sumQ3 = histInteraccionesMensual.slice(6, 9).reduce((a, b) => a + b, 0);
+    let sumQ4 = histInteraccionesMensual.slice(9, 12).reduce((a, b) => a + b, 0);
+
+    const factorEngagement = 1.18;
+    const proyQ1 = Math.round((sumQ1 || globalInteracciones / 4) * factorEngagement);
+    const proyQ2 = Math.round((sumQ2 || globalInteracciones / 4) * factorEngagement);
+    const proyQ3 = Math.round((sumQ3 || globalInteracciones / 4) * factorEngagement);
+    const proyQ4 = Math.round((sumQ4 || globalInteracciones / 4) * factorEngagement);
+
+    crearOActualizarChart('chart-resumen-proyeccion-engagement', 'bar', ['Q1 (Ene-Mar)', 'Q2 (Abr-Jun)', 'Q3 (Jul-Sep)', 'Q4 (Oct-Dic)'], [
+        { label: `Interacciones Proyectadas ${anioSiguiente}`, data: [proyQ1, proyQ2, proyQ3, proyQ4], backgroundColor: '#8b5cf6' }
+    ]);
 }
 
 /* =============================================================
@@ -779,7 +1135,6 @@ function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
     const cardMes = document.getElementById('card-tiktok-top-video-mes');
     const cardTabla = document.getElementById('card-tiktok-top-videos-tabla');
 
-    // Detección dinámica de columnas por encabezado
     const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['video / titular', 'video/titular', 'titulo del video', 'título del video', 'titulo de video', 'título de video', 'titulo', 'título', 'nombre del video', 'publicacion', 'publicación']);
     const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'vistas', 'reproducciones']);
 
@@ -801,7 +1156,6 @@ function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
         }
     });
 
-    // Ordenar de mayor a menor según Visualizaciones
     listaVideos.sort((a, b) => b.views - a.views);
 
     const tbody = document.getElementById('tabla-tiktok-top-body');
@@ -810,7 +1164,6 @@ function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
     if (listaVideos.length === 0) {
         tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-500">No se encontraron videos registrados.</td></tr>`;
     } else {
-        // TOP 5 MÁS VISTOS
         const top5Videos = listaVideos.slice(0, 5);
         top5Videos.forEach((v, index) => {
             tbody.innerHTML += `
@@ -824,184 +1177,6 @@ function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
     }
 }
 
-/* =============================================================
-   RENDERIZADO DE GRÁFICOS PARA REDES SOCIALES
-============================================================= */
-function renderGraficosRedes(filasFiltradas, todasLasFilas) {
-    const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    let dataInv = new Array(12).fill(0);
-    let dataAlc = new Array(12).fill(0);
-    let dataAlcOrg = new Array(12).fill(0);
-    let dataIntVideo = new Array(12).fill(0);
-
-    const idxInv = obtenerIndiceColumna(todasLasFilas, ['inversion', 'inversión']);
-    const idxAlc = obtenerIndiceColumna(todasLasFilas, ['alcance', 'alcance total']);
-    const idxAlcOrg = obtenerIndiceColumna(todasLasFilas, ['alcance organico', 'alcance orgánico']);
-    
-    const cuenta = document.getElementById('filtro-cuenta').value;
-    let idxInt = -1;
-    if (redActiva === 'Instagram') {
-        if (cuenta === 'acquaroni') {
-            idxInt = 3; // Columna D
-        } else if (cuenta === 'aztec') {
-            idxInt = 6; // Columna G
-        } else {
-            idxInt = obtenerIndiceColumna(todasLasFilas, ['interacciones']);
-        }
-    } else {
-        idxInt = obtenerIndiceColumna(todasLasFilas, ['interacciones']);
-    }
-
-    filasFiltradas.forEach(f => {
-        const idxMes = obtenerIndiceMes(f[1]);
-        if (idxMes !== -1) {
-            if (idxInv !== -1) dataInv[idxMes] = limpiarValorNum(f[idxInv]);
-            if (idxAlc !== -1) dataAlc[idxMes] = limpiarValorNum(f[idxAlc]);
-            if (idxAlcOrg !== -1) dataAlcOrg[idxMes] = limpiarValorNum(f[idxAlcOrg]);
-            if (idxInt !== -1) dataIntVideo[idxMes] = limpiarValorNum(f[idxInt]);
-        }
-    });
-
-    const anioSel = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
-    const anioProyectado = anioSel + 1;
-
-    document.getElementById('titulo-chart-inversion').innerText = `PROYECCIÓN REDES SOCIALES ${anioProyectado}`;
-
-    let dataProyeccion = new Array(12).fill(0);
-    const sumaHist = dataInv.reduce((a, b) => a + b, 0);
-    const basePromedio = (sumaHist > 0 ? sumaHist / 12 : 500) * 1.15;
-
-    for (let i = 0; i < 12; i++) {
-        dataProyeccion[i] = parseFloat((basePromedio * (1 + (i * 0.01))).toFixed(2));
-    }
-
-    crearOActualizarChart('chart-inversion', 'line', mesesLabels, [
-        { label: 'Inversión Real (Q)', data: dataInv, borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true },
-        { label: `Proyección ${anioProyectado} (Ene-Dic)`, data: dataProyeccion, borderColor: '#f59e0b', borderDash: [5, 5], fill: false }
-    ]);
-
-    if (redActiva !== 'YouTube' && redActiva !== 'TikTok') {
-        crearOActualizarChart('chart-alcance', 'bar', mesesLabels, [
-            { label: 'Alcance Total', data: dataAlc, backgroundColor: '#8b5cf6' },
-            { label: 'Alcance Orgánico', data: dataAlcOrg, backgroundColor: '#10b981' }
-        ]);
-    }
-
-    renderGraficoSeguidoresPorRed(mesesLabels);
-
-    if (redActiva === 'TikTok' || redActiva === 'YouTube') {
-        document.getElementById('titulo-chart-extra').innerText = 'Interacciones por Video / Contenido';
-        crearOActualizarChart('chart-extra', 'bar', mesesLabels, [
-            { label: 'Interacciones', data: dataIntVideo, backgroundColor: '#ec4899' }
-        ]);
-    } else {
-        document.getElementById('titulo-chart-extra').innerText = 'Interacciones Generales';
-        crearOActualizarChart('chart-extra', 'line', mesesLabels, [
-            { label: 'Interacciones', data: dataIntVideo, borderColor: '#6366f1', fill: false }
-        ]);
-    }
-
-    if (redActiva === 'Instagram') {
-        renderGraficoGeneroInstagram(filasFiltradas, todasLasFilas);
-    }
-}
-
-/* =============================================================
-   INSTAGRAM — GRÁFICO DE GÉNERO
-============================================================= */
-function renderGraficoGeneroInstagram(filasFiltradas, todasLasFilas) {
-    const idxGenero = obtenerIndiceColumna(todasLasFilas, ['genero', 'género']);
-    if (idxGenero === -1) return;
-
-    const conteoGenero = {};
-
-    filasFiltradas.forEach(f => {
-        const valRaw = f[idxGenero];
-        if (valRaw !== null && valRaw !== undefined && valRaw.toString().trim() !== '') {
-            const val = valRaw.toString().trim();
-            const claveClara = val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
-            conteoGenero[claveClara] = (conteoGenero[claveClara] || 0) + 1;
-        }
-    });
-
-    const labels = Object.keys(conteoGenero);
-    const data = Object.values(conteoGenero);
-
-    const coloresGenericos = ['#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#6366f1'];
-    const backgroundColors = labels.map((l, i) => {
-        if (l.toLowerCase() === 'mujer' || l.toLowerCase() === 'femenino') return '#ec4899';
-        if (l.toLowerCase() === 'hombre' || l.toLowerCase() === 'masculino') return '#3b82f6';
-        return coloresGenericos[i % coloresGenericos.length];
-    });
-
-    crearOActualizarChart('chart-genero', 'doughnut', labels, [
-        {
-            data: data,
-            backgroundColor: backgroundColors
-        }
-    ]);
-}
-
-function renderGraficoSeguidoresPorRed(mesesLabels) {
-    const cuenta = document.getElementById('filtro-cuenta').value;
-    const anioSel = document.getElementById('filtro-anio').value;
-
-    let mapasHojas = [];
-    if (cuenta === 'acquaroni') {
-        mapasHojas = [
-            { red: 'Facebook', hoja: 'Facebook Repuestos Acquaroni', color: '#1877f2' },
-            { red: 'Instagram', hoja: 'Instagram Repuestos Acquaroni', color: '#e1306c' },
-            { red: 'TikTok', hoja: 'Tiktok Repuestos Acquaroni', color: '#000000' },
-            { red: 'YouTube', hoja: 'Youtube Repuestos Acquaroni', color: '#ff0000' }
-        ];
-    } else if (cuenta === 'aztec') {
-        mapasHojas = [
-            { red: 'Facebook', hoja: 'Facebook de AZtec Oils', color: '#1877f2' },
-            { red: 'Instagram', hoja: 'Instagram de AZtec Oils', color: '#e1306c' },
-            { red: 'TikTok', hoja: 'Tiktok de AZtec Oils', color: '#000000' }
-        ];
-    } else if (cuenta === 'ultra') {
-        mapasHojas = [
-            { red: 'Facebook', hoja: 'Facebook Ultra Parts', color: '#1877f2' },
-            { red: 'Instagram', hoja: 'Instagram Ultra Parts', color: '#e1306c' },
-            { red: 'TikTok', hoja: 'Tiktok Ultra Parts', color: '#000000' },
-            { red: 'YouTube', hoja: 'Youtube Ultra Parts', color: '#ff0000' }
-        ];
-    }
-
-    const datasets = [];
-
-    mapasHojas.forEach(item => {
-        const filas = obtenerHojaPrincipalInsensible(item.hoja);
-        let serieSeguidoresReal = new Array(12).fill(0);
-
-        if (filas && filas.length > 1) {
-            const idxSeg = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
-            
-            filas.slice(1).forEach(row => {
-                const rowAnio = row[0] ? row[0].toString().trim() : '';
-                if (rowAnio === anioSel) {
-                    const idxMes = obtenerIndiceMes(row[1]);
-                    if (idxMes !== -1 && idxSeg !== -1) {
-                        serieSeguidoresReal[idxMes] = limpiarValorNum(row[idxSeg]);
-                    }
-                }
-            });
-        }
-
-        datasets.push({
-            label: item.red,
-            data: serieSeguidoresReal,
-            borderColor: item.color,
-            backgroundColor: item.color,
-            fill: false,
-            tension: 0.1
-        });
-    });
-
-    crearOActualizarChart('chart-seguidores', 'line', mesesLabels, datasets);
-}
-
 function renderGraficosTikTokLive(filas) {
     const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     let dataSegLive = new Array(12).fill(0);
@@ -1013,9 +1188,15 @@ function renderGraficosTikTokLive(filas) {
         }
     });
 
-    document.getElementById('titulo-chart-extra').innerText = 'Porcentaje de Nuevos Seguidores por Live';
-    crearOActualizarChart('chart-extra', 'bar', mesesLabels, [
-        { label: '% Seguidores en Live', data: dataSegLive, backgroundColor: '#a855f7' }
+    document.getElementById('titulo-grafico-1').innerText = 'Nuevos Seguidores en Live';
+    document.getElementById('titulo-grafico-2').innerText = 'Rendimiento en Vivo';
+
+    crearOActualizarChart('chart-redes-1', 'bar', mesesLabels, [
+        { label: 'Seguidores Nuevos', data: dataSegLive, backgroundColor: '#a855f7' }
+    ]);
+    
+    crearOActualizarChart('chart-redes-2', 'line', mesesLabels, [
+        { label: 'Seguidores Nuevos', data: dataSegLive, borderColor: '#ec4899', fill: false }
     ]);
 }
 
