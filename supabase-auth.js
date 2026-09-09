@@ -36,7 +36,7 @@ function getSupabase() {
                 <span id="login-error-msg">Credenciales incorrectas.</span>
             </div>
 
-            <form id="login-form" class="space-y-5">
+            <form id="login-form" class="space-y-5" onsubmit="window.execLogin(event)">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Correo Electrónico</label>
                     <div class="relative">
@@ -80,36 +80,33 @@ function getSupabase() {
     }
 })();
 
-// Control de Sesión y Formulario
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('login-form');
-    if (form) {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const client = getSupabase();
-            if (!client) return alert('Error al conectar con el servidor de autenticación.');
+// Función de procesamiento de login
+window.execLogin = async function(e) {
+    if (e) e.preventDefault();
+    const client = getSupabase();
+    if (!client) return alert('Error al conectar con el servidor de autenticación.');
 
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-            const errorBox = document.getElementById('login-error');
-            const errorMsg = document.getElementById('login-error-msg');
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errorBox = document.getElementById('login-error');
+    const errorMsg = document.getElementById('login-error-msg');
 
-            if (errorBox) errorBox.classList.add('hidden');
+    if (errorBox) errorBox.classList.add('hidden');
 
-            try {
-                const { data, error } = await client.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-                grantAccess(data.user);
-            } catch (err) {
-                if (errorBox && errorMsg) {
-                    errorMsg.innerText = 'Correo o contraseña incorrectos.';
-                    errorBox.classList.remove('hidden');
-                }
-            }
-        });
+    try {
+        const { data, error } = await client.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        grantAccess(data.user);
+    } catch (err) {
+        if (errorBox && errorMsg) {
+            errorMsg.innerText = 'Correo o contraseña incorrectos.';
+            errorBox.classList.remove('hidden');
+        }
     }
+};
 
-    // Verificar si ya hay una sesión activa
+// Verificar si ya hay una sesión activa al cargar
+document.addEventListener('DOMContentLoaded', () => {
     setTimeout(async () => {
         const client = getSupabase();
         if (client) {
