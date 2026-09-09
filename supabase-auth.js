@@ -3,9 +3,7 @@
 // ==========================================
 
 const SUPABASE_URL = 'https://lmlphqqmelaedrbycuwg.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHBocXFtZWxhZWRyYnljdXdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU0Mzc5MzQsImV4cCI6MjAzMTAxMzkzNH0.D5s-E1_zO2b2LXZQ3Z3v1Y1v';
-
-let supabaseClient = null;
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHBocXFtZWxhZWRyYnljdXdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NzA3NDcsImV4cCI6MjEwNDU0Njc0N30.Ulg2HgFCrV0vQUrozVXjMPdNIaLHmdMMSAWwf9rNTeU';
 
 function getSupabase() {
     if (!supabaseClient && window.supabase) {
