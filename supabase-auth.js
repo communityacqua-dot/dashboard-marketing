@@ -5,6 +5,8 @@
 const SUPABASE_URL = 'https://lmlphqqmelaedrbycuwg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbHBocXFtZWxhZWRyYnljdXdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NzA3NDcsImV4cCI6MjEwNDU0Njc0N30.Ulg2HgFCrV0vQUrozVXjMPdNIaLHmdMMSAWwf9rNTeU';
 
+var supabaseClient = null;
+
 function getSupabase() {
     if (!supabaseClient && window.supabase) {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -34,7 +36,7 @@ function getSupabase() {
                 <span id="login-error-msg">Credenciales incorrectas.</span>
             </div>
 
-            <form id="login-form" class="space-y-5" onsubmit="handleLoginSubmit(event)">
+            <form id="login-form" class="space-y-5">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Correo Electrónico</label>
                     <div class="relative">
@@ -70,7 +72,7 @@ function getSupabase() {
             </div>
         </div>
     `;
-    
+
     if (document.body) {
         document.body.prepend(loginDiv);
     } else {
@@ -78,68 +80,53 @@ function getSupabase() {
     }
 })();
 
-// Verificación de sesión al cargar
-document.addEventListener('DOMContentLoaded', async () => {
-    const client = getSupabase();
-    if (!client) {
-        console.error('Supabase no está disponible aún.');
-        return;
-    }
+// Control de Sesión y Formulario
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('login-form');
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const client = getSupabase();
+            if (!client) return alert('Error al conectar con el servidor de autenticación.');
 
-    try {
-        const { data: { session } } = await client.auth.getSession();
-        if (session) {
-            grantAccess(session.user);
-        } else {
-            revokeAccess();
-        }
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const errorBox = document.getElementById('login-error');
+            const errorMsg = document.getElementById('login-error-msg');
 
-        client.auth.onAuthStateChange((event, session) => {
-            if (session) {
-                grantAccess(session.user);
-            } else {
-                revokeAccess();
+            if (errorBox) errorBox.classList.add('hidden');
+
+            try {
+                const { data, error } = await client.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                grantAccess(data.user);
+            } catch (err) {
+                if (errorBox && errorMsg) {
+                    errorMsg.innerText = 'Correo o contraseña incorrectos.';
+                    errorBox.classList.remove('hidden');
+                }
             }
         });
-    } catch (err) {
-        console.error('Error al inicializar sesión:', err);
-        revokeAccess();
     }
+
+    // Verificar si ya hay una sesión activa
+    setTimeout(async () => {
+        const client = getSupabase();
+        if (client) {
+            const { data: { session } } = await client.auth.getSession();
+            if (session) {
+                grantAccess(session.user);
+            }
+        }
+    }, 500);
 });
 
 function grantAccess(user) {
     document.body.classList.add('authenticated');
-    const userRole = user.user_metadata?.role || getUserRoleByEmail(user.email);
+    const userRole = getUserRoleByEmail(user?.email || '');
 
     if (window.PermissionsEngine) {
-        window.PermissionsEngine.applyPermissions(user.email, userRole);
-    }
-}
-
-function revokeAccess() {
-    document.body.classList.remove('authenticated');
-}
-
-async function handleLoginSubmit(e) {
-    e.preventDefault();
-    const client = getSupabase();
-    if (!client) return alert('Error de conexión con el servicio de autenticación.');
-
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    const errorBox = document.getElementById('login-error');
-    const errorMsg = document.getElementById('login-error-msg');
-
-    if (errorBox) errorBox.classList.add('hidden');
-
-    try {
-        const { error } = await client.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-    } catch (err) {
-        if (errorBox && errorMsg) {
-            errorMsg.innerText = err.message || 'Credenciales incorrectas.';
-            errorBox.classList.remove('hidden');
-        }
+        window.PermissionsEngine.applyPermissions(user?.email || '', userRole);
     }
 }
 
