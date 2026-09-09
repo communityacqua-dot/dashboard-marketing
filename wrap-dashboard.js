@@ -10,15 +10,20 @@
         dashboardContainer.id = 'dashboard-container';
         dashboardContainer.className = 'w-full min-h-screen flex flex-col md:flex-row';
 
-        // Mover todos los elementos del body a dashboard-container
+        // Mover solo el contenido del dashboard, excluyendo el login
         const nodes = Array.from(document.body.childNodes);
         nodes.forEach(node => {
-            if (node.id !== 'login-screen' && node.id !== 'auth-loading-screen' && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE') {
+            if (
+                node.id !== 'login-screen' && 
+                node.id !== 'auth-loading-screen' && 
+                node.tagName !== 'SCRIPT' && 
+                node.tagName !== 'STYLE'
+            ) {
                 dashboardContainer.appendChild(node);
             }
         });
 
-        document.body.prepend(dashboardContainer);
+        document.body.appendChild(dashboardContainer);
     }
 
     if (document.readyState === 'loading') {
