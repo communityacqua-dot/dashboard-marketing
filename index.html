@@ -410,7 +410,7 @@
                 <!-- GRÁFICO DE PRESUPUESTO CON PROYECCIÓN Y PORCENTAJES -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div class="bg-white p-5 rounded-xl border shadow-sm">
-                        <h4 class="text-sm font-bold text-gray-700 mb-4">Ejecución Mensual y Porcentajes</h4>
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">Seguimiento del Gasto vs. Meta</h4>
                         <div class="h-64">
                             <canvas id="chart-presupuesto-mensual"></canvas>
                         </div>
@@ -1458,6 +1458,55 @@ function cerrarModalCampana() {
 }
 
 /* =============================================================
+   TIKTOK TOP VIDEOS COMPLEMENTARIO
+============================================================= */
+function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
+    const cardMes = document.getElementById('card-tiktok-top-video-mes');
+    const cardTabla = document.getElementById('card-tiktok-top-videos-tabla');
+
+    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['video / titular', 'video/titular', 'titulo del video', 'título del video', 'titulo de video', 'título de video', 'titulo', 'título', 'nombre del video', 'publicacion', 'publicación']);
+    const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'vistas', 'reproducciones']);
+
+    if (idxTitulo === -1 || idxViews === -1) {
+        cardMes.classList.add('hidden');
+        cardTabla.classList.add('hidden');
+        return;
+    }
+
+    cardMes.classList.add('hidden');
+    cardTabla.classList.remove('hidden');
+
+    const listaVideos = [];
+    filasFiltradas.forEach(f => {
+        const titulo = f[idxTitulo] ? f[idxTitulo].toString().trim() : '';
+        const views = limpiarValorNum(f[idxViews]);
+        if (titulo !== '') {
+            listaVideos.push({ titulo, views });
+        }
+    });
+
+    listaVideos.sort((a, b) => b.views - a.views);
+
+    const tbody = document.getElementById('tabla-tiktok-top-body');
+    tbody.innerHTML = '';
+
+    if (listaVideos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-500">No se encontraron videos registrados.</td></tr>`;
+    } else {
+        const top5Videos = listaVideos.slice(0, 5);
+        top5Videos.forEach((v, index) => {
+            tbody.innerHTML += `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-3 font-bold text-gray-400 text-center">${index + 1}</td>
+                    <td class="p-3 font-medium text-gray-800">${escapeHtml(v.titulo)}</td>
+                    <td class="p-3 text-right font-bold text-blue-600">${v.views.toLocaleString()}</td>
+                </tr>
+            `;
+        });
+    }
+}
+
+/* =============================================================
    MÓDULO PRESUPUESTO & ESTADO DE CUENTA
 ============================================================= */
 function solicitarAsignadoTotal() {
@@ -1474,7 +1523,7 @@ function solicitarAsignadoTotal() {
 ============================================================= */
 function renderizarModuloPresupuesto() {
     const filasPresupuesto = obtenerHojaPrincipalInsensible('Presupuesto');
-    
+
     const idxEjecutadoTotal = obtenerIndiceColumna(filasPresupuesto, ['ejecutado total']);
     const idxRedesSociales = obtenerIndiceColumna(filasPresupuesto, ['redes sociales']);
     const idxAcquaroni = obtenerIndiceColumna(filasPresupuesto, ['presupuesto repuestos acquaroni']);
@@ -1522,45 +1571,124 @@ function renderizarModuloPresupuesto() {
 
 function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupuesto) {
     const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    
-    const total = ejecutado || 1;
-    const pctRedes = ((redes / total) * 100).toFixed(1);
-    const pctPlat = ((plataformas / total) * 100).toFixed(1);
+    const anioSel = document.getElementById('filtro-anio').value;
+    const mesSel = document.getElementById('filtro-mes').value;
 
-    crearOActualizarChart('chart-presupuesto-mensual', 'doughnut', [`Redes (${pctRedes}%)`, `Plataformas (${pctPlat}%)`], [
-        { data: [redes, plataformas], backgroundColor: ['#8b5cf6', '#6366f1'] }
-    ]);
+    // Detectar índices dinámicos de Presupuesto Asignado y Ejecutado
+    const idxAsignado = obtenerIndiceColumna(filasPresupuesto, ['presupuesto asignado', 'asignado', 'presupuesto']);
+    const idxEjecutado = obtenerIndiceColumna(filasPresupuesto, ['ejecutado total', 'presupuesto ejecutado', 'ejecutado', 'gasto']);
 
-    const anioSel = parseInt(document.getElementById('filtro-anio').value) || new Date().getFullYear();
-    const anioProyectado = anioSel + 1;
+    let datosAsignado = new Array(12).fill(0);
+    let datosEjecutado = new Array(12).fill(0);
 
-    document.getElementById('titulo-proyeccion-presupuesto').innerText = `Proyección de Presupuesto ${anioProyectado}`;
-
-    let valoresMensualesReales = new Array(12).fill(0);
     if (filasPresupuesto && filasPresupuesto.length > 1) {
         filasPresupuesto.slice(1).forEach(f => {
             const rowAnio = f[0] ? f[0].toString().trim() : '';
-            if (rowAnio === anioSel.toString()) {
-                const idxMes = obtenerIndiceMes(f[1]);
+            const rowMes = f[1] ? f[1].toString().trim() : '';
+
+            if (rowAnio === anioSel) {
+                const idxMes = obtenerIndiceMes(rowMes);
                 if (idxMes !== -1) {
-                    const valMes = limpiarValorNum(f[3]) + limpiarValorNum(f[4]) + limpiarValorNum(f[5]) + limpiarValorNum(f[6]);
-                    valoresMensualesReales[idxMes] += valMes;
+                    if (mesSel === 'todos' || rowMes.toLowerCase() === mesSel.toLowerCase()) {
+                        let valAsig = idxAsignado !== -1 ? limpiarValorNum(f[idxAsignado]) : 0;
+                        let valEjec = 0;
+
+                        if (idxEjecutado !== -1) {
+                            valEjec = limpiarValorNum(f[idxEjecutado]);
+                        } else {
+                            // Suma de los rubros si no existe una sola columna de ejecutado
+                            valEjec = limpiarValorNum(f[3]) + limpiarValorNum(f[4]) + limpiarValorNum(f[5]) + limpiarValorNum(f[6]);
+                        }
+
+                        datosAsignado[idxMes] += valAsig;
+                        datosEjecutado[idxMes] += valEjec;
+                    }
                 }
             }
         });
     }
 
+    // SI NO HAY DATO DE ASIGNADO EN LAS FILAS, SE UTILIZA EL TOTAL MANUAL PRO-RATEADO ENTRE 12
+    const totalAsignadoProcesado = datosAsignado.reduce((a, b) => a + b, 0);
+    if (totalAsignadoProcesado === 0 && asignadoTotalManual > 0) {
+        const asignadoMensualBase = parseFloat((limpiarValorNum(asignadoTotalManual) / 12).toFixed(2));
+        datosAsignado = new Array(12).fill(asignadoMensualBase);
+    }
+
+    // REEMPLAZO DEL GRÁFICO 1: "Seguimiento del Gasto vs. Meta" (BARRAS AGRUPADAS - DOS SERIES)
+    if (chartInstances['chart-presupuesto-mensual']) {
+        chartInstances['chart-presupuesto-mensual'].destroy();
+    }
+    const canvasPres1 = document.getElementById('chart-presupuesto-mensual');
+    if (canvasPres1) {
+        const ctxPres1 = canvasPres1.getContext('2d');
+        chartInstances['chart-presupuesto-mensual'] = new Chart(ctxPres1, {
+            type: 'bar',
+            data: {
+                labels: mesesLabels,
+                datasets: [
+                    {
+                        label: 'Presupuesto Asignado',
+                        data: datosAsignado,
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Presupuesto Ejecutado',
+                        data: datosEjecutado,
+                        backgroundColor: '#ef4444',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Seguimiento del Gasto vs. Meta',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let val = context.parsed.y || 0;
+                                return `${context.dataset.label}: Q ${val.toLocaleString('es-GT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return 'Q ' + value.toLocaleString('es-GT');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // GRÁFICO 2: PROYECCIÓN DE PRESUPUESTO
+    const anioNum = parseInt(anioSel) || new Date().getFullYear();
+    const anioProyectado = anioNum + 1;
+
+    document.getElementById('titulo-proyeccion-presupuesto').innerText = `Proyección de Presupuesto ${anioProyectado}`;
+
     let proyeccionPresupuesto = new Array(12).fill(0);
-    const sumaReal = valoresMensualesReales.reduce((a, b) => a + b, 0);
+    const sumaReal = datosEjecutado.reduce((a, b) => a + b, 0);
     const promedioMensual = sumaReal > 0 ? sumaReal / 12 : 1000;
 
     for (let i = 0; i < 12; i++) {
-        const baseMes = valoresMensualesReales[i] > 0 ? valoresMensualesReales[i] : promedioMensual;
+        const baseMes = datosEjecutado[i] > 0 ? datosEjecutado[i] : promedioMensual;
         proyeccionPresupuesto[i] = parseFloat((baseMes * 1.05).toFixed(2));
     }
 
     crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
-        { label: `Proyección Estimada ${anioProyectado} (Ene-Dic)`, data: proyeccionPresupuesto, backgroundColor: '#3b82f6' }
+        { label: `Proyección Estimada ${anioProyectado} (Ene-Dic)`, data: proyeccionPresupuesto, backgroundColor: '#10b981' }
     ]);
 }
 
