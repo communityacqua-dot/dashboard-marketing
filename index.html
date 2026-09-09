@@ -1704,7 +1704,15 @@ window.addEventListener('DOMContentLoaded', () => {
     renderizarTabsRedes();
     cargarDatosSheets();
 });
-</script>
+</script> 
+    <style>
+        body > *:not(#login-screen):not(#auth-loading-screen) {
+            display: none !important;
+        }
+        body.authenticated > * {
+            display: revert !important;
+        }
+    </style>
 
 <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
