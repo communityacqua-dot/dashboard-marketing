@@ -1705,14 +1705,17 @@ window.addEventListener('DOMContentLoaded', () => {
     cargarDatosSheets();
 });
 </script> 
-    <style>
-        body > *:not(#login-screen):not(#auth-loading-screen) {
+   <style>
+        #dashboard-container {
             display: none !important;
         }
-        body.authenticated > * {
-            display: revert !important;
+        body.authenticated #dashboard-container {
+            display: flex !important;
         }
-    </style>
+        body.authenticated #login-screen {
+            display: none !important;
+        }
+    </style> 
 
 <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
