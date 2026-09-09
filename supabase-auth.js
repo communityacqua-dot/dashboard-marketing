@@ -147,6 +147,8 @@ async function handleLoginSubmit(e) {
 
 function getUserRoleByEmail(email = '') {
     const map = {
+        'community.acqua@gmail.com': 'administrador',
+        'orlando2216146@gmail.com': 'administrador',
         'admin@acquaroni.com': 'administrador',
         'nery@acquaroni.com': 'gerente_mercadeo',
         'otto@acquaroni.com': 'gerente_mercadeo_corporativo',
