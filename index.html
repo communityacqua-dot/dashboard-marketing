@@ -657,45 +657,252 @@ function renderizarModuloRedes() {
                 data: serieReal,
                 borderColor: '#2563eb',
                 backgroundColor: '#2563eb',
-                borderWidth: 2,
-                tension: 0.2,
-                spanGaps: true
-              },
-              {
-                label: 'Proyectado',
-                data: serieProyectada,
-                borderColor: '#9333ea',
-                borderDash: [6, 6],
-                backgroundColor: '#9333ea',
-                borderWidth: 2,
-                tension: 0.2,
-                spanGaps: true
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-          title: {
-            display: true,
-            text: 'Proyección de usuarios de Facebook',
-            font: { size: 14, weight: 'bold' }
-          }
+         function renderizarModuloRedes() {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const kpisEstandar = document.getElementById('kpis-estandar');
+    const kpisLive = document.getElementById('kpis-tiktok-live');
+    const seccionTikTokTop = document.getElementById('seccion-tiktok-top-videos');
+    const seccionGraficos = document.getElementById('seccion-graficos-redes');
+    const seccionResumen = document.getElementById('seccion-resumen-general');
+
+    // --- LÓGICA DE PROYECCIÓN FACEBOOK (SEGURO) ---
+    try {
+        const cuentaSel = document.getElementById('filtro-cuenta') ? document.getElementById('filtro-cuenta').value : 'Repuestos Acquaroni';
+        const nombreHojaFB = (typeof obtenerNombreHojaActual === 'function') ? obtenerNombreHojaActual(cuentaSel, 'Facebook') : 'Facebook';
+        const datosHojaFB = obtenerHojaPrincipalInsensible(nombreHojaFB);
+
+        if (datosHojaFB && datosHojaFB.length > 1) {
+            const filasDatos = datosHojaFB.slice(1);
+
+            let idxMes = obtenerIndiceColumna(datosHojaFB, ['mes', 'fecha']);
+            let idxValor = obtenerIndiceColumna(datosHojaFB, ['seguidores', 'usuarios', 'total', 'fans']);
+
+            if (idxMes === -1) idxMes = 0;
+            if (idxValor === -1) idxValor = 1;
+
+            const mesesReales = filasDatos.map(row => row[idxMes] || '');
+            const valoresReales = filasDatos.map(row => limpiarValorNum(row[idxValor]));
+            const ultimoValorReal = valoresReales[valoresReales.length - 1] || 0;
+
+            const mesesProyeccion = [
+                'Ene 2027', 'Feb 2027', 'Mar 2027', 'Abr 2027', 'May 2027', 'Jun 2027',
+                'Jul 2027', 'Ago 2027', 'Sep 2027', 'Oct 2027', 'Nov 2027', 'Dic 2027'
+            ];
+
+            let incrementoMensual = 0;
+            if (valoresReales.length > 1) {
+                incrementoMensual = (ultimoValorReal - valoresReales[0]) / (valoresReales.length - 1);
+            }
+
+            const valoresProyectados = [];
+            let acumulado = ultimoValorReal;
+            mesesProyeccion.forEach(() => {
+                acumulado += incrementoMensual;
+                valoresProyectados.push(Math.round(acumulado));
+            });
+
+            const labelsTotales = [...mesesReales, ...mesesProyeccion];
+            const serieReal = [...valoresReales, ...new Array(mesesProyeccion.length).fill(null)];
+            const serieProyectada = [
+                ...new Array(valoresReales.length - 1).fill(null),
+                ultimoValorReal,
+                ...valoresProyectados
+            ];
+
+            const canvasFB = document.getElementById('miNuevaGraficaFacebook');
+            if (canvasFB) {
+                if (window.miGraficaFBInstance) {
+                    window.miGraficaFBInstance.destroy();
+                }
+
+                window.miGraficaFBInstance = new Chart(canvasFB.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: labelsTotales,
+                        datasets: [
+                            {
+                                label: 'Real',
+                                data: serieReal,
+                                borderColor: '#2563eb',
+                                backgroundColor: '#2563eb',
+                                borderWidth: 2,
+                                tension: 0.2,
+                                spanGaps: true
+                            },
+                            {
+                                label: 'Proyectado',
+                                data: serieProyectada,
+                                borderColor: '#9333ea',
+                                borderDash: [6, 6],
+                                backgroundColor: '#9333ea',
+                                borderWidth: 2,
+                                tension: 0.2,
+                                spanGaps: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Proyección de usuarios de Facebook',
+                                font: { size: 14, weight: 'bold' }
+                            }
+                        }
+                    }
+                });
+            }
         }
-}
-    });
+    } catch (e) {
+        console.error('Error en gráfica de Facebook:', e);
+    }
 
-  if (redActiva === 'Resumen General') {
-    if (seccionTikTokTop) seccionTikTokTop.classList.add('hidden');
-    if (seccionGraficos) seccionGraficos.classList.add('hidden');
-    if (seccionResumen) seccionResumen.classList.remove('hidden');
+    if (redActiva === 'Resumen General') {
+        if (seccionTikTokTop) seccionTikTokTop.classList.add('hidden');
+        if (seccionGraficos) seccionGraficos.classList.add('hidden');
+        if (seccionResumen) seccionResumen.classList.remove('hidden');
 
-    renderizarResumenGeneral();
-    return;
-  }
+        renderizarResumenGeneral();
+        return;
+    }
+
     if (seccionResumen) seccionResumen.classList.add('hidden');
     if (seccionGraficos) seccionGraficos.classList.remove('hidden');
+
+    let nombreHoja = '';
+
+    if (cuenta === 'acquaroni') {
+        if (redActiva === 'Facebook') nombreHoja = 'Facebook Repuestos Acquaroni';
+        else if (redActiva === 'Instagram') nombreHoja = 'Instagram Repuestos Acquaroni';
+        else if (redActiva === 'TikTok Live') nombreHoja = 'Tiktok live Repuestos Acquaroni';
+        else if (redActiva === 'TikTok') nombreHoja = 'Tiktok Repuestos Acquaroni';
+        else if (redActiva === 'YouTube') nombreHoja = 'Youtube Repuestos Acquaroni';
+    } else if (cuenta === 'aztec') {
+        if (redActiva === 'Facebook') nombreHoja = 'Facebook de AZtec Oils';
+        else if (redActiva === 'Instagram') nombreHoja = 'Instagram de AZtec Oils';
+        else if (redActiva === 'TikTok') nombreHoja = 'Tiktok de AZtec Oils';
+    } else if (cuenta === 'ultra') {
+        if (redActiva === 'Facebook') nombreHoja = 'Facebook Ultra Parts';
+        else if (redActiva === 'Instagram') nombreHoja = 'Instagram Ultra Parts';
+        else if (redActiva === 'TikTok') nombreHoja = 'Tiktok Ultra Parts';
+        else if (redActiva === 'YouTube') nombreHoja = 'Youtube Ultra Parts';
+    }
+
+    const filas = obtenerHojaPrincipalInsensible(nombreHoja);
+    const filasFiltradas = filtrarFilas(filas, 0, 1);
+
+    if (seccionTikTokTop) seccionTikTokTop.classList.add('hidden');
+
+    if (redActiva === 'TikTok Live') {
+        kpisEstandar.classList.add('hidden');
+        kpisLive.classList.remove('hidden');
+
+        let tViews = 0, tDon = 0, tDiam = 0, tSeg = 0, tCom = 0, tLikes = 0;
+        filasFiltradas.forEach(f => {
+            tViews += limpiarValorNum(f[2]);
+            tDon += limpiarValorNum(f[3]);
+            tDiam += limpiarValorNum(f[4]);
+            tSeg += limpiarValorNum(f[5]);
+            tCom += limpiarValorNum(f[6]);
+            tLikes += limpiarValorNum(f[7]);
+        });
+
+        document.getElementById('kpi-live-views').innerText = tViews.toLocaleString();
+        document.getElementById('kpi-live-donadores').innerText = tDon.toLocaleString();
+        document.getElementById('kpi-live-diamantes').innerText = tDiam.toLocaleString();
+        document.getElementById('kpi-live-seguidores').innerText = tSeg.toLocaleString();
+        document.getElementById('kpi-live-comentarios').innerText = tCom.toLocaleString();
+        document.getElementById('kpi-live-likes').innerText = tLikes.toLocaleString();
+
+        renderGraficosTikTokLive(filasFiltradas);
+    } else {
+        kpisLive.classList.add('hidden');
+        kpisEstandar.classList.remove('hidden');
+
+        const cardCtr = document.getElementById('card-kpi-ctr');
+        const cardAlcance = document.getElementById('card-kpi-alcance');
+        const cardAlcanceOrg = document.getElementById('card-kpi-alcance-organico');
+        const cardImpresiones = document.getElementById('card-kpi-impresiones');
+        const cardTiempoRepro = document.getElementById('card-kpi-tiempo-reproduccion');
+        const cardNuevosEspectadores = document.getElementById('card-kpi-nuevos-espectadores');
+        const cardInteracciones = document.getElementById('card-kpi-interacciones');
+        const cardInversion = document.getElementById('card-kpi-inversion');
+        const lblSeguidores = document.getElementById('lbl-kpi-seguidores');
+
+        cardCtr.classList.remove('hidden');
+        cardAlcance.classList.remove('hidden');
+        cardAlcanceOrg.classList.remove('hidden');
+        cardImpresiones.classList.remove('hidden');
+        if (cardTiempoRepro) cardTiempoRepro.classList.add('hidden');
+        if (cardNuevosEspectadores) cardNuevosEspectadores.classList.add('hidden');
+        cardInteracciones.classList.remove('hidden');
+        cardInversion.classList.remove('hidden');
+        lblSeguidores.innerText = 'NUEVOS SEGUIDORES';
+
+        if (redActiva === 'Instagram') {
+            cardImpresiones.classList.add('hidden');
+        } else if (redActiva === 'TikTok') {
+            cardCtr.classList.add('hidden');
+            cardAlcanceOrg.classList.add('hidden');
+            cardAlcance.classList.add('hidden');
+            cardImpresiones.classList.add('hidden');
+            if (seccionTikTokTop) seccionTikTokTop.classList.remove('hidden');
+        } else if (redActiva === 'YouTube') {
+            cardCtr.classList.add('hidden');
+            cardAlcanceOrg.classList.add('hidden');
+            cardAlcance.classList.add('hidden');
+            cardImpresiones.classList.add('hidden');
+            cardInteracciones.classList.add('hidden');
+            
+            if (cardTiempoRepro) cardTiempoRepro.classList.remove('hidden');
+            if (cardNuevosEspectadores) cardNuevosEspectadores.classList.remove('hidden');
+            
+            lblSeguidores.innerText = 'SUSCRIPTORES GANADOS';
+        }
+
+        const idxInversion = obtenerIndiceColumna(filas, ['inversion', 'inversión']);
+        const idxCtr = obtenerIndiceColumna(filas, ['ctr', 'ctr promedio']);
+        const idxAlcance = obtenerIndiceColumna(filas, ['alcance', 'alcance total']);
+        const idxAlcanceOrg = obtenerIndiceColumna(filas, ['alcance organico', 'alcance orgánico']);
+        const idxImpresiones = obtenerIndiceColumna(filas, ['impresiones']);
+        
+        let idxInteracciones = -1;
+        if (redActiva === 'Instagram') {
+            if (cuenta === 'acquaroni') idxInteracciones = 3;
+            else if (cuenta === 'aztec') idxInteracciones = 6;
+            else idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
+        } else {
+            idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
+        }
+        
+        const idxTiempoRepro = obtenerIndiceColumna(filas, ['tiempo de reproduccion', 'tiempo de reproducción', 'horas de reproduccion', 'horas de reproducción']);
+        const idxNuevosEspectadores = obtenerIndiceColumna(filas, ['nuevos espectadores de contenido', 'nuevos espectadores', 'espectadores de contenido']);
+        const idxNuevosSeguidores = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
+
+        let totalInv = 0, totalAlc = 0, totalAlcOrg = 0, totalImp = 0, totalInt = 0, totalTiempoRepro = 0, totalNuevosEsp = 0, totalNuevosSeg = 0;
+        let countCtr = 0, sumCtr = 0;
+
+        document.getElementById('lbl-kpi-interacciones').innerText = 'INTERACCIONES';
+
+        filasFiltradas.forEach(f => {
+            if (idxInversion !== -1) totalInv += limpiarValorNum(f[idxInversion]);
+            if (idxCtr !== -1) {
+                const ctrVal = limpiarValorNum(f[idxCtr]);
+                if (ctrVal > 0) {
+                    sumCtr += ctrVal;
+                    countCtr++;
+                }
+            }
+            if (idxAlcance !== -1) totalAlc += limpiarValorNum(f[idxAlcance]);
+            if (idxAlcanceOrg !== -1) totalAlcOrg += limpiarValorNum(f[idxAlcanceOrg]);
+            if (idxImpresiones !== -1) totalImp += limpiarValorNum(f[idxImpresiones]);
+            if (idxInteracciones !== -1) totalInt += limpiarValorNum(f[idxInteracciones]);
+            if (idxTiempoRepro !== -1) totalTiempoRepro += limpiarValorNum(f[idxTiempoRepro]);
+            if (idxNuevosEspectadores !== -1) totalNuevosEsp += limpiarValorNum(f[idxNuevosEspectadores]);
+            if (idxNuevosSeguidores !== -1) totalNuevosSeg += limpiarValorNum(f[idxNuevosSeguidores]);
+        });
 
     let nombreHoja = '';
 
