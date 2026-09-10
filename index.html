@@ -281,36 +281,6 @@
         </div>
     </div>
 </div>
-          <!-- TARJETA: Proyección de Usuarios de Facebook -->
-<div id="seccion-proyeccion-facebook" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hidden mb-6">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-            <h3 class="text-lg font-bold text-gray-800">Proyección de usuarios de Facebook</h3>
-            <p class="text-xs text-gray-500">Estimación Ene 2027 – Dic 2027 basada en el comportamiento e histórico real</p>
-        </div>
-        <div class="flex items-center gap-6 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
-            <div>
-                <span class="text-xs font-semibold text-gray-500 block uppercase tracking-wider">Total Est. Dic 2027</span>
-                <span id="kpi-fb-proj-total" class="text-lg font-black text-blue-600">--</span>
-            </div>
-            <div class="w-px h-8 bg-blue-200"></div>
-            <div>
-                <span class="text-xs font-semibold text-gray-500 block uppercase tracking-wider">Crecimiento Est.</span>
-                <span id="kpi-fb-proj-growth" class="text-lg font-black text-emerald-600">--</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Mensaje si faltan datos -->
-    <div id="fb-projection-msg" class="hidden p-4 bg-amber-50 rounded-xl text-amber-700 text-sm">
-        Se requieren al menos 3 meses de datos históricos en Facebook para calcular la proyección.
-    </div>
-
-    <!-- Contenedor del Chart -->
-    <div id="fb-projection-chart-container" class="relative w-full h-72">
-        <canvas id="chartFBProjection"></canvas>
-    </div>
-</div>      
                 <!-- SECCIÓN: RESUMEN GENERAL (CONSOLIDADO Y PROYECCIÓN) -->
                 <div id="seccion-resumen-general" class="space-y-8 hidden">
                     
@@ -1773,10 +1743,11 @@ function escapeHtml(valor) {
 window.addEventListener('DOMContentLoaded', () => {
     renderizarTabsRedes();
     cargarDatosSheets();
+});
+   // Llamada automática a la proyección
     if (typeof renderFacebookUserProjection === 'function') {
         renderFacebookUserProjection();
-    }
-});
+    } 
 // ==========================================
 // MÓDULO AISLADO: PROYECCIÓN FACEBOOK 2027
 // ==========================================
@@ -1788,36 +1759,33 @@ function renderFacebookUserProjection() {
         
         if (!secContainer) return;
 
-        const cuenta = document.getElementById('filtro-cuenta').value;
-        let nombreHoja = '';
-
-        if (cuenta === 'acquaroni') nombreHoja = 'Facebook Repuestos Acquaroni';
-        else if (cuenta === 'aztec') nombreHoja = 'Facebook de AZtec Oils';
-        else if (cuenta === 'ultra') nombreHoja = 'Facebook Ultra Parts';
-
-        const fbRaw = obtenerHojaPrincipalInsensible(nombreHoja);
-
-        if (!fbRaw || fbRaw.length <= 1) {
+        if (!window.datosGlobales || !Array.isArray(window.datosGlobales['Facebook']) || window.datosGlobales['Facebook'].length === 0) {
             secContainer.classList.add('hidden');
             return;
         }
 
-        const idxAnio = 0;
-        const idxMes = 1;
-        const idxNuevosSeg = obtenerIndiceColumna(fbRaw, ['nuevos seguidores', 'seguidores ganados', 'seguidores']);
-        const idxTotalSeg = obtenerIndiceColumna(fbRaw, ['total seguidores', 'seguidores totales', 'seguidores']);
+        const fbRaw = window.datosGlobales['Facebook'].filter(d => 
+            !window.cuentaActiva || window.cuentaActiva === 'TODAS' || String(d.Cuenta || '').toUpperCase() === String(window.cuentaActiva).toUpperCase()
+        );
 
-        const filasFiltradas = fbRaw.slice(1);
+        if (fbRaw.length === 0) {
+            secContainer.classList.add('hidden');
+            return;
+        }
+
+        secContainer.classList.remove('hidden');
+
+        const copiaDatos = JSON.parse(JSON.stringify(fbRaw));
         const historico = [];
 
-        filasFiltradas.forEach(row => {
-            const mesStr = row[idxMes] ? `${row[idxMes]} ${row[idxAnio] || ''}`.trim() : '';
-            const segTotales = idxTotalSeg !== -1 ? limpiarValorNum(row[idxTotalSeg]) : 0;
-            const segNuevos = idxNuevosSeg !== -1 ? limpiarValorNum(row[idxNuevosSeg]) : 0;
+        copiaDatos.forEach(item => {
+            const mesStr = item.Mes || item.MES || item.Fecha || item.FECHA || '';
+            const segTotales = parseFloat(item['Seguidores Totales'] || item['Seguidores'] || item['Fans'] || item['Total Seguidores'] || 0);
+            const segNuevos = parseFloat(item['Nuevos Seguidores'] || item['Nuevos seguidores'] || item['Nuevos Fans'] || 0);
             
-            if (mesStr && (segTotales > 0 || segNuevos > 0)) {
+            if (mesStr) {
                 historico.push({
-                    mes: mesStr,
+                    mes: String(mesStr).trim(),
                     totales: segTotales,
                     nuevos: segNuevos
                 });
@@ -1825,13 +1793,11 @@ function renderFacebookUserProjection() {
         });
 
         if (historico.length < 3) {
-            secContainer.classList.remove('hidden');
             if (msgContainer) msgContainer.classList.remove('hidden');
             if (chartContainer) chartContainer.classList.add('hidden');
             return;
         }
 
-        secContainer.classList.remove('hidden');
         if (msgContainer) msgContainer.classList.add('hidden');
         if (chartContainer) chartContainer.classList.remove('hidden');
 
@@ -1890,35 +1856,13 @@ function renderFacebookUserProjection() {
 
         const canvasEl = document.getElementById('chartFBProjection');
         if (!canvasEl) return;
+        const ctx = canvasEl.getContext('2d');
 
-        crearOActualizarChart('chartFBProjection', 'line', labels, [
-            {
-                label: 'Histórico Real',
-                data: dataHistorico,
-                borderColor: '#2563eb',
-                backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                borderWidth: 2.5,
-                fill: true,
-                tension: 0.3,
-                pointRadius: 3
-            },
-            {
-                label: 'Proyección 2027',
-                data: dataProyeccion,
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.05)',
-                borderDash: [5, 5],
-                borderWidth: 2.5,
-                fill: true,
-                tension: 0.3,
-                pointRadius: 3
-            }
-        ]);
+        if (window.chartsInstancias && window.chartsInstancias['chartFBProjection']) {
+            window.chartsInstancias['chartFBProjection'].destroy();
+        }
 
-    } catch (err) {
-        console.warn("Error en Proyección Facebook:", err);
-    }
-}
+        const newChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
@@ -1963,54 +1907,7 @@ function renderFacebookUserProjection() {
     } catch (err) {
         console.warn("Error en Proyección Facebook:", err);
     }
-} 
-  /**
- * Calcula la proyección de nuevos seguidores para los 12 meses de 2027
- */
-function calculateFacebookUserProjection(historico) {
-    if (!historico || historico.length === 0) return { meses2027: [], incrementoTotal: 0 };
-
-    const n = historico.length;
-    const sumaNuevos = historico.reduce((acc, h) => acc + h.nuevos, 0);
-    const promedioBase = sumaNuevos / n;
-
-    let sumaX = 0, sumaY = 0, sumaXY = 0, sumaXX = 0;
-    historico.forEach((h, index) => {
-        sumaX += index;
-        sumaY += h.nuevos;
-        sumaXY += index * h.nuevos;
-        sumaXX += index * index;
-    });
-    
-    const pendiente = n > 1 ? (n * sumaXY - sumaX * sumaY) / (n * sumaXX - sumaX * sumaX) : 0;
-
-    const factoresEstacionales = [
-        { nombre: 'Ene 2027', factor: 0.95 },
-        { nombre: 'Feb 2027', factor: 0.90 },
-        { nombre: 'Mar 2027', factor: 1.05 },
-        { nombre: 'Abr 2027', factor: 1.10 },
-        { nombre: 'May 2027', factor: 1.00 },
-        { nombre: 'Jun 2027', factor: 0.95 },
-        { nombre: 'Jul 2027', factor: 1.05 },
-        { nombre: 'Ago 2027', factor: 1.00 },
-        { nombre: 'Sep 2027', factor: 1.15 },
-        { nombre: 'Oct 2027', factor: 1.05 },
-        { nombre: 'Nov 2027', factor: 1.20 },
-        { nombre: 'Dic 2027', factor: 1.30 }
-    ];
-
-    let incrementoTotal = 0;
-    const proyeccionesMensuales = factoresEstacionales.map((m, idx) => {
-        const incrementoTendencia = pendiente * (n + idx);
-        let estimado = (promedioBase + incrementoTendencia) * m.factor;
-        estimado = Math.max(Math.round(estimado), 0);
-        
-        incrementoTotal += estimado;
-        return { nombre: m.nombre, nuevos: estimado };
-    });
-
-    return { meses2027: proyeccionesMensuales, incrementoTotal: incrementoTotal };
-}  
+}
 </script> 
    <style>
         #dashboard-container {
