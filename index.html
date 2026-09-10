@@ -1898,9 +1898,7 @@ function renderFacebookUserProjection() {
        if (seccion) seccion.classList.remove('hidden');
         const chartContainer = document.getElementById('fb-projection-chart-container');
         if (chartContainer) chartContainer.classList.remove('hidden');
-       if (!window.chartsInstancies) window.chartsInstancies = {};
-window.chartsInstancies['chartFBProjection'] = new Chart(...);
-
+    
     } catch (err) {
         console.warn("Error en Proyección Facebook:", err);
     }
