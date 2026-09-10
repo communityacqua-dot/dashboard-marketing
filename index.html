@@ -242,6 +242,14 @@
                     </div>
                 </div>
 
+                <!-- Nueva Gráfica Independiente de Proyección de Usuarios para Facebook -->
+                <div id="seccion-proyeccion-usuarios-fb" class="bg-white p-5 rounded-xl border shadow-sm mt-6 hidden">
+                    <h4 id="titulo-grafico-proyeccion-fb" class="text-sm font-bold text-gray-700 mb-4">Proyección de usuarios</h4>
+                    <div class="h-72">
+                        <canvas id="chart-proyeccion-usuarios-fb"></canvas>
+                    </div>
+                </div>
+
                 <div id="seccion-resumen-general" class="space-y-8 hidden">
                     <div>
                         <h3 class="text-lg font-bold text-gray-800 mb-1">Desempeño Global y Alcance Total</h3>
@@ -589,6 +597,7 @@ function renderizarModuloRedes() {
     const kpisLive = document.getElementById('kpis-tiktok-live');
     const seccionTikTokTop = document.getElementById('seccion-tiktok-top-videos');
     const seccionGraficos = document.getElementById('seccion-graficos-redes');
+    const seccionProyeccionFb = document.getElementById('seccion-proyeccion-usuarios-fb');
     const seccionResumen = document.getElementById('seccion-resumen-general');
 
     if (redActiva === 'Resumen General') {
@@ -596,6 +605,7 @@ function renderizarModuloRedes() {
         kpisLive.classList.add('hidden');
         if (seccionTikTokTop) seccionTikTokTop.classList.add('hidden');
         if (seccionGraficos) seccionGraficos.classList.add('hidden');
+        if (seccionProyeccionFb) seccionProyeccionFb.classList.add('hidden');
         if (seccionResumen) seccionResumen.classList.remove('hidden');
 
         renderizarResumenGeneral();
@@ -632,6 +642,7 @@ function renderizarModuloRedes() {
     if (redActiva === 'TikTok Live') {
         kpisEstandar.classList.add('hidden');
         kpisLive.classList.remove('hidden');
+        if (seccionProyeccionFb) seccionProyeccionFb.classList.add('hidden');
 
         let tViews = 0, tDon = 0, tDiam = 0, tSeg = 0, tCom = 0, tLikes = 0;
         filasFiltradas.forEach(f => {
@@ -674,6 +685,14 @@ function renderizarModuloRedes() {
         cardInteracciones.classList.remove('hidden');
         cardInversion.classList.remove('hidden');
         lblSeguidores.innerText = 'NUEVOS SEGUIDORES';
+
+        if (seccionProyeccionFb) {
+            if (redActiva === 'Facebook') {
+                seccionProyeccionFb.classList.remove('hidden');
+            } else {
+                seccionProyeccionFb.classList.add('hidden');
+            }
+        }
 
         if (redActiva === 'Instagram') {
             cardImpresiones.classList.add('hidden');
@@ -758,6 +777,10 @@ function renderizarModuloRedes() {
         }
 
         renderNuevosGraficosEspecificos(filasFiltradas, filas);
+
+        if (redActiva === 'Facebook') {
+            renderGraficaProyeccionUsuariosFacebook(filas);
+        }
     }
 }
 
@@ -919,6 +942,110 @@ function renderNuevosGraficosEspecificos(filasFiltradas, todasLasFilas) {
             { label: 'CTR (%)', data: dataCtr, backgroundColor: '#10b981' }
         ]);
     }
+}
+
+function renderGraficaProyeccionUsuariosFacebook(filas) {
+    const nombresMesesFull = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const anioSel = document.getElementById('filtro-anio').value;
+    const mesSel = document.getElementById('filtro-mes').value;
+
+    const idxSeg = obtenerIndiceColumna(filas, ['nuevos seguidores', 'seguidores ganados', 'seguidores']);
+    const idxAlcOrg = obtenerIndiceColumna(filas, ['alcance organico', 'alcance orgánico']);
+    const idxAlcTot = obtenerIndiceColumna(filas, ['alcance', 'alcance total']);
+
+    let netosMensuales = new Array(12).fill(0);
+    let alcOrgMensual = new Array(12).fill(0);
+    let alcTotMensual = new Array(12).fill(0);
+
+    if (filas && filas.length > 1) {
+        filas.slice(1).forEach(f => {
+            const rowAnio = f[0] ? f[0].toString().trim() : '';
+            const rowMes = f[1] ? f[1].toString().trim() : '';
+            if (rowAnio === anioSel) {
+                const mIdx = obtenerIndiceMes(rowMes);
+                if (mIdx !== -1) {
+                    if (idxSeg !== -1) netosMensuales[mIdx] += limpiarValorNum(f[idxSeg]);
+                    if (idxAlcOrg !== -1) alcOrgMensual[mIdx] += limpiarValorNum(f[idxAlcOrg]);
+                    if (idxAlcTot !== -1) alcTotMensual[mIdx] += limpiarValorNum(f[idxAlcTot]);
+                }
+            }
+        });
+    }
+
+    // Detectar dinámicamente hasta qué mes hay datos reales en el año seleccionado
+    let ultimoMesConDatos = -1;
+    for (let i = 0; i < 12; i++) {
+        if (netosMensuales[i] > 0 || alcOrgMensual[i] > 0 || alcTotMensual[i] > 0) {
+            ultimoMesConDatos = i;
+        }
+    }
+    if (ultimoMesConDatos === -1) ultimoMesConDatos = 5; // Valor por defecto si no encuentra registros exactos (ej. junio)
+
+    // Base actual de seguidores obtenida del acumulado real del año hasta el último mes con datos
+    let baseSeguidoresActual = 0;
+    for (let i = 0; i <= ultimoMesConDatos; i++) {
+        baseSeguidoresActual += netosMensuales[i];
+    }
+    if (baseSeguidoresActual <= 0) baseSeguidoresActual = 1000; // Mínimo inicial seguro
+
+    let datosReales = new Array(12).fill(null);
+    let datosProyectados = new Array(12).fill(null);
+
+    let acumuladorReal = baseSeguidoresActual - (ultimoMesConDatos >= 0 ? netosMensuales[ultimoMesConDatos] : 0);
+    for (let i = 0; i <= ultimoMesConDatos; i++) {
+        acumuladorReal += netosMensuales[i];
+        datosReales[i] = acumuladorReal;
+    }
+
+    // Calcular factor de crecimiento dinámico basado en alcance orgánico y total histórico
+    let sumOrg = 0, sumTot = 0;
+    for (let i = 0; i <= ultimoMesConDatos; i++) {
+        sumOrg += alcOrgMensual[i];
+        sumTot += alcTotMensual[i];
+    }
+    let factorConversion = sumTot > 0 ? (sumOrg / sumTot) * 0.05 : 0.02;
+
+    let acumuladorProyeccion = datosReales[ultimoMesConDatos] || baseSeguidoresActual;
+    datosProyectados[ultimoMesConDatos] = acumuladorProyeccion; // Conecta el último punto real con la proyección
+
+    for (let i = ultimoMesConDatos + 1; i < 12; i++) {
+        let estimadoNeto = (netosMensuales[i] > 0 ? netosMensuales[i] : (netosMensuales[ultimoMesConDatos] > 0 ? netosMensuales[ultimoMesConDatos] : 50)) * (1 + factorConversion);
+        acumuladorProyeccion += Math.round(estimadoNeto);
+        datosProyectados[i] = acumuladorProyeccion;
+    }
+
+    // Aplicar filtro de mes individual si se seleccionó uno específico
+    let etiquetasFinales = [...nombresMesesFull];
+    if (mesSel !== 'todos') {
+        const idxFiltro = obtenerIndiceMes(mesSel);
+        if (idxFiltro !== -1) {
+            etiquetasFinales = [nombresMesesFull[idxFiltro]];
+            datosReales = [datosReales[idxFiltro]];
+            datosProyectados = [datosProyectados[idxFiltro]];
+        }
+    }
+
+    crearOActualizarChart('chart-proyeccion-usuarios-fb', 'line', etiquetasFinales, [
+        {
+            label: 'Datos Reales / Históricos',
+            data: datosReales,
+            borderColor: '#2563eb',
+            backgroundColor: '#2563eb',
+            borderWidth: 3,
+            fill: false,
+            tension: 0.1
+        },
+        {
+            label: 'Proyección de Usuarios',
+            data: datosProyectados,
+            borderColor: '#9333ea',
+            backgroundColor: '#9333ea',
+            borderWidth: 3,
+            borderDash: [6, 6],
+            fill: false,
+            tension: 0.1
+        }
+    ]);
 }
 
 function renderizarResumenGeneral() {
