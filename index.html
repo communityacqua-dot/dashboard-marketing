@@ -281,6 +281,36 @@
         </div>
     </div>
 </div>
+          <!-- TARJETA: Proyección de Usuarios de Facebook -->
+<div id="seccion-proyeccion-facebook" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hidden mb-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
+            <h3 class="text-lg font-bold text-gray-800">Proyección de usuarios de Facebook</h3>
+            <p class="text-xs text-gray-500">Estimación Ene 2027 – Dic 2027 basada en el comportamiento e histórico real</p>
+        </div>
+        <div class="flex items-center gap-6 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
+            <div>
+                <span class="text-xs font-semibold text-gray-500 block uppercase tracking-wider">Total Est. Dic 2027</span>
+                <span id="kpi-fb-proj-total" class="text-lg font-black text-blue-600">--</span>
+            </div>
+            <div class="w-px h-8 bg-blue-200"></div>
+            <div>
+                <span class="text-xs font-semibold text-gray-500 block uppercase tracking-wider">Crecimiento Est.</span>
+                <span id="kpi-fb-proj-growth" class="text-lg font-black text-emerald-600">--</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje si faltan datos -->
+    <div id="fb-projection-msg" class="hidden p-4 bg-amber-50 rounded-xl text-amber-700 text-sm">
+        Se requieren al menos 3 meses de datos históricos en Facebook para calcular la proyección.
+    </div>
+
+    <!-- Contenedor del Chart -->
+    <div id="fb-projection-chart-container" class="relative w-full h-72">
+        <canvas id="chartFBProjection"></canvas>
+    </div>
+</div>      
                 <!-- SECCIÓN: RESUMEN GENERAL (CONSOLIDADO Y PROYECCIÓN) -->
                 <div id="seccion-resumen-general" class="space-y-8 hidden">
                     
@@ -1743,11 +1773,10 @@ function escapeHtml(valor) {
 window.addEventListener('DOMContentLoaded', () => {
     renderizarTabsRedes();
     cargarDatosSheets();
-});
-   // Llamada automática a la proyección
     if (typeof renderFacebookUserProjection === 'function') {
         renderFacebookUserProjection();
-    } 
+    }
+});
 // ==========================================
 // MÓDULO AISLADO: PROYECCIÓN FACEBOOK 2027
 // ==========================================
@@ -1934,7 +1963,54 @@ function renderFacebookUserProjection() {
     } catch (err) {
         console.warn("Error en Proyección Facebook:", err);
     }
-}
+} 
+  /**
+ * Calcula la proyección de nuevos seguidores para los 12 meses de 2027
+ */
+function calculateFacebookUserProjection(historico) {
+    if (!historico || historico.length === 0) return { meses2027: [], incrementoTotal: 0 };
+
+    const n = historico.length;
+    const sumaNuevos = historico.reduce((acc, h) => acc + h.nuevos, 0);
+    const promedioBase = sumaNuevos / n;
+
+    let sumaX = 0, sumaY = 0, sumaXY = 0, sumaXX = 0;
+    historico.forEach((h, index) => {
+        sumaX += index;
+        sumaY += h.nuevos;
+        sumaXY += index * h.nuevos;
+        sumaXX += index * index;
+    });
+    
+    const pendiente = n > 1 ? (n * sumaXY - sumaX * sumaY) / (n * sumaXX - sumaX * sumaX) : 0;
+
+    const factoresEstacionales = [
+        { nombre: 'Ene 2027', factor: 0.95 },
+        { nombre: 'Feb 2027', factor: 0.90 },
+        { nombre: 'Mar 2027', factor: 1.05 },
+        { nombre: 'Abr 2027', factor: 1.10 },
+        { nombre: 'May 2027', factor: 1.00 },
+        { nombre: 'Jun 2027', factor: 0.95 },
+        { nombre: 'Jul 2027', factor: 1.05 },
+        { nombre: 'Ago 2027', factor: 1.00 },
+        { nombre: 'Sep 2027', factor: 1.15 },
+        { nombre: 'Oct 2027', factor: 1.05 },
+        { nombre: 'Nov 2027', factor: 1.20 },
+        { nombre: 'Dic 2027', factor: 1.30 }
+    ];
+
+    let incrementoTotal = 0;
+    const proyeccionesMensuales = factoresEstacionales.map((m, idx) => {
+        const incrementoTendencia = pendiente * (n + idx);
+        let estimado = (promedioBase + incrementoTendencia) * m.factor;
+        estimado = Math.max(Math.round(estimado), 0);
+        
+        incrementoTotal += estimado;
+        return { nombre: m.nombre, nuevos: estimado };
+    });
+
+    return { meses2027: proyeccionesMensuales, incrementoTotal: incrementoTotal };
+}  
 </script> 
    <style>
         #dashboard-container {
