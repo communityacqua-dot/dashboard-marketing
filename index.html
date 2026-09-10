@@ -1895,121 +1895,15 @@ function renderFacebookUserProjection() {
         });
 // Mostrar la sección en el DOM
         const seccion = document.getElementById('seccion-proyeccion-facebook');
-       if (seccion) seccion.classList.remove('hidden');
+        if (seccion) seccion.classList.remove('hidden');
+
         const chartContainer = document.getElementById('fb-projection-chart-container');
         if (chartContainer) chartContainer.classList.remove('hidden');
-    
+
     } catch (err) {
         console.warn("Error en Proyección Facebook:", err);
     }
 }
-// --- MÓDULO AISLADO: PROYECCIÓN DE FACEBOOK ---
-(function initFacebookUserProjection() {
-    function runFBProjection() {
-        try {
-            const secContainer = document.getElementById('seccion-proyeccion-facebook');
-            if (!secContainer) return;
-
-            // Determinar cuenta activa sin alterar variables globales
-            const cuentaEl = document.getElementById('filtro-cuenta');
-            const cuenta = cuentaEl ? cuentaEl.value : '';
-            let nombreHoja = 'Facebook Repuestos Acquaroni';
-            if (cuenta === 'aztec') nombreHoja = 'Facebook de AZtec Oils';
-            else if (cuenta === 'ultra') nombreHoja = 'Facebook Ultra Parts';
-
-            // Leer datos ya cargados en memoria de forma segura
-            if (typeof obtenerHojaPrincipalInsensible !== 'function') return;
-            const fbRaw = obtenerHojaPrincipalInsensible(nombreHoja);
-            if (!fbRaw || fbRaw.length <= 1) return;
-
-            const idxAnio = 0;
-            const idxMes = 1;
-            const idxNuevosSeg = typeof obtenerIndiceColumna === 'function' ? obtenerIndiceColumna(fbRaw, ['nuevos seguidores', 'seguidores ganados', 'seguidores']) : -1;
-            const idxTotalSeg = typeof obtenerIndiceColumna === 'function' ? obtenerIndiceColumna(fbRaw, ['total seguidores', 'seguidores totales', 'seguidores']) : -1;
-
-            const historico = [];
-            fbRaw.slice(1).forEach(row => {
-                const mesStr = row[idxMes] ? `${row[idxMes]} ${row[idxAnio] || ''}`.trim() : '';
-                const segTotales = idxTotalSeg !== -1 && typeof limpiarValorNum === 'function' ? limpiarValorNum(row[idxTotalSeg]) : 0;
-                const segNuevos = idxNuevosSeg !== -1 && typeof limpiarValorNum === 'function' ? limpiarValorNum(row[idxNuevosSeg]) : 0;
-                
-                if (mesStr && (segTotales > 0 || segNuevos > 0)) {
-                    historico.push({ mes: mesStr, totales: segTotales, nuevos: segNuevos });
-                }
-            });
-
-            if (historico.length === 0) return;
-
-            // Tendencia y Estacionalidad
-            const n = historico.length;
-            const sumaNuevos = historico.reduce((acc, h) => acc + h.nuevos, 0);
-            const promedioBase = sumaNuevos / n;
-
-            let sumaX = 0, sumaY = 0, sumaXY = 0, sumaXX = 0;
-            historico.forEach((h, i) => {
-                sumaX += i; sumaY += h.nuevos; sumaXY += i * h.nuevos; sumaXX += i * i;
-            });
-            const pendiente = n > 1 ? (n * sumaXY - sumaX * sumaY) / (n * sumaXX - sumaX * sumaX) : 0;
-
-            const factoresEstacionales = [
-                { nombre: 'Ene 2027', factor: 0.95 }, { nombre: 'Feb 2027', factor: 0.90 },
-                { nombre: 'Mar 2027', factor: 1.05 }, { nombre: 'Abr 2027', factor: 1.10 },
-                { nombre: 'May 2027', factor: 1.00 }, { nombre: 'Jun 2027', factor: 0.95 },
-                { nombre: 'Jul 2027', factor: 1.05 }, { nombre: 'Ago 2027', factor: 1.00 },
-                { nombre: 'Sep 2027', factor: 1.15 }, { nombre: 'Oct 2027', factor: 1.05 },
-                { nombre: 'Nov 2027', factor: 1.20 }, { nombre: 'Dic 2027', factor: 1.30 }
-            ];
-
-            let ultimoTotalReal = historico[historico.length - 1].totales || sumaNuevos;
-            let acumuladoProyeccion = ultimoTotalReal;
-            let incrementoTotal = 0;
-
-            const labels = historico.map(h => h.mes);
-            const dataHistorico = historico.map(h => h.totales > 0 ? h.totales : null);
-            const dataProyeccion = new Array(historico.length - 1).fill(null);
-            dataProyeccion.push(ultimoTotalReal);
-
-            factoresEstacionales.forEach((m, idx) => {
-                labels.push(m.nombre);
-                dataHistorico.push(null);
-                const est = Math.max(Math.round((promedioBase + (pendiente * (n + idx))) * m.factor), 0);
-                incrementoTotal += est;
-                acumuladoProyeccion += est;
-                dataProyeccion.push(acumuladoProyeccion);
-            });
-
-            const pctCrecimiento = ultimoTotalReal > 0 ? ((incrementoTotal / ultimoTotalReal) * 100).toFixed(1) : 0;
-
-            const kpiTotal = document.getElementById('kpi-fb-proj-total');
-            const kpiGrowth = document.getElementById('kpi-fb-proj-growth');
-            if (kpiTotal) kpiTotal.innerText = acumuladoProyeccion.toLocaleString('es-GT');
-            if (kpiGrowth) kpiGrowth.innerText = `+${incrementoTotal.toLocaleString('es-GT')} (+${pctCrecimiento}%)`;
-
-            if (typeof crearOActualizarChart === 'function') {
-                crearOActualizarChart('chartFBProjection', 'line', labels, [
-                    {
-                        label: 'Histórico Real',
-                        data: dataHistorico,
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        borderWidth: 2.5,
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 3
-                    },
-                    {
-                        label: 'Proyección 2027',
-                        data: dataProyeccion,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.05)',
-                        borderDash: [5, 5],
-                        borderWidth: 2.5,
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 3
-                    }
-                ]);
-            }
         } catch (e) {
             console.warn("Proyección FB silenciada:", e);
         }
