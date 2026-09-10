@@ -241,39 +241,11 @@
                     </div>
                 </div>
 <!-- CONTENEDOR DE PROYECCIÓN FACEBOOK (NUEVO) -->
-
+<div id="seccion-proyeccion-facebook" class="mt-8">
     <!-- Indicadores de Proyección -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-            <div>
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Usuarios Proyectados (Dic 2027)</p>
-                <h4 id="kpi-fb-proj-total" class="text-2xl font-bold text-blue-600 mt-1">--</h4>
-            </div>
-            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                <i class="fa-solid fa-users text-xl"></i>
-            </div>
-        </div>
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-            <div>
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Crecimiento Proyectado 2027</p>
-                <h4 id="kpi-fb-proj-growth" class="text-2xl font-bold text-emerald-600 mt-1">--</h4>
-            </div>
-            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
-                <i class="fa-solid fa-arrow-trend-up text-xl"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- Gráfica de Proyección -->
-    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-        <div id="fb-projection-msg" class="hidden text-center py-8 text-gray-500 text-sm font-medium">
-            Datos insuficientes para generar la proyección.
-        </div>
-        <div class="relative h-72 w-full" id="fb-projection-chart-container">
-            <canvas id="chartFBProjection"></canvas>
-        </div>
-    </div>
-</div>
+           
              <!-- TARJETA: Proyección de Usuarios de Facebook -->
 <div id="seccion-proyeccion-facebook" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -1921,9 +1893,13 @@ function renderFacebookUserProjection() {
                 }
             }
         });
-
-        if (!window.chartsInstancias) window.chartsInstancias = {};
-        window.chartsInstancias['chartFBProjection'] = newChart;
+// Mostrar la sección en el DOM
+        const seccion = document.getElementById('seccion-proyeccion-facebook');
+       if (seccion) seccion.classList.remove('hidden');
+        const chartContainer = document.getElementById('fb-projection-chart-container');
+        if (chartContainer) chartContainer.classList.remove('hidden');
+       if (!window.chartsInstancies) window.chartsInstancies = {};
+window.chartsInstancies['chartFBProjection'] = new Chart(...);
 
     } catch (err) {
         console.warn("Error en Proyección Facebook:", err);
