@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Redes Sociales R.A</title>
@@ -8,16 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js para Renderizado de Gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+</head> 
 
 <body class="bg-gray-100 font-sans text-gray-800">
 
 <div class="flex h-screen overflow-hidden">
 
-    <!-- ==========================================
+    <!-- =========================================================
          SIDEBAR
-    =========================================== -->
+    ========================================================== -->
     <aside class="w-64 bg-slate-900 text-white flex flex-col justify-between p-4 shadow-lg">
         <div>
             <div class="mb-8 flex items-center gap-3">
@@ -33,475 +33,398 @@
                     <i class="fa-solid fa-chart-simple"></i>
                     Redes Sociales
                 </button>
-                <button onclick="cambiarModulo('impulsados')" id="btn-nav-impulsados" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+
+                <button onclick="cambiarModulo('posts')" id="btn-nav-posts" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition">
                     <i class="fa-solid fa-rocket"></i>
                     Post Impulsados
                 </button>
-                <button onclick="cambiarModulo('campanas')" id="btn-nav-campanas" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+
+                <button onclick="cambiarModulo('campanas')" id="btn-nav-campanas" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition">
                     <i class="fa-solid fa-bullhorn"></i>
                     Campañas
                 </button>
-                <button onclick="cambiarModulo('presupuesto')" id="btn-nav-presupuesto" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+
+                <button onclick="cambiarModulo('presupuesto')" id="btn-nav-presupuesto" class="btn-nav w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition">
                     <i class="fa-solid fa-wallet"></i>
                     Presupuesto
                 </button>
             </nav>
         </div>
 
-        <div class="border-t border-slate-800 pt-4">
-            <div class="flex items-center gap-3 px-2 mb-3">
-                <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm" id="user-avatar">
-                    U
-                </div>
-                <div class="overflow-hidden">
-                    <p class="text-sm font-medium truncate text-white" id="user-email-display">usuario@acquaroni.com</p>
-                    <p class="text-xs text-gray-400 capitalize" id="user-role-display">Administrador</p>
-                </div>
-            </div>
-            <button onclick="cerrarSesion()" class="w-full flex items-center gap-2 text-xs text-red-400 hover:text-red-300 px-2 py-1 rounded transition">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                Cerrar Sesión
-            </button>
+        <div class="text-xs text-gray-500 border-t border-slate-800 pt-4 flex justify-between items-center">
+            <span>Dashboard R.A v3.6</span>
+            <span id="loader-status" class="text-blue-400 text-xs hidden">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+            </span>
         </div>
     </aside>
 
-    <!-- ==========================================
-         MAIN CONTENT AREA
-    =========================================== -->
-    <main class="flex-1 flex flex-col overflow-y-auto bg-gray-50">
+    <!-- =========================================================
+         ÁREA PRINCIPAL
+    ========================================================== -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
 
-        <!-- HEADER / CONTROLES FILTROS -->
-        <header class="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-10 flex flex-wrap items-center justify-between gap-4 shadow-sm">
-            <div>
-                <h2 class="text-xl font-bold text-gray-800" id="modulo-titulo">Redes Sociales</h2>
-                <p class="text-xs text-gray-500">Métricas y rendimiento de contenido</p>
-            </div>
+        <header class="bg-white border-b px-8 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10 shadow-sm">
+            <h2 id="titulo-seccion" class="text-xl font-bold text-gray-800">Redes Sociales</h2>
 
-            <!-- Filtros Globales -->
-            <div class="flex items-center gap-3">
-                <select id="filtro-anio" onchange="aplicarFiltrosGlobales()" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 font-medium">
-                    <option value="2025">Año: 2025</option>
-                    <option value="2026" selected>Año: 2026</option>
-                </select>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
+                    <i class="fa-solid fa-calendar text-gray-400"></i>
+                    <select id="filtro-anio" onchange="actualizarTodo()" class="bg-transparent text-sm font-semibold focus:outline-none">
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                    </select>
+                </div>
 
-                <select id="filtro-mes" onchange="aplicarFiltrosGlobales()" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 font-medium">
-                    <option value="Todos">Todos los meses</option>
-                    <option value="Enero">Enero</option>
-                    <option value="Febrero">Febrero</option>
-                    <option value="Marzo">Marzo</option>
-                    <option value="Abril">Abril</option>
-                    <option value="Mayo">Mayo</option>
-                    <option value="Junio">Junio</option>
-                    <option value="Julio">Julio</option>
-                    <option value="Agosto">Agosto</option>
-                    <option value="Septiembre">Septiembre</option>
-                    <option value="Octubre">Octubre</option>
-                    <option value="Noviembre">Noviembre</option>
-                    <option value="Diciembre">Diciembre</option>
-                </select>
+                <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
+                    <i class="fa-solid fa-filter text-gray-400"></i>
+                    <select id="filtro-mes" onchange="actualizarTodo()" class="bg-transparent text-sm font-semibold focus:outline-none">
+                        <option value="todos">Todos los Meses</option>
+                        <option value="Enero">Enero</option>
+                        <option value="Febrero">Febrero</option>
+                        <option value="Marzo">Marzo</option>
+                        <option value="Abril">Abril</option>
+                        <option value="Mayo">Mayo</option>
+                        <option value="Junio">Junio</option>
+                        <option value="Julio">Julio</option>
+                        <option value="Agosto">Agosto</option>
+                        <option value="Septiembre">Septiembre</option>
+                        <option value="Octubre">Octubre</option>
+                        <option value="Noviembre">Noviembre</option>
+                        <option value="Diciembre">Diciembre</option>
+                    </select>
+                </div>
 
-                <select id="filtro-cuenta" onchange="aplicarFiltrosGlobales()" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 font-medium">
-                    <option value="Repuestos Acquaroni" selected>Cuenta: Repuestos Acquaroni</option>
-                    <option value="AZtec Oils">Cuenta: AZtec Oils</option>
-                    <option value="Ultra Parts">Cuenta: Ultra Parts</option>
-                </select>
-
-                <button onclick="cargarDatosSheets()" class="bg-blue-600 hover:bg-blue-700 text-white p-2.5 rounded-lg transition" title="Sincronizar Datos">
-                    <i class="fa-solid fa-rotate"></i>
-                </button>
+                <div class="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-1.5">
+                    <i class="fa-solid fa-building text-gray-400"></i>
+                    <select id="filtro-cuenta" onchange="cambiarCuentaPrincipal()" class="bg-transparent text-sm font-semibold focus:outline-none">
+                        <option value="acquaroni">Repuestos Acquaroni</option>
+                        <option value="aztec">AZtec Oils</option>
+                        <option value="ultra">Ultra Parts</option>
+                    </select>
+                </div>
             </div>
         </header>
 
-        <!-- DASHBOARD CONTAINER -->
         <div class="p-8 space-y-8">
 
-            <!-- ==========================================
-                 MÓDULO: REDES SOCIALES
-            =========================================== -->
-            <section id="modulo-redes" class="space-y-8">
-                
-                <!-- Sub-Navegación Plataformas -->
-                <div class="flex border-b border-gray-200 space-x-8">
-                    <button onclick="cambiarPlataforma('facebook')" id="tab-facebook" class="tab-plataforma pb-3 font-semibold text-blue-600 border-b-2 border-blue-600 flex items-center gap-2">
-                        <i class="fa-brands fa-facebook text-lg"></i> Facebook
-                    </button>
-                    <button onclick="cambiarPlataforma('instagram')" id="tab-instagram" class="tab-plataforma pb-3 font-medium text-gray-500 hover:text-gray-700 flex items-center gap-2">
-                        <i class="fa-brands fa-instagram text-lg"></i> Instagram
-                    </button>
-                    <button onclick="cambiarPlataforma('tiktok')" id="tab-tiktok" class="tab-plataforma pb-3 font-medium text-gray-500 hover:text-gray-700 flex items-center gap-2">
-                        <i class="fa-brands fa-tiktok text-lg"></i> TikTok
-                    </button>
-                    <button onclick="cambiarPlataforma('tiktok-live')" id="tab-tiktok-live" class="tab-plataforma pb-3 font-medium text-gray-500 hover:text-gray-700 flex items-center gap-2">
-                        <i class="fa-solid fa-video text-lg"></i> TikTok Live
-                    </button>
-                    <button onclick="cambiarPlataforma('youtube')" id="tab-youtube" class="tab-plataforma pb-3 font-medium text-gray-500 hover:text-gray-700 flex items-center gap-2">
-                        <i class="fa-brands fa-youtube text-lg"></i> YouTube
-                    </button>
-                    <button onclick="cambiarPlataforma('resumen')" id="tab-resumen" class="tab-plataforma pb-3 font-medium text-gray-500 hover:text-gray-700 flex items-center gap-2">
-                        <i class="fa-solid fa-globe text-lg"></i> Resumen General
-                    </button>
+            <!-- =================================================
+                 MÓDULO 1: REDES SOCIALES
+            ================================================== -->
+            <section id="mod-redes" class="modulo-seccion space-y-6">
+                <div id="tabs-redes" class="flex gap-2 border-b pb-2"></div>
+
+                <div id="kpis-estandar" class="grid grid-cols-1 md:grid-cols-7 gap-4">
+                    <div id="card-kpi-inversion" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Inversión Total</p>
+                        <p id="kpi-inversion" class="text-xl font-extrabold text-blue-600 mt-1">Q 0.00</p>
+                    </div>
+
+                    <div id="card-kpi-ctr" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">CTR Promedio</p>
+                        <p id="kpi-ctr" class="text-xl font-extrabold text-green-600 mt-1">0.00%</p>
+                    </div>
+
+                    <div id="card-kpi-alcance" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Alcance Total</p>
+                        <p id="kpi-alcance" class="text-xl font-extrabold text-purple-600 mt-1">0</p>
+                    </div>
+
+                    <div id="card-kpi-alcance-organico" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Alcance Orgánico</p>
+                        <p id="kpi-alcance-organico" class="text-xl font-extrabold text-emerald-600 mt-1">0</p>
+                    </div>
+
+                    <div id="card-kpi-impresiones" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Impresiones</p>
+                        <p id="kpi-impresiones" class="text-xl font-extrabold text-orange-600 mt-1">0</p>
+                    </div>
+
+                    <div id="card-kpi-tiempo-reproduccion" class="bg-white p-4 rounded-xl border shadow-sm hidden">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Tiempo de Reproducción</p>
+                        <p id="kpi-tiempo-reproduccion" class="text-xl font-extrabold text-indigo-600 mt-1">0 hrs</p>
+                    </div>
+
+                    <!-- NUEVA FICHA YOUTUBE: NUEVOS ESPECTADORES DE CONTENIDO -->
+                    <div id="card-kpi-nuevos-espectadores" class="bg-white p-4 rounded-xl border shadow-sm hidden">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Nuevos Espectadores de Contenido</p>
+                        <p id="kpi-nuevos-espectadores" class="text-xl font-extrabold text-cyan-600 mt-1">0</p>
+                    </div>
+
+                    <div id="card-kpi-interacciones" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p id="lbl-kpi-interacciones" class="text-xs text-gray-500 font-semibold uppercase">Interacciones</p>
+                        <p id="kpi-interacciones" class="text-xl font-extrabold text-gray-700 mt-1">0</p>
+                    </div>
+
+                    <div id="card-kpi-seguidores" class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p id="lbl-kpi-seguidores" class="text-xs text-gray-500 font-semibold uppercase">Total Seguidores</p>
+                        <p id="kpi-seguidores-exactos" class="text-xl font-extrabold text-teal-600 mt-1">0</p>
+                    </div>
                 </div>
 
-                <!-- CONTENIDO PLATAFORMA: FACEBOOK -->
-                <div id="plataforma-facebook" class="plataforma-content space-y-6">
+                <!-- TIKTOK VIDEO MÁS VISUALIZADO / LISTADO -->
+                <div id="seccion-tiktok-top-videos" class="hidden">
+                    <!-- Ficha para Mes Específico -->
+                    <div id="card-tiktok-top-video-mes" class="bg-white p-5 rounded-xl border shadow-sm hidden">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Video más visualizado del mes</p>
+                        <blockquote id="tiktok-top-titulo" class="text-lg font-bold text-gray-800 italic border-l-4 border-blue-600 pl-3 py-1 mb-2">
+                            -
+                        </blockquote>
+                        <p id="tiktok-top-views" class="text-2xl font-black text-blue-600">0 visualizaciones</p>
+                    </div>
+
+                    <!-- TABLA TOP 5 VIDEOS MÁS VISTOS -->
+                    <div id="card-tiktok-top-videos-tabla" class="bg-white p-5 rounded-xl border shadow-sm hidden">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">TOP 5 VIDEOS MÁS VISTOS DEL MES</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left border-collapse">
+                                <thead class="bg-gray-50 text-xs text-gray-500 uppercase border-b">
+                                    <tr>
+                                        <th class="p-3 w-12 text-center">#</th>
+                                        <th class="p-3">Video / Titular</th>
+                                        <th class="p-3 text-right">Visualizaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-tiktok-top-body" class="divide-y"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TIKTOK LIVE KPIS -->
+                <div id="kpis-tiktok-live" class="grid grid-cols-1 md:grid-cols-6 gap-4 hidden">
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Visualizaciones</p>
+                        <p id="kpi-live-views" class="text-xl font-extrabold text-blue-600 mt-1">0</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Donadores</p>
+                        <p id="kpi-live-donadores" class="text-xl font-extrabold text-purple-600 mt-1">0</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Diamantes</p>
+                        <p id="kpi-live-diamantes" class="text-xl font-extrabold text-yellow-600 mt-1">0</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Seguidores Nuevos</p>
+                        <p id="kpi-live-seguidores" class="text-xl font-extrabold text-green-600 mt-1">0</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Comentarios</p>
+                        <p id="kpi-live-comentarios" class="text-xl font-extrabold text-indigo-600 mt-1">0</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Me Gusta</p>
+                        <p id="kpi-live-likes" class="text-xl font-extrabold text-pink-600 mt-1">0</p>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DE GRÁFICOS DINÁMICOS REDES SOCIALES POR PLATAFORMA -->
+                <div id="seccion-graficos-redes" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-white p-5 rounded-xl border shadow-sm">
+                        <h4 id="titulo-grafico-1" class="text-sm font-bold text-gray-700 mb-4">Gráfico 1</h4>
+                        <div class="h-64">
+                            <canvas id="chart-redes-1"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border shadow-sm">
+                        <h4 id="titulo-grafico-2" class="text-sm font-bold text-gray-700 mb-4">Gráfico 2</h4>
+                        <div class="h-64">
+                            <canvas id="chart-redes-2"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN: RESUMEN GENERAL (CONSOLIDADO Y PROYECCIÓN) -->
+                <div id="seccion-resumen-general" class="space-y-8 hidden">
                     
-                    <!-- Tarjetas KPIs -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Seguidores Totales</span>
-                                <i class="fa-solid fa-users text-blue-500"></i>
+                    <!-- KPIS GLOBALES -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-1">Desempeño Global y Alcance Total</h3>
+                        <p class="text-xs text-gray-500 mb-4">Consolidado en tiempo real de Facebook, Instagram, TikTok y YouTube.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-blue-600">
+                                <p class="text-xs text-gray-500 font-semibold uppercase">Alcance Total Acumulado</p>
+                                <p id="kpi-resumen-alcance" class="text-2xl font-extrabold text-blue-600 mt-1">0</p>
                             </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="fb-kpi-seguidores">0</h3>
-                            <p class="text-xs text-green-600 mt-2 font-medium" id="fb-kpi-seguidores-crec">+0% vs mes anterior</p>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Alcance Total</span>
-                                <i class="fa-solid fa-bullseye text-blue-500"></i>
+                            <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-orange-500">
+                                <p class="text-xs text-gray-500 font-semibold uppercase">Impresiones Totales</p>
+                                <p id="kpi-resumen-impresiones" class="text-2xl font-extrabold text-orange-500 mt-1">0</p>
                             </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="fb-kpi-alcance">0</h3>
-                            <p class="text-xs text-gray-500 mt-2" id="fb-kpi-alcance-prom">Promedio mensual</p>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Interacciones</span>
-                                <i class="fa-solid fa-thumbs-up text-blue-500"></i>
+                            <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-teal-500">
+                                <p class="text-xs text-gray-500 font-semibold uppercase">Crecimiento de Comunidad (Neto)</p>
+                                <p id="kpi-resumen-seguidores" class="text-2xl font-extrabold text-teal-600 mt-1">0</p>
                             </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="fb-kpi-interacciones">0</h3>
-                            <p class="text-xs text-blue-600 mt-2 font-medium" id="fb-kpi-engagement">0.0% Engagement</p>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Publicaciones</span>
-                                <i class="fa-solid fa-newspaper text-blue-500"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="fb-kpi-posts">0</h3>
-                            <p class="text-xs text-gray-500 mt-2" id="fb-kpi-posts-tipo">Reels, Fotos, Enlaces</p>
-                        </div>
-                    </div>
-
-                    <!-- Gráficas Principales Facebook -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm lg:col-span-2">
-                            <h4 class="text-base font-bold text-gray-800 mb-4">Alcance vs Impresiones Mensuales</h4>
-                            <div class="h-64">
-                                <canvas id="chart-fb-alcance-impresiones"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <h4 class="text-base font-bold text-gray-800 mb-4">Distribución por Formato</h4>
-                            <div class="h-64 flex items-center justify-center">
-                                <canvas id="chart-fb-formatos"></canvas>
+                            <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-purple-600">
+                                <p class="text-xs text-gray-500 font-semibold uppercase">Interacciones Totales (Engagement)</p>
+                                <p id="kpi-resumen-interacciones" class="text-2xl font-extrabold text-purple-600 mt-1">0</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- NUEVA / MEJORADA SECCIÓN: PROYECCIÓN DE USUARIOS DE FACEBOOK -->
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-4">
-                            <div>
-                                <h4 class="text-base font-bold text-gray-800 flex items-center gap-2">
-                                    <i class="fa-solid fa-chart-line text-blue-600"></i> Proyección de usuarios de Facebook
-                                </h4>
-                                <p class="text-xs text-gray-500 mt-0.5">Basado en comportamiento histórico real, tendencia y factores estacionales (Verano, Aniversario, Fiestas Patrias, Navidad).</p>
-                            </div>
+                    <!-- PROYECCIÓN DEL AÑO SIGUIENTE -->
+                    <div class="border-t pt-6 space-y-6">
+                        <div>
+                            <h3 id="titulo-proyeccion-seccion" class="text-lg font-bold text-gray-800 mb-1">Proyección del Año Siguiente</h3>
+                            <p class="text-xs text-gray-500">Estimación basada dinámicamente en el ritmo de crecimiento histórico (Run Rate).</p>
+                        </div>
+
+                        <!-- TABLA Y GRÁFICOS DE PROYECCIÓN -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             
-                            <!-- Información Complementaria -->
-                            <div class="flex items-center gap-4 bg-gray-50 p-3 rounded-lg border border-gray-200 text-xs">
-                                <div>
-                                    <span class="text-gray-500 block font-medium">Cierre proyectado 2027:</span>
-                                    <span class="text-sm font-extrabold text-blue-700" id="fb-proj-total-cierre">--</span>
+                            <!-- TABLA AUDIENCIA PROYECTADA -->
+                            <div class="bg-white p-5 rounded-xl border shadow-sm flex flex-col justify-between">
+                                <h4 class="text-sm font-bold text-gray-700 mb-4">Meta de Seguidores / Suscriptores Netos por Red</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm text-left border-collapse">
+                                        <thead class="bg-gray-50 text-xs text-gray-500 uppercase border-b">
+                                            <tr>
+                                                <th class="p-2">Red Social</th>
+                                                <th class="p-2 text-right">Ganados Actual</th>
+                                                <th class="p-2 text-right">Est. Crecimiento</th>
+                                                <th class="p-2 text-right">Meta Proyectada</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabla-proyeccion-seguidores" class="divide-y font-medium text-xs"></tbody>
+                                    </table>
                                 </div>
-                                <div class="border-l border-gray-300 pl-4">
-                                    <span class="text-gray-500 block font-medium">Crecimiento proyectado:</span>
-                                    <span class="text-sm font-extrabold text-green-600" id="fb-proj-crecimiento-pct">--%</span>
+                            </div>
+
+                            <!-- GRÁFICO ALCANCE E IMPRESIONES PROYECTADAS -->
+                            <div class="bg-white p-5 rounded-xl border shadow-sm">
+                                <h4 class="text-sm font-bold text-gray-700 mb-4">Alcance e Impresiones Proyectadas (Mensual)</h4>
+                                <div class="h-60">
+                                    <canvas id="chart-resumen-proyeccion-alcance"></canvas>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Gráfica Proyección -->
-                        <div class="h-72">
-                            <canvas id="chart-fb-proyeccion-usuarios"></canvas>
+                            <!-- ENGAGEMENT ESPERADO Y TIKTOK LIVE -->
+                            <div class="bg-white p-5 rounded-xl border shadow-sm md:col-span-2">
+                                <h4 class="text-sm font-bold text-gray-700 mb-4">Volumen de Interacciones Esperadas por Trimestre</h4>
+                                <div class="h-64">
+                                    <canvas id="chart-resumen-proyeccion-engagement"></canvas>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
                 </div>
-
-                <!-- CONTENIDO PLATAFORMA: INSTAGRAM -->
-                <div id="plataforma-instagram" class="plataforma-content hidden space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Seguidores IG</span>
-                                <i class="fa-brands fa-instagram text-pink-500"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="ig-kpi-seguidores">0</h3>
-                            <p class="text-xs text-green-600 mt-2 font-medium" id="ig-kpi-seguidores-crec">+0% vs mes anterior</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Alcance Cuentas</span>
-                                <i class="fa-solid fa-eye text-pink-500"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="ig-kpi-alcance">0</h3>
-                            <p class="text-xs text-gray-500 mt-2">Cuentas alcanzadas</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Interacciones</span>
-                                <i class="fa-solid fa-heart text-pink-500"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="ig-kpi-interacciones">0</h3>
-                            <p class="text-xs text-pink-600 mt-2 font-medium" id="ig-kpi-engagement">0.0% Engagement Rate</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Reels & Posts</span>
-                                <i class="fa-solid fa-photo-film text-pink-500"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="ig-kpi-posts">0</h3>
-                            <p class="text-xs text-gray-500 mt-2">Publicados en el período</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <h4 class="text-base font-bold text-gray-800 mb-4">Evolución de Alcance e Interacciones</h4>
-                            <div class="h-64">
-                                <canvas id="chart-ig-evolucion"></canvas>
-                            </div>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <h4 class="text-base font-bold text-gray-800 mb-4">Interacciones por Formato (Reels vs Carruseles)</h4>
-                            <div class="h-64">
-                                <canvas id="chart-ig-formatos"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CONTENIDO PLATAFORMA: TIKTOK -->
-                <div id="plataforma-tiktok" class="plataforma-content hidden space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Seguidores TikTok</span>
-                                <i class="fa-brands fa-tiktok text-slate-900"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="tt-kpi-seguidores">0</h3>
-                            <p class="text-xs text-green-600 mt-2 font-medium" id="tt-kpi-seguidores-crec">+0% vs anterior</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Reproducciones Totales</span>
-                                <i class="fa-solid fa-play text-slate-900"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="tt-kpi-views">0</h3>
-                            <p class="text-xs text-gray-500 mt-2">Visualizaciones de videos</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Me Gusta</span>
-                                <i class="fa-solid fa-heart text-slate-900"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="tt-kpi-likes">0</h3>
-                            <p class="text-xs text-gray-500 mt-2">Likes acumulados</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Videos Publicados</span>
-                                <i class="fa-solid fa-video text-slate-900"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="tt-kpi-videos">0</h3>
-                            <p class="text-xs text-gray-500 mt-2">Contenidos subidos</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <h4 class="text-base font-bold text-gray-800 mb-4">Crecimiento de Vistas y Likes</h4>
-                        <div class="h-64">
-                            <canvas id="chart-tt-vistas"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CONTENIDO PLATAFORMA: TIKTOK LIVE -->
-                <div id="plataforma-tiktok-live" class="plataforma-content hidden space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Transmisiones</span>
-                                <i class="fa-solid fa-headset text-red-500"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="ttl-kpi-lives">0</h3>
-                            <p class="text-xs text-gray-500 mt-2">En Vivos Realizados</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Espectadores Únicos</span>
-                                <i class="fa-solid fa-user-group text-red-500"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="ttl-kpi-espectadores">0</h3>
-                            <p class="text-xs text-gray-500 mt-2">Audiencia única</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Diamantes / Regalos</span>
-                                <i class="fa-solid fa-gem text-red-500"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="ttl-kpi-diamantes">0</h3>
-                            <p class="text-xs text-gray-500 mt-2">Monetización Live</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Nuevos Seguidores en Live</span>
-                                <i class="fa-solid fa-user-plus text-red-500"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="ttl-kpi-seguidores">0</h3>
-                            <p class="text-xs text-gray-500 mt-2">Captados durante lives</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <h4 class="text-base font-bold text-gray-800 mb-4">Espectadores Promedio por Live</h4>
-                        <div class="h-64">
-                            <canvas id="chart-ttl-espectadores"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CONTENIDO PLATAFORMA: YOUTUBE -->
-                <div id="plataforma-youtube" class="plataforma-content hidden space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Suscriptores</span>
-                                <i class="fa-brands fa-youtube text-red-600"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="yt-kpi-suscriptores">0</h3>
-                            <p class="text-xs text-green-600 mt-2 font-medium" id="yt-kpi-subs-crec">+0 nuevos</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Vistas Totales</span>
-                                <i class="fa-solid fa-circle-play text-red-600"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="yt-kpi-vistas">0</h3>
-                            <p class="text-xs text-gray-500 mt-2">Reproducciones acumuladas</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">Tiempo de Reproducción</span>
-                                <i class="fa-solid fa-clock text-red-600"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="yt-kpi-tiempo">0 hrs</h3>
-                            <p class="text-xs text-gray-500 mt-2">Horas consumidas</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <div class="flex items-center justify-between text-gray-500 mb-2">
-                                <span class="text-xs font-semibold uppercase tracking-wider">CTR Promedio</span>
-                                <i class="fa-solid fa-arrow-pointer text-red-600"></i>
-                            </div>
-                            <h3 class="text-2xl font-extrabold text-gray-800" id="yt-kpi-ctr">0.0%</h3>
-                            <p class="text-xs text-gray-500 mt-2">Clics por impresiones</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <h4 class="text-base font-bold text-gray-800 mb-4">Rendimiento de Vistas y Horas de Visualización</h4>
-                        <div class="h-64">
-                            <canvas id="chart-yt-rendimiento"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CONTENIDO PLATAFORMA: RESUMEN GENERAL -->
-                <div id="plataforma-resumen" class="plataforma-content hidden space-y-6">
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <h4 class="text-base font-bold text-gray-800 mb-4">Comparativa de Alcance Multicanal</h4>
-                        <div class="h-72">
-                            <canvas id="chart-resumen-alcance"></canvas>
-                        </div>
-                    </div>
-                </div>
-
             </section>
 
-            <!-- ==========================================
-                 MÓDULO: POST IMPULSADOS
-            =========================================== -->
-            <section id="modulo-impulsados" class="hidden space-y-6">
-                <div class="flex justify-between items-center bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800">Publicaciones Impulsadas (Pauta)</h3>
-                        <p class="text-xs text-gray-500">Gestión e imágenes de pauta publicitaria en redes</p>
-                    </div>
-                </div>
+            <!-- =================================================
+                 MÓDULO 2: POST IMPULSADOS
+            ================================================== -->
+            <section id="mod-posts" class="modulo-seccion hidden space-y-6">
+                <h3 class="text-lg font-bold">Publicaciones Promocionadas</h3>
 
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase">
+                <div class="bg-white rounded-xl border shadow-sm p-4 overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
                             <tr>
-                                <th class="p-4">Vista Previa</th>
-                                <th class="p-4">Post / Campaña</th>
-                                <th class="p-4">Plataforma</th>
-                                <th class="p-4">Inversión</th>
-                                <th class="p-4">Resultados / Clics</th>
-                                <th class="p-4">CPL / CPC</th>
-                                <th class="p-4">Acción</th>
+                                <th class="p-3">Vista Previa</th>
+                                <th class="p-3">Año / Mes</th>
+                                <th class="p-3">Publicación</th>
+                                <th class="p-3">Red Social</th>
+                                <th class="p-3">Reproducciones</th>
+                                <th class="p-3">Alcance</th>
+                                <th class="p-3">Conversaciones</th>
+                                <th class="p-3">Inversión (Q)</th>
+                                <th class="p-3">CPC</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-post-impulsados-body" class="divide-y divide-gray-200 text-sm">
-                            <!-- Filas dinámicas -->
-                        </tbody>
+                        <tbody id="tabla-posts-body" class="divide-y"></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- ==========================================
-                 MÓDULO: CAMPAÑAS
-            =========================================== -->
-            <section id="modulo-campanas" class="hidden space-y-6">
-                <div class="flex justify-between items-center bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800">Campañas Destacadas</h3>
-                        <p class="text-xs text-gray-500">Estrategias estacionales y lanzamientos clave</p>
-                    </div>
+            <!-- =================================================
+                 MÓDULO 3: CAMPAÑAS
+            ================================================== -->
+            <section id="mod-campanas" class="modulo-seccion hidden space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold">Gestión de Campañas</h3>
+                    <p class="text-sm text-gray-500 mt-1">Selecciona una campaña para ver sus posts, artes y métricas.</p>
                 </div>
 
-                <div id="grid-campanas-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Tarjetas dinámicas de campañas -->
-                </div>
+                <div id="contenedor-campanas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </section>
 
-            <!-- ==========================================
-                 MÓDULO: PRESUPUESTO
-            =========================================== -->
-            <section id="modulo-presupuesto" class="hidden space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <span class="text-xs font-semibold text-gray-500 uppercase">Presupuesto Asignado</span>
-                        <h3 class="text-2xl font-extrabold text-gray-800 mt-2" id="pres-asignado">$0.00</h3>
+            <!-- =================================================
+                 MÓDULO 4: PRESUPUESTO & ESTADOS DE CUENTA
+            ================================================== -->
+            <section id="mod-presupuesto" class="modulo-seccion hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-bold">Consolidado de Presupuesto y Estados de Cuenta</h3>
+                        <p class="text-xs text-gray-500 mt-1">Alimentado directamente desde las pestañas oficiales de Presupuesto.</p>
                     </div>
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <span class="text-xs font-semibold text-gray-500 uppercase">Presupuesto Ejecutado</span>
-                        <h3 class="text-2xl font-extrabold text-blue-600 mt-2" id="pres-ejecutado">$0.00</h3>
+                    <button onclick="solicitarAsignadoTotal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow">
+                        <i class="fa-solid fa-pen-to-square mr-1"></i> Ingresar Asignado Total
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-blue-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Asignado Total</p>
+                        <p id="pres-asignado" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
                     </div>
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <span class="text-xs font-semibold text-gray-500 uppercase">Disponible</span>
-                        <h3 class="text-2xl font-extrabold text-green-600 mt-2" id="pres-disponible">$0.00</h3>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-green-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Ejecutado Total</p>
+                        <p id="pres-ejecutado" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-purple-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Redes Sociales</p>
+                        <p id="pres-redes-soc" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-red-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Repuestos Acquaroni</p>
+                        <p id="pres-acquaroni" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-yellow-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">AZtec Oils</p>
+                        <p id="pres-aztec" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-orange-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Mercadeo</p>
+                        <p id="pres-mercadeo" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-indigo-500">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Plataformas Ext.</p>
+                        <p id="pres-plataformas-m4" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                    <h4 class="text-base font-bold text-gray-800 mb-4">Ejecución Presupuestaria por Mes</h4>
-                    <div class="h-72">
-                        <canvas id="chart-presupuesto-ejecucion"></canvas>
+                <!-- GRÁFICO DE PRESUPUESTO CON PROYECCIÓN Y PORCENTAJES -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-white p-5 rounded-xl border shadow-sm">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">Seguimiento del Gasto vs. Meta</h4>
+                        <div class="h-64">
+                            <canvas id="chart-presupuesto-mensual"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border shadow-sm">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
+                            <span id="titulo-proyeccion-presupuesto">Proyección de Presupuesto Año Próximo</span>
+                            <span class="text-xs font-normal text-blue-500" id="tag-proyeccion-pres-sub">Enero - Diciembre</span>
+                        </h4>
+                        <div class="h-64">
+                            <canvas id="chart-presupuesto-proyeccion"></canvas>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -510,338 +433,1239 @@
     </main>
 </div>
 
-<!-- ==========================================
-     MODAL DETALLE DE CAMPAÑA
-=========================================== -->
-<div id="modal-campana" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-    <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 space-y-4 overflow-y-auto max-h-[90vh]">
-        <div class="flex justify-between items-center border-b border-gray-200 pb-3">
-            <h3 class="text-lg font-bold text-gray-800" id="modal-campana-titulo">Detalle de Campaña</h3>
-            <button onclick="cerrarModalCampana()" class="text-gray-400 hover:text-gray-600 text-lg font-bold">&times;</button>
-        </div>
-        <div id="modal-campana-contenido" class="space-y-3 text-sm text-gray-600">
-            <!-- Contenido dinámico -->
-        </div>
+<!-- =============================================================
+     MODAL VISOR DE IMÁGENES A PANTALLA COMPLETA
+============================================================== -->
+<div id="modal-visor-imagen" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4 cursor-pointer" onclick="cerrarVisorImagen()">
+    <div class="relative max-w-4xl max-h-[90vh]">
+        <img id="img-visor-full" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain">
+        <button class="absolute -top-10 right-0 text-white text-xl font-bold">
+            <i class="fa-solid fa-xmark"></i> Cerrar
+        </button>
     </div>
-</div> 
-    <!-- ==========================================
-     SCRIPTS & LÓGICA DEL DASHBOARD
-=========================================== -->
+</div>
+
+<!-- =============================================================
+     MODAL CAMPAÑA
+============================================================== -->
+<div id="modal-campana" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-6xl w-full max-h-[92vh] overflow-y-auto shadow-2xl">
+        <div class="sticky top-0 z-20 bg-white border-b px-6 py-5">
+            <div class="flex justify-between items-start gap-4">
+                <div>
+                    <h3 id="modal-campana-titulo" class="text-xl font-bold text-gray-800"></h3>
+                    <p id="modal-campana-subtitulo" class="text-sm text-gray-500 mt-1"></p>
+                </div>
+                <button onclick="cerrarModalCampana()" class="text-gray-400 hover:text-gray-700 transition">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="modal-campana-contenido" class="p-6 space-y-6"></div>
+    </div>
+</div>
+
+<!-- =============================================================
+     SCRIPT PRINCIPAL CON ÚNICA FUENTE DE DATOS (EXCEL 1)
+============================================================== -->
 <script>
-    // ==========================================
-    // ESTADO GLOBAL Y VARIABLES
-    // ==========================================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-EXAMPLE-ENDPOINT/exec'; // URL del Apps Script o endpoint de datos
-    
-    let datosGlobales = {
-        facebook: [],
-        instagram: [],
-        tiktok: [],
-        tiktokLive: [],
-        youtube: [],
-        postImpulsados: [],
-        campanas: [],
-        presupuesto: []
-    };
+// FUENTE ÚNICA — DATOS DEL DASHBOARD (EXCEL 1)
+const URL_FUENTE_PRINCIPAL = 'https://script.google.com/macros/s/AKfycbzaYdXgo9yvjXzajv9vVb2tYml8TphKv_B2VRi_N_aBxWhmIVu4jeY4OszRgGS0Mbz1/exec';
 
-    let chartFBAlcance = null;
-    let chartFBFormatos = null;
-    let chartFBProyeccion = null;
-    let chartIGEvolucion = null;
-    let chartIGFormatos = null;
-    let chartTTVistas = null;
-    let chartTTLEspectadores = null;
-    let chartYTRendimiento = null;
-    let chartResumenAlcance = null;
-    let chartPresupuestoEjecucion = null;
+let rawDataPrincipal = {};
+let redActiva = '';
+let chartInstances = {};
+let asignadoTotalManual = localStorage.getItem('presupuesto_asignado_total') || 0;
 
-    // Factores de Estacionalidad para Facebook
-    const FACTORES_ESTACIONALIDAD_FB = {
-        'Enero': 0.95,       // Ajuste post-fiestas
-        'Febrero': 1.02,     // Campañas San Valentín / Verano inicio
-        'Marzo': 1.08,       // Verano / Semana Santa
-        'Abril': 1.05,       // Verano continuación
-        'Mayo': 1.03,       // Mes de las Madres
-        'Junio': 0.98,       // Mid-year normalización
-        'Julio': 1.12,       // Lanzamiento de Marcas / Promociones
-        'Agosto': 1.15,      // Aniversario 70 años
-        'Septiembre': 1.10,  // Época Patriótica
-        'Octubre': 1.00,     // Regular
-        'Noviembre': 1.08,   // Pre-Navidad / Black Friday
-        'Diciembre': 1.20    // Navidad / Cierre de Año
-    };
-
-    const MESES_ORDEN = [
-        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-
-    // ==========================================
-    // INICIALIZACIÓN
-    // ==========================================
-    document.addEventListener('DOMContentLoaded', () => {
-        cargarDatosSheets();
+/* =============================================================
+   CAMBIAR MÓDULO
+============================================================= */
+function cambiarModulo(moduloId) {
+    document.querySelectorAll('.modulo-seccion').forEach(sec => sec.classList.add('hidden'));
+    document.querySelectorAll('.btn-nav').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('hover:bg-slate-800', 'text-gray-300');
     });
 
-    // ==========================================
-    // NAVEGACIÓN Y FILTROS
-    // ==========================================
-    function cambiarModulo(modulo) {
-        document.querySelectorAll('main section').forEach(sec => sec.classList.add('hidden'));
-        document.querySelectorAll('.btn-nav').forEach(btn => {
-            btn.classList.remove('bg-blue-600', 'text-white');
-            btn.classList.add('text-gray-400', 'hover:bg-slate-800', 'hover:text-white');
-        });
+    document.getElementById(`mod-${moduloId}`).classList.remove('hidden');
+    const btnActivo = document.getElementById(`btn-nav-${moduloId}`);
+    if (btnActivo) {
+        btnActivo.classList.add('bg-blue-600', 'text-white');
+    }
 
-        const targetSec = document.getElementById(`modulo-${modulo}`);
-        if (targetSec) targetSec.classList.remove('hidden');
+    const titulos = {
+        redes: 'Redes Sociales',
+        posts: 'Post Impulsados',
+        campanas: 'Campañas',
+        presupuesto: 'Consolidado de Presupuesto'
+    };
+    document.getElementById('titulo-seccion').innerText = titulos[moduloId];
+}
 
-        const targetBtn = document.getElementById(`btn-nav-${modulo}`);
-        if (targetBtn) {
-            targetBtn.classList.add('bg-blue-600', 'text-white');
-            targetBtn.classList.remove('text-gray-400', 'hover:bg-slate-800', 'hover:text-white');
-        }
+/* =============================================================
+   CAMBIO DE CUENTA
+============================================================= */
+function cambiarCuentaPrincipal() {
+    renderizarTabsRedes();
+    actualizarTodo();
+}
 
-        const titulos = {
-            'redes': 'Redes Sociales',
-            'impulsados': 'Post Impulsados',
-            'campanas': 'Campañas',
-            'presupuesto': 'Presupuesto'
+/* =============================================================
+   TABS REDES
+============================================================= */
+function renderizarTabsRedes() {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const contenedorTabs = document.getElementById('tabs-redes');
+    contenedorTabs.innerHTML = '';
+
+    let redes = [];
+    if (cuenta === 'acquaroni') {
+        redes = ['Facebook', 'Instagram', 'TikTok Live', 'TikTok', 'YouTube', 'Resumen General'];
+    } else if (cuenta === 'aztec') {
+        redes = ['Facebook', 'Instagram', 'TikTok', 'Resumen General'];
+    } else if (cuenta === 'ultra') {
+        redes = ['Facebook', 'Instagram', 'TikTok', 'YouTube', 'Resumen General'];
+    }
+
+    redActiva = redes[0];
+
+    redes.forEach(red => {
+        const button = document.createElement('button');
+        button.className = `px-4 py-2 text-sm font-semibold rounded-lg transition ${
+            red === redActiva ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-100'
+        }`;
+        button.innerText = red;
+
+        button.onclick = () => {
+            redActiva = red;
+            document.querySelectorAll('#tabs-redes button').forEach(b => {
+                b.className = 'px-4 py-2 text-sm font-semibold rounded-lg transition text-gray-500 hover:bg-gray-100';
+            });
+            button.className = 'px-4 py-2 text-sm font-semibold rounded-lg transition bg-blue-100 text-blue-700';
+            renderizarModuloRedes();
         };
-        document.getElementById('modulo-titulo').innerText = titulos[modulo] || 'Dashboard';
+
+        contenedorTabs.appendChild(button);
+    });
+}
+
+/* =============================================================
+   OBTENER HOJA INSENSIBLE A MAYÚSCULAS/ESPACIOS (EXCEL 1)
+============================================================= */
+function obtenerHojaPrincipalInsensible(busqueda) {
+    if (!rawDataPrincipal) return [];
+    const keyLimpia = busqueda.toLowerCase().replace(/\s+/g, '');
+    const claveEncontrada = Object.keys(rawDataPrincipal).find(k => k.toLowerCase().replace(/\s+/g, '') === keyLimpia);
+    return claveEncontrada ? rawDataPrincipal[claveEncontrada] : [];
+}
+
+/* =============================================================
+   CARGAR DATOS DESDE EXCEL 1
+============================================================= */
+async function cargarDatosSheets() {
+    const loader = document.getElementById('loader-status');
+    loader.classList.remove('hidden');
+
+    try {
+        const response = await fetch(URL_FUENTE_PRINCIPAL);
+        rawDataPrincipal = await response.json();
+    } catch (err) {
+        console.error('Error al cargar datos del Excel 1:', err);
     }
 
-    function cambiarPlataforma(plataforma) {
-        document.querySelectorAll('.plataforma-content').forEach(p => p.classList.add('hidden'));
-        document.querySelectorAll('.tab-plataforma').forEach(tab => {
-            tab.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600', 'font-semibold');
-            tab.classList.add('text-gray-500', 'font-medium');
+    loader.classList.add('hidden');
+    actualizarTodo();
+}
+
+/* =============================================================
+   FILTRO GENERAL
+============================================================= */
+function filtrarFilas(filas, indexAnio = 0, indexMes = 1) {
+    if (!filas || filas.length <= 1) return [];
+
+    const anioSel = document.getElementById('filtro-anio').value;
+    const mesSel = document.getElementById('filtro-mes').value;
+
+    return filas.slice(1).filter(row => {
+        const anioMatch = !row[indexAnio] || row[indexAnio].toString().trim() === anioSel;
+        const mesMatch = mesSel === 'todos' || (row[indexMes] && row[indexMes].toString().toLowerCase().trim() === mesSel.toLowerCase());
+        return anioMatch && mesMatch;
+    });
+}
+
+/* =============================================================
+   LIMPIAR NÚMEROS
+============================================================= */
+function limpiarValorNum(val) {
+    if (val === null || val === undefined || val === '') return 0;
+    const num = parseFloat(val.toString().replace(/[^0-9.-]+/g, ''));
+    return isNaN(num) ? 0 : num;
+}
+
+/* =============================================================
+   OBTENER ÍNDICE DE COLUMNA POR NOMBRE (EXACTO / INSENSIBLE)
+============================================================= */
+function obtenerIndiceColumna(filas, nombresPosibles) {
+    if (!filas || filas.length === 0) return -1;
+    const encabezados = filas[0].map(h => h ? h.toString().toLowerCase().trim().replace(/\s+/g, ' ') : '');
+    const opciones = Array.isArray(nombresPosibles) ? nombresPosibles : [nombresPosibles];
+    
+    for (const opcion of opciones) {
+        const buscado = opcion.toLowerCase().trim().replace(/\s+/g, ' ');
+        const idxExacto = encabezados.findIndex(e => e === buscado);
+        if (idxExacto !== -1) return idxExacto;
+    }
+
+    for (const opcion of opciones) {
+        const buscado = opcion.toLowerCase().trim().replace(/\s+/g, ' ');
+        const idxParcial = encabezados.findIndex(e => e.includes(buscado));
+        if (idxParcial !== -1) return idxParcial;
+    }
+    return -1;
+}
+
+/* =============================================================
+   ACTUALIZAR TODO
+============================================================= */
+function actualizarTodo() {
+    renderizarModuloRedes();
+    renderizarModuloPosts();
+    renderizarModuloCampanas();
+    renderizarModuloPresupuesto();
+}
+
+/* =============================================================
+   REDES SOCIALES (EXCLUSIVAMENTE EXCEL 1)
+============================================================= */
+function renderizarModuloRedes() {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const kpisEstandar = document.getElementById('kpis-estandar');
+    const kpisLive = document.getElementById('kpis-tiktok-live');
+    const seccionTikTokTop = document.getElementById('seccion-tiktok-top-videos');
+    const seccionGraficos = document.getElementById('seccion-graficos-redes');
+    const seccionResumen = document.getElementById('seccion-resumen-general');
+
+    if (redActiva === 'Resumen General') {
+        kpisEstandar.classList.add('hidden');
+        kpisLive.classList.add('hidden');
+        if (seccionTikTokTop) seccionTikTokTop.classList.add('hidden');
+        if (seccionGraficos) seccionGraficos.classList.add('hidden');
+        if (seccionResumen) seccionResumen.classList.remove('hidden');
+
+        renderizarResumenGeneral();
+        return;
+    }
+
+    if (seccionResumen) seccionResumen.classList.add('hidden');
+    if (seccionGraficos) seccionGraficos.classList.remove('hidden');
+
+    let nombreHoja = '';
+
+    if (cuenta === 'acquaroni') {
+        if (redActiva === 'Facebook') nombreHoja = 'Facebook Repuestos Acquaroni';
+        else if (redActiva === 'Instagram') nombreHoja = 'Instagram Repuestos Acquaroni';
+        else if (redActiva === 'TikTok Live') nombreHoja = 'Tiktok live Repuestos Acquaroni';
+        else if (redActiva === 'TikTok') nombreHoja = 'Tiktok Repuestos Acquaroni';
+        else if (redActiva === 'YouTube') nombreHoja = 'Youtube Repuestos Acquaroni';
+    } else if (cuenta === 'aztec') {
+        if (redActiva === 'Facebook') nombreHoja = 'Facebook de AZtec Oils';
+        else if (redActiva === 'Instagram') nombreHoja = 'Instagram de AZtec Oils';
+        else if (redActiva === 'TikTok') nombreHoja = 'Tiktok de AZtec Oils';
+    } else if (cuenta === 'ultra') {
+        if (redActiva === 'Facebook') nombreHoja = 'Facebook Ultra Parts';
+        else if (redActiva === 'Instagram') nombreHoja = 'Instagram Ultra Parts';
+        else if (redActiva === 'TikTok') nombreHoja = 'Tiktok Ultra Parts';
+        else if (redActiva === 'YouTube') nombreHoja = 'Youtube Ultra Parts';
+    }
+
+    const filas = obtenerHojaPrincipalInsensible(nombreHoja);
+    const filasFiltradas = filtrarFilas(filas, 0, 1);
+
+    if (seccionTikTokTop) seccionTikTokTop.classList.add('hidden');
+
+    if (redActiva === 'TikTok Live') {
+        kpisEstandar.classList.add('hidden');
+        kpisLive.classList.remove('hidden');
+
+        let tViews = 0, tDon = 0, tDiam = 0, tSeg = 0, tCom = 0, tLikes = 0;
+        filasFiltradas.forEach(f => {
+            tViews += limpiarValorNum(f[2]);
+            tDon += limpiarValorNum(f[3]);
+            tDiam += limpiarValorNum(f[4]);
+            tSeg += limpiarValorNum(f[5]);
+            tCom += limpiarValorNum(f[6]);
+            tLikes += limpiarValorNum(f[7]);
         });
 
-        const targetPlat = document.getElementById(`plataforma-${plataforma}`);
-        if (targetPlat) targetPlat.classList.remove('hidden');
+        document.getElementById('kpi-live-views').innerText = tViews.toLocaleString();
+        document.getElementById('kpi-live-donadores').innerText = tDon.toLocaleString();
+        document.getElementById('kpi-live-diamantes').innerText = tDiam.toLocaleString();
+        document.getElementById('kpi-live-seguidores').innerText = tSeg.toLocaleString();
+        document.getElementById('kpi-live-comentarios').innerText = tCom.toLocaleString();
+        document.getElementById('kpi-live-likes').innerText = tLikes.toLocaleString();
 
-        const targetTab = document.getElementById(`tab-${plataforma}`);
-        if (targetTab) {
-            targetTab.classList.add('text-blue-600', 'border-b-2', 'border-blue-600', 'font-semibold');
-            targetTab.classList.remove('text-gray-500', 'font-medium');
+        renderGraficosTikTokLive(filasFiltradas);
+    } else {
+        kpisLive.classList.add('hidden');
+        kpisEstandar.classList.remove('hidden');
+
+        const cardCtr = document.getElementById('card-kpi-ctr');
+        const cardAlcance = document.getElementById('card-kpi-alcance');
+        const cardAlcanceOrg = document.getElementById('card-kpi-alcance-organico');
+        const cardImpresiones = document.getElementById('card-kpi-impresiones');
+        const cardTiempoRepro = document.getElementById('card-kpi-tiempo-reproduccion');
+        const cardNuevosEspectadores = document.getElementById('card-kpi-nuevos-espectadores');
+        const cardInteracciones = document.getElementById('card-kpi-interacciones');
+        const cardInversion = document.getElementById('card-kpi-inversion');
+        const lblSeguidores = document.getElementById('lbl-kpi-seguidores');
+
+        // Restablecer visibilidad por defecto de FICHAS
+        cardCtr.classList.remove('hidden');
+        cardAlcance.classList.remove('hidden');
+        cardAlcanceOrg.classList.remove('hidden');
+        cardImpresiones.classList.remove('hidden');
+        if (cardTiempoRepro) cardTiempoRepro.classList.add('hidden');
+        if (cardNuevosEspectadores) cardNuevosEspectadores.classList.add('hidden');
+        cardInteracciones.classList.remove('hidden');
+        cardInversion.classList.remove('hidden');
+        lblSeguidores.innerText = 'NUEVOS SEGUIDORES';
+
+        if (redActiva === 'Instagram') {
+            cardImpresiones.classList.add('hidden');
+        } else if (redActiva === 'TikTok') {
+            cardCtr.classList.add('hidden');
+            cardAlcanceOrg.classList.add('hidden');
+            cardAlcance.classList.add('hidden');
+            cardImpresiones.classList.add('hidden');
+            if (seccionTikTokTop) seccionTikTokTop.classList.remove('hidden');
+        } else if (redActiva === 'YouTube') {
+            cardCtr.classList.add('hidden');
+            cardAlcanceOrg.classList.add('hidden');
+            cardAlcance.classList.add('hidden');
+            cardImpresiones.classList.add('hidden');
+            cardInteracciones.classList.add('hidden');
+            
+            if (cardTiempoRepro) cardTiempoRepro.classList.remove('hidden');
+            if (cardNuevosEspectadores) cardNuevosEspectadores.classList.remove('hidden');
+            
+            lblSeguidores.innerText = 'SUSCRIPTORES GANADOS';
         }
+
+        // Mapeo dinámico de Índices por Nombre Exacto para FICHAS EXISTENTES
+        const idxInversion = obtenerIndiceColumna(filas, ['inversion', 'inversión']);
+        const idxCtr = obtenerIndiceColumna(filas, ['ctr', 'ctr promedio']);
+        const idxAlcance = obtenerIndiceColumna(filas, ['alcance', 'alcance total']);
+        const idxAlcanceOrg = obtenerIndiceColumna(filas, ['alcance organico', 'alcance orgánico']);
+        const idxImpresiones = obtenerIndiceColumna(filas, ['impresiones']);
+        
+        let idxInteracciones = -1;
+        if (redActiva === 'Instagram') {
+            if (cuenta === 'acquaroni') idxInteracciones = 3; // Columna D
+            else if (cuenta === 'aztec') idxInteracciones = 6;    // Columna G
+            else idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
+        } else {
+            idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
+        }
+        
+        const idxTiempoRepro = obtenerIndiceColumna(filas, [
+            'tiempo de reproduccion', 'tiempo de reproducción', 'tiempo de reproduccion (horas)', 
+            'tiempo de reproducción (horas)', 'horas de reproduccion', 'horas de reproducción', 
+            'tiempo de reproduccion (hrs)', 'tiempo de reproducción (hrs)', 'tiempo reproduccion'
+        ]);
+
+        const idxNuevosEspectadores = obtenerIndiceColumna(filas, [
+            'nuevos espectadores de contenido', 'nuevos espectadores', 'espectadores de contenido'
+        ]);
+        
+        const idxNuevosSeguidores = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
+
+        let totalInv = 0, totalAlc = 0, totalAlcOrg = 0, totalImp = 0, totalInt = 0, totalTiempoRepro = 0, totalNuevosEsp = 0, totalNuevosSeg = 0;
+        let countCtr = 0, sumCtr = 0;
+
+        document.getElementById('lbl-kpi-interacciones').innerText = 'INTERACCIONES';
+
+        filasFiltradas.forEach(f => {
+            if (idxInversion !== -1) totalInv += limpiarValorNum(f[idxInversion]);
+            
+            if (idxCtr !== -1) {
+                const ctrVal = limpiarValorNum(f[idxCtr]);
+                if (ctrVal > 0) {
+                    sumCtr += ctrVal;
+                    countCtr++;
+                }
+            }
+            
+            if (idxAlcance !== -1) totalAlc += limpiarValorNum(f[idxAlcance]);
+            if (idxAlcanceOrg !== -1) totalAlcOrg += limpiarValorNum(f[idxAlcanceOrg]);
+            if (idxImpresiones !== -1) totalImp += limpiarValorNum(f[idxImpresiones]);
+            if (idxInteracciones !== -1) totalInt += limpiarValorNum(f[idxInteracciones]);
+            if (idxTiempoRepro !== -1) totalTiempoRepro += limpiarValorNum(f[idxTiempoRepro]);
+            if (idxNuevosEspectadores !== -1) totalNuevosEsp += limpiarValorNum(f[idxNuevosEspectadores]);
+            if (idxNuevosSeguidores !== -1) totalNuevosSeg += limpiarValorNum(f[idxNuevosSeguidores]);
+        });
+
+        // ASIGNACIÓN A FICHAS
+        document.getElementById('kpi-inversion').innerText = `Q ${totalInv.toFixed(2)}`;
+        document.getElementById('kpi-ctr').innerText = `${(countCtr ? sumCtr / countCtr : 0).toFixed(2)}%`;
+        document.getElementById('kpi-alcance').innerText = totalAlc.toLocaleString();
+        document.getElementById('kpi-alcance-organico').innerText = totalAlcOrg.toLocaleString();
+        document.getElementById('kpi-impresiones').innerText = totalImp.toLocaleString();
+        document.getElementById('kpi-interacciones').innerText = totalInt.toLocaleString();
+        
+        const elemTiempo = document.getElementById('kpi-tiempo-reproduccion');
+        if (elemTiempo) elemTiempo.innerText = `${totalTiempoRepro.toLocaleString()} hrs`;
+
+        const elemNuevosEsp = document.getElementById('kpi-nuevos-espectadores');
+        if (elemNuevosEsp) elemNuevosEsp.innerText = totalNuevosEsp.toLocaleString();
+        
+        document.getElementById('kpi-seguidores-exactos').innerText = totalNuevosSeg.toLocaleString();
+
+        if (redActiva === 'TikTok') {
+            renderTikTokTopVideos(filasFiltradas, filas);
+        }
+
+        renderNuevosGraficosEspecificos(filasFiltradas, filas);
+    }
+}
+
+/* =============================================================
+   REEMPLAZO DE GRÁFICOS SOLICITADOS (FACEBOOK, INSTAGRAM, TIKTOK, YOUTUBE)
+============================================================= */
+function renderNuevosGraficosEspecificos(filasFiltradas, todasLasFilas) {
+    const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+    if (redActiva === 'Facebook') {
+        // 1. FACEBOOK
+        document.getElementById('titulo-grafico-1').innerText = 'Alcance vs. Impresiones';
+        document.getElementById('titulo-grafico-2').innerText = 'Alcance Orgánico vs. Pagado';
+
+        const idxAlc = obtenerIndiceColumna(todasLasFilas, ['alcance', 'alcance total']);
+        const idxImp = obtenerIndiceColumna(todasLasFilas, ['impresiones']);
+        const idxAlcOrg = obtenerIndiceColumna(todasLasFilas, ['alcance organico', 'alcance orgánico']);
+        const idxAlcPag = obtenerIndiceColumna(todasLasFilas, ['alcance pagado', 'alcance de pago']);
+
+        let dataAlc = new Array(12).fill(0);
+        let dataImp = new Array(12).fill(0);
+        let dataAlcOrg = new Array(12).fill(0);
+        let dataAlcPag = new Array(12).fill(0);
+
+        filasFiltradas.forEach(f => {
+            const m = obtenerIndiceMes(f[1]);
+            if (m !== -1) {
+                if (idxAlc !== -1) dataAlc[m] += limpiarValorNum(f[idxAlc]);
+                if (idxImp !== -1) dataImp[m] += limpiarValorNum(f[idxImp]);
+                if (idxAlcOrg !== -1) dataAlcOrg[m] += limpiarValorNum(f[idxAlcOrg]);
+                if (idxAlcPag !== -1) dataAlcPag[m] += limpiarValorNum(f[idxAlcPag]);
+            }
+        });
+
+        // Gráfico 1 - Líneas
+        crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
+            { label: 'Alcance Total', data: dataAlc, borderColor: '#8b5cf6', fill: false },
+            { label: 'Impresiones', data: dataImp, borderColor: '#f97316', fill: false }
+        ]);
+
+        // Gráfico 2 - Barras Agrupadas
+        crearOActualizarChart('chart-redes-2', 'bar', mesesLabels, [
+            { label: 'Alcance Orgánico', data: dataAlcOrg, backgroundColor: '#10b981' },
+            { label: 'Alcance Pagado', data: dataAlcPag, backgroundColor: '#3b82f6' }
+        ]);
+
+    } else if (redActiva === 'Instagram') {
+        // 2. INSTAGRAM
+        document.getElementById('titulo-grafico-1').innerText = 'Evolución del Rendimiento';
+        document.getElementById('titulo-grafico-2').innerText = 'Rendimiento por Formato';
+
+        const idxAlc = obtenerIndiceColumna(todasLasFilas, ['alcance', 'alcance total']);
+        const idxImp = obtenerIndiceColumna(todasLasFilas, ['impresiones']);
+
+        let dataAlc = new Array(12).fill(0);
+        let dataImp = new Array(12).fill(0);
+
+        filasFiltradas.forEach(f => {
+            const m = obtenerIndiceMes(f[1]);
+            if (m !== -1) {
+                if (idxAlc !== -1) dataAlc[m] += limpiarValorNum(f[idxAlc]);
+                if (idxImp !== -1) dataImp[m] += limpiarValorNum(f[idxImp]);
+            }
+        });
+
+        // Gráfico 1 - Líneas
+        crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
+            { label: 'Alcance', data: dataAlc, borderColor: '#e1306c', fill: false },
+            { label: 'Impresiones', data: dataImp, borderColor: '#f59e0b', fill: false }
+        ]);
+
+        // Gráfico 2 - Doughnut (Rendimiento por Formato)
+        const idxFormato = obtenerIndiceColumna(todasLasFilas, ['formato', 'tipo de contenido', 'tipo contenido', 'formato de contenido']);
+        const idxMetricFormato = idxAlc !== -1 ? idxAlc : obtenerIndiceColumna(todasLasFilas, ['engagement', 'interacciones']);
+
+        let totalReels = 0, totalCarruseles = 0, totalEstaticas = 0, totalHistorias = 0;
+
+        if (idxFormato !== -1 && idxMetricFormato !== -1) {
+            filasFiltradas.forEach(f => {
+                const fmt = (f[idxFormato] || '').toString().toLowerCase().trim();
+                const val = limpiarValorNum(f[idxMetricFormato]);
+
+                if (fmt.includes('reel')) totalReels += val;
+                else if (fmt.includes('carrusel') || fmt.includes('carousel')) totalCarruseles += val;
+                else if (fmt.includes('foto') || fmt.includes('estatica') || fmt.includes('estática') || fmt.includes('imagen')) totalEstaticas += val;
+                else if (fmt.includes('historia') || fmt.includes('story') || fmt.includes('stories')) totalHistorias += val;
+            });
+        }
+
+        const sumaFormatos = totalReels + totalCarruseles + totalEstaticas + totalHistorias;
+        let pctReels = 0, pctCarruseles = 0, pctEstaticas = 0, pctHistorias = 0;
+
+        if (sumaFormatos > 0) {
+            pctReels = parseFloat(((totalReels / sumaFormatos) * 100).toFixed(1));
+            pctCarruseles = parseFloat(((totalCarruseles / sumaFormatos) * 100).toFixed(1));
+            pctEstaticas = parseFloat(((totalEstaticas / sumaFormatos) * 100).toFixed(1));
+            pctHistorias = parseFloat(((totalHistorias / sumaFormatos) * 100).toFixed(1));
+        }
+
+        crearOActualizarChart('chart-redes-2', 'doughnut', ['Reels (%)', 'Carruseles (%)', 'Fotos estáticas (%)', 'Historias (%)'], [
+            {
+                data: [pctReels, pctCarruseles, pctEstaticas, pctHistorias],
+                backgroundColor: ['#e1306c', '#833ab4', '#405de6', '#f77737']
+            }
+        ]);
+
+    } else if (redActiva === 'TikTok') {
+        // 3. TIKTOK
+        document.getElementById('titulo-grafico-1').innerText = 'Visualizaciones vs. Alcance';
+        document.getElementById('titulo-grafico-2').innerText = 'Retención y Calidad del Contenido';
+
+        const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones totales de videos', 'video views', 'visualizaciones', 'vistas']);
+        const idxAlc = obtenerIndiceColumna(todasLasFilas, ['alcance', 'alcance total']);
+        const idxWatchTime = obtenerIndiceColumna(todasLasFilas, ['tiempo promedio de reproduccion', 'tiempo promedio de reproducción', 'average watch time']);
+        const idxCompletion = obtenerIndiceColumna(todasLasFilas, ['porcentaje de video visto completo', 'completion rate', '% visto completo']);
+
+        let dataViews = new Array(12).fill(0);
+        let dataAlc = new Array(12).fill(0);
+        let dataWatchTime = new Array(12).fill(0);
+        let dataCompletion = new Array(12).fill(0);
+
+        filasFiltradas.forEach(f => {
+            const m = obtenerIndiceMes(f[1]);
+            if (m !== -1) {
+                if (idxViews !== -1) dataViews[m] += limpiarValorNum(f[idxViews]);
+                if (idxAlc !== -1) dataAlc[m] += limpiarValorNum(f[idxAlc]);
+                if (idxWatchTime !== -1) dataWatchTime[m] += limpiarValorNum(f[idxWatchTime]);
+                if (idxCompletion !== -1) dataCompletion[m] += limpiarValorNum(f[idxCompletion]);
+            }
+        });
+
+        // Gráfico 1 - Líneas
+        crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
+            { label: 'Visualizaciones Totales', data: dataViews, borderColor: '#000000', fill: false },
+            { label: 'Alcance', data: dataAlc, borderColor: '#2563eb', fill: false }
+        ]);
+
+        // Gráfico 2 - Barras (Retención y Calidad)
+        crearOActualizarChart('chart-redes-2', 'bar', mesesLabels, [
+            { label: 'Tiempo Prom. Reproducción (s)', data: dataWatchTime, backgroundColor: '#06b6d4' },
+            { label: '% Video Visto Completo', data: dataCompletion, backgroundColor: '#8b5cf6' }
+        ]);
+
+    } else if (redActiva === 'YouTube') {
+        // 4. YOUTUBE
+        document.getElementById('titulo-grafico-1').innerText = 'Visualizaciones vs. Impresiones';
+        document.getElementById('titulo-grafico-2').innerText = 'CTR — Eficiencia de Clics';
+
+        const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'views', 'vistas']);
+        const idxImp = obtenerIndiceColumna(todasLasFilas, ['impresiones']);
+        const idxCtr = obtenerIndiceColumna(todasLasFilas, ['ctr', 'ctr promedio', 'click-through rate']);
+
+        let dataViews = new Array(12).fill(0);
+        let dataImp = new Array(12).fill(0);
+        let dataCtr = new Array(12).fill(0);
+
+        filasFiltradas.forEach(f => {
+            const m = obtenerIndiceMes(f[1]);
+            if (m !== -1) {
+                if (idxViews !== -1) dataViews[m] += limpiarValorNum(f[idxViews]);
+                if (idxImp !== -1) dataImp[m] += limpiarValorNum(f[idxImp]);
+                if (idxCtr !== -1) dataCtr[m] += limpiarValorNum(f[idxCtr]);
+            }
+        });
+
+        // Gráfico 1 - Líneas
+        crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
+            { label: 'Visualizaciones (Views)', data: dataViews, borderColor: '#ff0000', fill: false },
+            { label: 'Impresiones', data: dataImp, borderColor: '#f97316', fill: false }
+        ]);
+
+        // Gráfico 2 - Barras (CTR)
+        crearOActualizarChart('chart-redes-2', 'bar', mesesLabels, [
+            { label: 'CTR (%)', data: dataCtr, backgroundColor: '#10b981' }
+        ]);
+    }
+}
+
+/* =============================================================
+   SECCIÓN: RESUMEN GENERAL (CONSOLIDADO Y PROYECCIÓN DINO)
+============================================================= */
+function renderizarResumenGeneral() {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const anioSel = document.getElementById('filtro-anio').value;
+
+    let mapasHojas = [];
+    if (cuenta === 'acquaroni') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook Repuestos Acquaroni' },
+            { red: 'Instagram', hoja: 'Instagram Repuestos Acquaroni' },
+            { red: 'TikTok', hoja: 'Tiktok Repuestos Acquaroni' },
+            { red: 'YouTube', hoja: 'Youtube Repuestos Acquaroni' }
+        ];
+    } else if (cuenta === 'aztec') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook de AZtec Oils' },
+            { red: 'Instagram', hoja: 'Instagram de AZtec Oils' },
+            { red: 'TikTok', hoja: 'Tiktok de AZtec Oils' }
+        ];
+    } else if (cuenta === 'ultra') {
+        mapasHojas = [
+            { red: 'Facebook', hoja: 'Facebook Ultra Parts' },
+            { red: 'Instagram', hoja: 'Instagram Ultra Parts' },
+            { red: 'TikTok', hoja: 'Tiktok Ultra Parts' },
+            { red: 'YouTube', hoja: 'Youtube Ultra Parts' }
+        ];
     }
 
-    function aplicarFiltrosGlobales() {
-        renderizarModuloRedes();
-        renderizarModuloImpulsados();
-        renderizarModuloCampanas();
+    let globalAlcance = 0;
+    let globalImpresiones = 0;
+    let globalSeguidores = 0;
+    let globalInteracciones = 0;
+
+    const desgloseSeguidores = {};
+    
+    let histAlcanceMensual = new Array(12).fill(0);
+    let histImpresionesMensual = new Array(12).fill(0);
+    let histInteraccionesMensual = new Array(12).fill(0);
+
+    mapasHojas.forEach(item => {
+        const filas = obtenerHojaPrincipalInsensible(item.hoja);
+        const filasFiltradas = filtrarFilas(filas, 0, 1);
+
+        const idxAlc = obtenerIndiceColumna(filas, ['alcance', 'alcance total']);
+        const idxImp = obtenerIndiceColumna(filas, ['impresiones']);
+        const idxSeg = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
+        
+        let idxInt = -1;
+        if (item.red === 'Instagram') {
+            if (cuenta === 'acquaroni') idxInt = 3;
+            else if (cuenta === 'aztec') idxInt = 6;
+            else idxInt = obtenerIndiceColumna(filas, ['interacciones']);
+        } else {
+            idxInt = obtenerIndiceColumna(filas, ['interacciones', 'me gusta', 'comentarios', 'compartidos', 'guardados', 'clics']);
+        }
+
+        let totalSegRed = 0;
+
+        filasFiltradas.forEach(f => {
+            const m = obtenerIndiceMes(f[1]);
+
+            if (idxAlc !== -1) {
+                const val = limpiarValorNum(f[idxAlc]);
+                globalAlcance += val;
+                if (m !== -1) histAlcanceMensual[m] += val;
+            }
+            if (idxImp !== -1) {
+                const val = limpiarValorNum(f[idxImp]);
+                globalImpresiones += val;
+                if (m !== -1) histImpresionesMensual[m] += val;
+            }
+            if (idxSeg !== -1) {
+                const val = limpiarValorNum(f[idxSeg]);
+                globalSeguidores += val;
+                totalSegRed += val;
+            }
+            if (idxInt !== -1) {
+                const val = limpiarValorNum(f[idxInt]);
+                globalInteracciones += val;
+                if (m !== -1) histInteraccionesMensual[m] += val;
+            }
+        });
+
+        desgloseSeguidores[item.red] = totalSegRed;
+    });
+
+    document.getElementById('kpi-resumen-alcance').innerText = globalAlcance.toLocaleString();
+    document.getElementById('kpi-resumen-impresiones').innerText = globalImpresiones.toLocaleString();
+    document.getElementById('kpi-resumen-seguidores').innerText = globalSeguidores.toLocaleString();
+    document.getElementById('kpi-resumen-interacciones').innerText = globalInteracciones.toLocaleString();
+
+    // PROYECCIÓN DEL AÑO SIGUIENTE (RUN RATE)
+    const anioSiguiente = parseInt(anioSel) + 1;
+    document.getElementById('titulo-proyeccion-seccion').innerText = `Proyección del Año Siguiente (${anioSiguiente})`;
+
+    // TABLA PROYECCIÓN DE SEGUIDORES
+    const tbodySeg = document.getElementById('tabla-proyeccion-seguidores');
+    tbodySeg.innerHTML = '';
+
+    mapasHojas.forEach(item => {
+        const actual = desgloseSeguidores[item.red] || 0;
+        const estCrecimiento = Math.round(actual * 1.20);
+        const meta = actual + estCrecimiento;
+
+        tbodySeg.innerHTML += `
+            <tr class="hover:bg-gray-50">
+                <td class="p-2 font-bold text-gray-700">${item.red}</td>
+                <td class="p-2 text-right font-medium text-gray-600">${actual.toLocaleString()}</td>
+                <td class="p-2 text-right font-semibold text-green-600">+${estCrecimiento.toLocaleString()}</td>
+                <td class="p-2 text-right font-black text-blue-600">${meta.toLocaleString()}</td>
+            </tr>
+        `;
+    });
+
+    // GRÁFICO ALCANCE E IMPRESIONES PROYECTADAS
+    const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    
+    let proyAlcance = histAlcanceMensual.map(v => Math.round((v > 0 ? v : globalAlcance / 12) * 1.15));
+    let proyImpresiones = histImpresionesMensual.map(v => Math.round((v > 0 ? v : globalImpresiones / 12) * 1.15));
+
+    crearOActualizarChart('chart-resumen-proyeccion-alcance', 'line', mesesLabels, [
+        { label: `Alcance Proyectado ${anioSiguiente}`, data: proyAlcance, borderColor: '#2563eb', fill: false },
+        { label: `Impresiones Proyectadas ${anioSiguiente}`, data: proyImpresiones, borderColor: '#f97316', fill: false }
+    ]);
+
+    // GRÁFICO VOLUMEN DE INTERACCIONES ESPERADAS POR TRIMESTRE
+    let sumQ1 = histInteraccionesMensual.slice(0, 3).reduce((a, b) => a + b, 0);
+    let sumQ2 = histInteraccionesMensual.slice(3, 6).reduce((a, b) => a + b, 0);
+    let sumQ3 = histInteraccionesMensual.slice(6, 9).reduce((a, b) => a + b, 0);
+    let sumQ4 = histInteraccionesMensual.slice(9, 12).reduce((a, b) => a + b, 0);
+
+    const factorEngagement = 1.18;
+    const proyQ1 = Math.round((sumQ1 || globalInteracciones / 4) * factorEngagement);
+    const proyQ2 = Math.round((sumQ2 || globalInteracciones / 4) * factorEngagement);
+    const proyQ3 = Math.round((sumQ3 || globalInteracciones / 4) * factorEngagement);
+    const proyQ4 = Math.round((sumQ4 || globalInteracciones / 4) * factorEngagement);
+
+    crearOActualizarChart('chart-resumen-proyeccion-engagement', 'bar', ['Q1 (Ene-Mar)', 'Q2 (Abr-Jun)', 'Q3 (Jul-Sep)', 'Q4 (Oct-Dic)'], [
+        { label: `Interacciones Proyectadas ${anioSiguiente}`, data: [proyQ1, proyQ2, proyQ3, proyQ4], backgroundColor: '#8b5cf6' }
+    ]);
+}
+
+/* =============================================================
+   TIKTOK — TABLA TOP 5 VIDEOS MÁS VISTOS DEL MES / PERÍODO
+============================================================= */
+function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
+    const cardMes = document.getElementById('card-tiktok-top-video-mes');
+    const cardTabla = document.getElementById('card-tiktok-top-videos-tabla');
+
+    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['video / titular', 'video/titular', 'titulo del video', 'título del video', 'titulo de video', 'título de video', 'titulo', 'título', 'nombre del video', 'publicacion', 'publicación']);
+    const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'vistas', 'reproducciones']);
+
+    if (idxTitulo === -1 || idxViews === -1) {
+        cardMes.classList.add('hidden');
+        cardTabla.classList.add('hidden');
+        return;
+    }
+
+    cardMes.classList.add('hidden');
+    cardTabla.classList.remove('hidden');
+
+    const listaVideos = [];
+    filasFiltradas.forEach(f => {
+        const titulo = f[idxTitulo] ? f[idxTitulo].toString().trim() : '';
+        const views = limpiarValorNum(f[idxViews]);
+        if (titulo !== '') {
+            listaVideos.push({ titulo, views });
+        }
+    });
+
+    listaVideos.sort((a, b) => b.views - a.views);
+
+    const tbody = document.getElementById('tabla-tiktok-top-body');
+    tbody.innerHTML = '';
+
+    if (listaVideos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-500">No se encontraron videos registrados.</td></tr>`;
+    } else {
+        const top5Videos = listaVideos.slice(0, 5);
+        top5Videos.forEach((v, index) => {
+            tbody.innerHTML += `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-3 font-bold text-gray-400 text-center">${index + 1}</td>
+                    <td class="p-3 font-medium text-gray-800">${escapeHtml(v.titulo)}</td>
+                    <td class="p-3 text-right font-bold text-blue-600">${v.views.toLocaleString()}</td>
+                </tr>
+            `;
+        });
+    }
+}
+
+function renderGraficosTikTokLive(filas) {
+    const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    let dataSegLive = new Array(12).fill(0);
+
+    filas.forEach(f => {
+        const idxMes = obtenerIndiceMes(f[1]);
+        if (idxMes !== -1) {
+            dataSegLive[idxMes] = limpiarValorNum(f[5]);
+        }
+    });
+
+    document.getElementById('titulo-grafico-1').innerText = 'Nuevos Seguidores en Live';
+    document.getElementById('titulo-grafico-2').innerText = 'Rendimiento en Vivo';
+
+    crearOActualizarChart('chart-redes-1', 'bar', mesesLabels, [
+        { label: 'Seguidores Nuevos', data: dataSegLive, backgroundColor: '#a855f7' }
+    ]);
+    
+    crearOActualizarChart('chart-redes-2', 'line', mesesLabels, [
+        { label: 'Seguidores Nuevos', data: dataSegLive, borderColor: '#ec4899', fill: false }
+    ]);
+}
+
+function obtenerIndiceMes(nombreMes) {
+    if (!nombreMes) return -1;
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    return meses.indexOf(nombreMes.toString().toLowerCase().trim());
+}
+
+function crearOActualizarChart(canvasId, type, labels, datasets) {
+    if (chartInstances[canvasId]) {
+        chartInstances[canvasId].destroy();
+    }
+    const canvasElem = document.getElementById(canvasId);
+    if (!canvasElem) return;
+    const ctx = canvasElem.getContext('2d');
+    chartInstances[canvasId] = new Chart(ctx, {
+        type: type,
+        data: { labels: labels, datasets: datasets },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+}
+
+/* =============================================================
+   POST IMPULSADOS (EXCLUSIVAMENTE EXCEL 1)
+============================================================= */
+function renderizarModuloPosts() {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const nombreHoja = cuenta === 'acquaroni' ? 'Post impulsados Repuestos Acquaroni' : 'Post impulsados AZtec Oils';
+    const filas = obtenerHojaPrincipalInsensible(nombreHoja);
+    const filasFiltradas = filtrarFilas(filas, 0, 1);
+
+    const tbody = document.getElementById('tabla-posts-body');
+    tbody.innerHTML = '';
+
+    filasFiltradas.forEach((f, idx) => {
+        const postId = `post-img-${cuenta}-${idx}`;
+        const savedImage = localStorage.getItem(postId);
+
+        tbody.innerHTML += `
+            <tr>
+                <td class="p-3">
+                    <label class="cursor-pointer text-blue-500 hover:text-blue-700 font-semibold text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-image"></i> Cargar Imagen
+                        <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postId}', 'img-post-${idx}')">
+                    </label>
+                    <img id="img-post-${idx}" src="${savedImage || ''}" 
+                        class="w-12 h-12 object-cover rounded shadow-sm ${savedImage ? '' : 'hidden'} mt-1 cursor-pointer"
+                        onclick="abrirVisorImagen(this.src)">
+                </td>
+                <td class="p-3">${f[0]} / ${f[1] || '-'}</td>
+                <td class="p-3 font-medium">${escapeHtml(f[2] || '-')}</td>
+                <td class="p-3">${escapeHtml(f[3] || '-')}</td>
+                <td class="p-3">${limpiarValorNum(f[4]).toLocaleString()}</td>
+                <td class="p-3">${limpiarValorNum(f[5]).toLocaleString()}</td>
+                <td class="p-3">${limpiarValorNum(f[6]).toLocaleString()}</td>
+                <td class="p-3">Q ${limpiarValorNum(f[7]).toFixed(2)}</td>
+                <td class="p-3 font-bold text-blue-600">Q ${limpiarValorNum(f[8]).toFixed(2)}</td>
+            </tr>
+        `;
+    });
+}
+
+function guardarYMostrarImagenPost(e, storageKey, imgElementId) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const base64Img = evt.target.result;
+            localStorage.setItem(storageKey, base64Img);
+            const img = document.getElementById(imgElementId);
+            img.src = base64Img;
+            img.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function abrirVisorImagen(src) {
+    document.getElementById('img-visor-full').src = src;
+    document.getElementById('modal-visor-imagen').classList.remove('hidden');
+    document.getElementById('modal-visor-imagen').classList.add('flex');
+}
+
+function cerrarVisorImagen() {
+    document.getElementById('modal-visor-imagen').classList.add('hidden');
+    document.getElementById('modal-visor-imagen').classList.remove('flex');
+}
+
+/* =============================================================
+   CAMPAÑAS (EXCLUSIVAMENTE EXCEL 1)
+============================================================= */
+function normalizarCampana(valor) {
+    return (valor || '').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function prepararFilasCampanas(filas) {
+    if (!filas || filas.length <= 1) return [];
+    const anioSeleccionado = document.getElementById('filtro-anio').value;
+    const mesSeleccionado = document.getElementById('filtro-mes').value;
+
+    let campanaActual = '', anioActual = '', mesActual = '';
+    const resultado = [];
+
+    filas.slice(1).forEach(filaOriginal => {
+        const fila = [...filaOriginal];
+        if (fila[0]) anioActual = fila[0].toString().trim();
+        if (fila[1]) mesActual = fila[1].toString().trim();
+        if (fila[2]) campanaActual = fila[2].toString().trim();
+
+        fila[0] = fila[0] || anioActual;
+        fila[1] = fila[1] || mesActual;
+        fila[2] = fila[2] || campanaActual;
+
+        const coincideAnio = fila[0].toString().trim() === anioSeleccionado;
+        const coincideMes = mesSeleccionado === 'todos' || fila[1].toString().trim().toLowerCase() === mesSeleccionado.toLowerCase();
+
+        if (coincideAnio && coincideMes && fila[3]) {
+            resultado.push(fila);
+        }
+    });
+
+    return resultado;
+}
+
+function renderizarModuloCampanas() {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const nombreHoja = cuenta === 'acquaroni' ? 'Campañas Repuestos Acquaroni' : 'Campañas AZtec Oils';
+    const filas = obtenerHojaPrincipalInsensible(nombreHoja);
+    const filasCampanas = prepararFilasCampanas(filas);
+    const container = document.getElementById('contenedor-campanas');
+    container.innerHTML = '';
+
+    if (!filasCampanas.length) {
+        container.innerHTML = `<div class="col-span-full bg-white rounded-xl border p-10 text-center"><p class="font-semibold text-gray-600">No hay campañas disponibles.</p></div>`;
+        return;
+    }
+
+    const campanas = {};
+    filasCampanas.forEach(fila => {
+        const nombreCampana = fila[2].toString().trim();
+        const clave = normalizarCampana(nombreCampana);
+        if (!campanas[clave]) {
+            campanas[clave] = { nombre: nombreCampana, anio: fila[0], mes: fila[1], posts: [] };
+        }
+        campanas[clave].posts.push(fila);
+    });
+
+    Object.keys(campanas).forEach((clave, index) => {
+        const campana = campanas[clave];
+        const presupuestoTotal = campana.posts.reduce((t, f) => t + limpiarValorNum(f[7]), 0);
+        const portadaKey = `portada-campana-${cuenta}-${clave}`;
+        const savedPortada = localStorage.getItem(portadaKey);
+
+        container.innerHTML += `
+            <div class="bg-white rounded-xl border shadow-sm hover:shadow-lg transition overflow-hidden">
+                <div class="h-40 bg-gray-200 relative flex items-center justify-center overflow-hidden">
+                    <img id="cover-${index}" src="${savedPortada || ''}" class="absolute inset-0 w-full h-full object-cover ${savedPortada ? '' : 'hidden'}">
+                    <label class="absolute bottom-3 right-3 cursor-pointer bg-white/95 text-gray-700 px-3 py-2 rounded-lg text-xs font-bold shadow">
+                        Subir Portada
+                        <input type="file" class="hidden" accept="image/*" onchange="guardarPortadaCampana(event, '${portadaKey}', 'cover-${index}')">
+                    </label>
+                </div>
+                <div class="p-5">
+                    <h4 class="font-bold text-gray-800 text-base">${escapeHtml(campana.nombre)}</h4>
+                    <p class="text-xs text-gray-500 mt-1">${campana.anio} - ${campana.mes}</p>
+                    <p class="text-lg font-black text-blue-600 mt-3">Q ${presupuestoTotal.toFixed(2)}</p>
+                    <button onclick="abrirDesgloseCampana('${escapeHtml(campana.nombre)}')" class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-bold">
+                        Ver campaña
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function guardarPortadaCampana(e, storageKey, imgId) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            localStorage.setItem(storageKey, evt.target.result);
+            const img = document.getElementById(imgId);
+            img.src = evt.target.result;
+            img.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function abrirDesgloseCampana(nombreCampana) {
+    const cuenta = document.getElementById('filtro-cuenta').value;
+    const nombreHoja = cuenta === 'acquaroni' ? 'Campañas Repuestos Acquaroni' : 'Campañas AZtec Oils';
+    const filas = obtenerHojaPrincipalInsensible(nombreHoja);
+    const filasCampanas = prepararFilasCampanas(filas);
+
+    const postsCampana = filasCampanas.filter(f => normalizarCampana(f[2]) === normalizarCampana(nombreCampana));
+    const container = document.getElementById('modal-campana-contenido');
+    container.innerHTML = '';
+
+    document.getElementById('modal-campana-titulo').innerText = `Campaña: ${nombreCampana}`;
+    document.getElementById('modal-campana-subtitulo').innerText = `${postsCampana.length} Posts registrados`;
+
+    postsCampana.forEach((f, idxPost) => {
+        const postImgKey = `img-ref-post-${cuenta}-${normalizarCampana(nombreCampana)}-${idxPost}`;
+        const savedPostImg = localStorage.getItem(postImgKey);
+
+        container.innerHTML += `
+            <div class="border rounded-xl p-4 bg-gray-50 flex flex-col md:flex-row gap-4 items-start">
+                <div class="w-full md:w-32 flex-shrink-0">
+                    <p class="text-xs text-gray-500 font-bold mb-1">Imagen Referencia</p>
+                    <div class="relative h-28 bg-gray-200 border rounded-lg flex items-center justify-center overflow-hidden">
+                        <img id="img-post-ref-${idxPost}" src="${savedPostImg || ''}" class="${savedPostImg ? '' : 'hidden'} w-full h-full object-cover cursor-pointer" onclick="abrirVisorImagen(this.src)">
+                        <label class="absolute inset-0 flex flex-col items-center justify-center bg-black/40 text-white text-xs opacity-0 hover:opacity-100 transition cursor-pointer p-1 text-center">
+                            <i class="fa-solid fa-upload text-sm mb-1"></i> Subir
+                            <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postImgKey}', 'img-post-ref-${idxPost}')">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex-1 w-full">
+                    <h4 class="font-bold text-gray-800 text-base">${escapeHtml(f[3] || 'Post')}</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-center">
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Reproducciones</p><p class="font-bold">${limpiarValorNum(f[4]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Alcance</p><p class="font-bold">${limpiarValorNum(f[5]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Conversaciones</p><p class="font-bold">${limpiarValorNum(f[6]).toLocaleString()}</p></div>
+                        <div class="bg-white p-2 rounded border"><p class="text-xs text-gray-500">Presupuesto</p><p class="font-bold text-blue-600">Q ${limpiarValorNum(f[7]).toFixed(2)}</p></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    document.getElementById('modal-campana').classList.remove('hidden');
+    document.getElementById('modal-campana').classList.add('flex');
+}
+
+function cerrarModalCampana() {
+    document.getElementById('modal-campana').classList.add('hidden');
+    document.getElementById('modal-campana').classList.remove('flex');
+}
+
+/* =============================================================
+   TIKTOK TOP VIDEOS COMPLEMENTARIO
+============================================================= */
+function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
+    const cardMes = document.getElementById('card-tiktok-top-video-mes');
+    const cardTabla = document.getElementById('card-tiktok-top-videos-tabla');
+
+    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['video / titular', 'video/titular', 'titulo del video', 'título del video', 'titulo de video', 'título de video', 'titulo', 'título', 'nombre del video', 'publicacion', 'publicación']);
+    const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'vistas', 'reproducciones']);
+
+    if (idxTitulo === -1 || idxViews === -1) {
+        cardMes.classList.add('hidden');
+        cardTabla.classList.add('hidden');
+        return;
+    }
+
+    cardMes.classList.add('hidden');
+    cardTabla.classList.remove('hidden');
+
+    const listaVideos = [];
+    filasFiltradas.forEach(f => {
+        const titulo = f[idxTitulo] ? f[idxTitulo].toString().trim() : '';
+        const views = limpiarValorNum(f[idxViews]);
+        if (titulo !== '') {
+            listaVideos.push({ titulo, views });
+        }
+    });
+
+    listaVideos.sort((a, b) => b.views - a.views);
+
+    const tbody = document.getElementById('tabla-tiktok-top-body');
+    tbody.innerHTML = '';
+
+    if (listaVideos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-500">No se encontraron videos registrados.</td></tr>`;
+    } else {
+        const top5Videos = listaVideos.slice(0, 5);
+        top5Videos.forEach((v, index) => {
+            tbody.innerHTML += `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-3 font-bold text-gray-400 text-center">${index + 1}</td>
+                    <td class="p-3 font-medium text-gray-800">${escapeHtml(v.titulo)}</td>
+                    <td class="p-3 text-right font-bold text-blue-600">${v.views.toLocaleString()}</td>
+                </tr>
+            `;
+        });
+    }
+}
+
+/* =============================================================
+   MÓDULO PRESUPUESTO & ESTADO DE CUENTA
+============================================================= */
+function solicitarAsignadoTotal() {
+    const valor = prompt('Ingresa el monto del Asignado Total (Q):', asignadoTotalManual);
+    if (valor !== null) {
+        asignadoTotalManual = limpiarValorNum(valor);
+        localStorage.setItem('presupuesto_asignado_total', asignadoTotalManual);
         renderizarModuloPresupuesto();
     }
+}
 
-    // ==========================================
-    // CARGA DE DATOS DESDE SHEETS / APPS SCRIPT
-    // ==========================================
-    async function cargarDatosSheets() {
-        try {
-            // Intentar fetch a Apps Script o estructurar fallback de seguridad con datos almacenados
-            const response = await fetch(GOOGLE_SCRIPT_URL).catch(() => null);
-            if (response && response.ok) {
-                const data = await response.json();
-                datosGlobales = data;
-            } else {
-                // Si la red no responde o no está configurado el endpoint dinámico, se preserva el estado global
-                console.info("Cargando repositorio de datos local/Sheets...");
-            }
-        } catch (e) {
-            console.warn("Error al sincronizar con Sheets:", e);
-        } finally {
-            aplicarFiltrosGlobales();
+/* =============================================================
+   MÓDULO PRESUPUESTO (EXCLUSIVAMENTE DESDE EXCEL 1)
+============================================================= */
+function renderizarModuloPresupuesto() {
+    const filasPresupuesto = obtenerHojaPrincipalInsensible('Presupuesto');
+
+    const idxEjecutadoTotal = obtenerIndiceColumna(filasPresupuesto, ['ejecutado total']);
+    const idxRedesSociales = obtenerIndiceColumna(filasPresupuesto, ['redes sociales']);
+    const idxAcquaroni = obtenerIndiceColumna(filasPresupuesto, ['presupuesto repuestos acquaroni']);
+    const idxAztec = obtenerIndiceColumna(filasPresupuesto, ['presupuesto aztec oils']);
+    const idxMercadeo = obtenerIndiceColumna(filasPresupuesto, ['mercadeo']);
+
+    const filasFiltradasPres = filtrarFilas(filasPresupuesto, 0, 1);
+
+    let ejecutadoTotal = 0;
+    let totalRedesSociales = 0;
+    let totalAcquaroni = 0;
+    let totalAztec = 0;
+    let totalMercadeo = 0;
+
+    filasFiltradasPres.forEach(f => {
+        if (idxEjecutadoTotal !== -1) ejecutadoTotal += limpiarValorNum(f[idxEjecutadoTotal]);
+        if (idxRedesSociales !== -1) totalRedesSociales += limpiarValorNum(f[idxRedesSociales]);
+        if (idxAcquaroni !== -1) totalAcquaroni += limpiarValorNum(f[idxAcquaroni]);
+        if (idxAztec !== -1) totalAztec += limpiarValorNum(f[idxAztec]);
+        if (idxMercadeo !== -1) totalMercadeo += limpiarValorNum(f[idxMercadeo]);
+    });
+
+    const filasPlataformas = obtenerHojaPrincipalInsensible('Plataformas Externas');
+    const idxMontoEjecutadoPlat = obtenerIndiceColumna(filasPlataformas, ['monto ejecutado']);
+
+    const filasFiltradasPlat = filtrarFilas(filasPlataformas, 0, 1);
+
+    let totalPlataformasExternas = 0;
+    filasFiltradasPlat.forEach(f => {
+        if (idxMontoEjecutadoPlat !== -1) {
+            totalPlataformasExternas += limpiarValorNum(f[idxMontoEjecutadoPlat]);
         }
-    }
+    });
 
-    // ==========================================
-    // HELPERS DE PARSEO Y NORMAS
-    // ==========================================
-    function parseNumero(valor) {
-        if (valor === null || valor === undefined) return 0;
-        if (typeof valor === 'number') return isNaN(valor) ? 0 : valor;
-        let str = String(valor).replace(/[^0-9.-]/g, '');
-        let num = parseFloat(str);
-        return isNaN(num) ? 0 : num;
-    }
+    document.getElementById('pres-asignado').innerText = `Q ${limpiarValorNum(asignadoTotalManual).toFixed(2)}`;
+    document.getElementById('pres-ejecutado').innerText = `Q ${ejecutadoTotal.toFixed(2)}`;
+    document.getElementById('pres-redes-soc').innerText = `Q ${totalRedesSociales.toFixed(2)}`;
+    document.getElementById('pres-acquaroni').innerText = `Q ${totalAcquaroni.toFixed(2)}`;
+    document.getElementById('pres-aztec').innerText = `Q ${totalAztec.toFixed(2)}`;
+    document.getElementById('pres-mercadeo').innerText = `Q ${totalMercadeo.toFixed(2)}`;
+    document.getElementById('pres-plataformas-m4').innerText = `Q ${totalPlataformasExternas.toFixed(2)}`;
 
-    function formatearNumero(num) {
-        return new Intl.NumberFormat('es-GT').format(Math.round(num));
-    }
+    renderGraficosPresupuesto(ejecutadoTotal, totalRedesSociales, totalPlataformasExternas, filasPresupuesto);
+}
 
-    function formatearMoneda(num) {
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
-    }
+function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupuesto) {
+    const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const anioSel = document.getElementById('filtro-anio').value;
+    const mesSel = document.getElementById('filtro-mes').value;
 
-    // ==========================================
-    // RENDERIZADO MÓDULO REDES
-    // ==========================================
-    function renderizarModuloRedes() {
-        const anioSel = document.getElementById('filtro-anio').value;
-        const mesSel = document.getElementById('filtro-mes').value;
-        const cuentaSel = document.getElementById('filtro-cuenta').value;
+    // Detectar índices dinámicos de Presupuesto Asignado y Ejecutado
+    const idxAsignado = obtenerIndiceColumna(filasPresupuesto, ['presupuesto asignado', 'asignado', 'presupuesto']);
+    const idxEjecutado = obtenerIndiceColumna(filasPresupuesto, ['ejecutado total', 'presupuesto ejecutado', 'ejecutado', 'gasto']);
 
-        // Filtrar Facebook
-        const fbDatos = (datosGlobales.facebook || []).filter(item => {
-            const matchAnio = !item.anio || String(item.anio) === String(anioSel);
-            const matchCuenta = !item.cuenta || item.cuenta === cuentaSel;
-            const matchMes = mesSel === 'Todos' || item.mes === mesSel;
-            return matchAnio && matchCuenta && matchMes;
+    let datosAsignado = new Array(12).fill(0);
+    let datosEjecutado = new Array(12).fill(0);
+
+    if (filasPresupuesto && filasPresupuesto.length > 1) {
+        filasPresupuesto.slice(1).forEach(f => {
+            const rowAnio = f[0] ? f[0].toString().trim() : '';
+            const rowMes = f[1] ? f[1].toString().trim() : '';
+
+            if (rowAnio === anioSel) {
+                const idxMes = obtenerIndiceMes(rowMes);
+                if (idxMes !== -1) {
+                    if (mesSel === 'todos' || rowMes.toLowerCase() === mesSel.toLowerCase()) {
+                        let valAsig = idxAsignado !== -1 ? limpiarValorNum(f[idxAsignado]) : 0;
+                        let valEjec = 0;
+
+                        if (idxEjecutado !== -1) {
+                            valEjec = limpiarValorNum(f[idxEjecutado]);
+                        } else {
+                            // Suma de los rubros si no existe una sola columna de ejecutado
+                            valEjec = limpiarValorNum(f[3]) + limpiarValorNum(f[4]) + limpiarValorNum(f[5]) + limpiarValorNum(f[6]);
+                        }
+
+                        datosAsignado[idxMes] += valAsig;
+                        datosEjecutado[idxMes] += valEjec;
+                    }
+                }
+            }
         });
-
-        renderizarFacebook(fbDatos, anioSel, cuentaSel);
-        renderizarInstagram();
-        renderizarTikTok();
-        renderizarTikTokLive();
-        renderizarYouTube();
-        renderizarResumenGeneral();
     }
 
-    // ==========================================
-    // PROCESAMIENTO Y PROYECCIÓN DE FACEBOOK
-    // ==========================================
-    function renderizarFacebook(datosFiltrados, anioSel, cuentaSel) {
-        // 1. KPIs Rápidos del período seleccionado
-        let totalSeguidores = 0;
-        let totalAlcance = 0;
-        let totalInteracciones = 0;
-        let totalPosts = 0;
-
-        datosFiltrados.forEach(row => {
-            totalSeguidores = Math.max(totalSeguidores, parseNumero(row.seguidores || row.seguidoresTotales || row.usuarios));
-            totalAlcance += parseNumero(row.alcance);
-            totalInteracciones += parseNumero(row.interacciones);
-            totalPosts += parseNumero(row.posts || row.publicaciones);
-        });
-
-        document.getElementById('fb-kpi-seguidores').innerText = formatearNumero(totalSeguidores);
-        document.getElementById('fb-kpi-alcance').innerText = formatearNumero(totalAlcance);
-        document.getElementById('fb-kpi-interacciones').innerText = formatearNumero(totalInteracciones);
-        document.getElementById('fb-kpi-posts').innerText = formatearNumero(totalPosts);
-
-        // 2. Render Gráfica Alcance vs Impresiones
-        renderGráficaFBAlcance(datosFiltrados);
-        renderGráficaFBFormatos(datosFiltrados);
-
-        // 3. SECCIÓN REVISIONADA: PROYECCIÓN LÓGICA DE USUARIOS 2027
-        renderProyeccionFacebook(anioSel, cuentaSel);
+    // SI NO HAY DATO DE ASIGNADO EN LAS FILAS, SE UTILIZA EL TOTAL MANUAL PRO-RATEADO ENTRE 12
+    const totalAsignadoProcesado = datosAsignado.reduce((a, b) => a + b, 0);
+    if (totalAsignadoProcesado === 0 && asignadoTotalManual > 0) {
+        const asignadoMensualBase = parseFloat((limpiarValorNum(asignadoTotalManual) / 12).toFixed(2));
+        datosAsignado = new Array(12).fill(asignadoMensualBase);
     }
 
-    function renderGráficaFBAlcance(datos) {
-        const ctx = document.getElementById('chart-fb-alcance-impresiones');
-        if (!ctx) return;
-        if (chartFBAlcance) chartFBAlcance.destroy();
-
-        const labels = datos.map(d => d.mes || 'Mes');
-        const alcanceData = datos.map(d => parseNumero(d.alcance));
-        const impresionesData = datos.map(d => parseNumero(d.impresiones));
-
-        chartFBAlcance = new Chart(ctx, {
-            type: 'line',
+    // REEMPLAZO DEL GRÁFICO 1: "Seguimiento del Gasto vs. Meta" (BARRAS AGRUPADAS - DOS SERIES)
+    if (chartInstances['chart-presupuesto-mensual']) {
+        chartInstances['chart-presupuesto-mensual'].destroy();
+    }
+    const canvasPres1 = document.getElementById('chart-presupuesto-mensual');
+    if (canvasPres1) {
+        const ctxPres1 = canvasPres1.getContext('2d');
+        chartInstances['chart-presupuesto-mensual'] = new Chart(ctxPres1, {
+            type: 'bar',
             data: {
-                labels: labels.length ? labels : MESES_ORDEN,
+                labels: mesesLabels,
                 datasets: [
                     {
-                        label: 'Alcance',
-                        data: alcanceData,
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        fill: true,
-                        tension: 0.3
+                        label: 'Presupuesto Asignado',
+                        data: datosAsignado,
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
                     },
                     {
-                        label: 'Impresiones',
-                        data: impresionesData,
-                        borderColor: '#9333ea',
-                        backgroundColor: 'transparent',
-                        borderDash: [5, 5],
-                        tension: 0.3
+                        label: 'Presupuesto Ejecutado',
+                        data: datosEjecutado,
+                        backgroundColor: '#ef4444',
+                        borderRadius: 4
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'top' } }
-            }
-        });
-    }
-
-    function renderGráficaFBFormatos(datos) {
-        const ctx = document.getElementById('chart-fb-formatos');
-        if (!ctx) return;
-        if (chartFBFormatos) chartFBFormatos.destroy();
-
-        let reels = 0, fotos = 0, carruseles = 0, otros = 0;
-        datos.forEach(d => {
-            reels += parseNumero(d.reels);
-            fotos += parseNumero(d.fotos || d.estaticos);
-            carruseles += parseNumero(d.carruseles);
-            otros += parseNumero(d.otros || d.enlaces);
-        });
-
-        chartFBFormatos = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Reels', 'Fotos / Estáticos', 'Carruseles', 'Otros / Enlaces'],
-                datasets: [{
-                    data: [reels || 10, fotos || 15, carruseles || 8, otros || 5],
-                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom' } }
-            }
-        });
-    } 
-    // ==========================================
-    // PROYECCIÓN ESTACIONAL 2027 (FACEBOOK)
-    // ==========================================
-    function renderProyeccionFacebook(anioSel, cuentaSel) {
-        const ctx = document.getElementById('chart-fb-proyeccion');
-        if (!ctx) return;
-        if (chartFBProyeccion) chartFBProyeccion.destroy();
-
-        // Extraer datos históricos de la cuenta
-        const datosCuenta = (datosGlobales.facebook || []).filter(item => !item.cuenta || item.cuenta === cuentaSel);
-        
-        let baseAlcance = 10000; // Valor base por defecto
-        if (datosCuenta.length > 0) {
-            const suma = datosCuenta.reduce((acc, d) => acc + parseNumero(d.alcance), 0);
-            baseAlcance = (suma / datosCuenta.length) || baseAlcance;
-        }
-
-        // Calcular proyección ajustada por estacionalidad
-        const proyeccion2027 = MESES_ORDEN.map(mes => {
-            const factor = FACTORES_ESTACIONALIDAD_FB[mes] || 1.0;
-            return Math.round(baseAlcance * factor * 1.10); // Crecimiento base +10% ajustado
-        });
-
-        chartFBProyeccion = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: MESES_ORDEN,
-                datasets: [{
-                    label: 'Proyección Alcance 2027',
-                    data: proyeccion2027,
-                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                    borderColor: '#2563eb',
-                    borderWidth: 1,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'top' },
+                    title: {
+                        display: true,
+                        text: 'Seguimiento del Gasto vs. Meta',
+                        font: { size: 14, weight: 'bold' }
+                    },
                     tooltip: {
                         callbacks: {
-                            label: (ctx) => `Alcance Estimado: ${formatearNumero(ctx.raw)}`
+                            label: function(context) {
+                                let val = context.parsed.y || 0;
+                                return `${context.dataset.label}: Q ${val.toLocaleString('es-GT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return 'Q ' + value.toLocaleString('es-GT');
+                            }
                         }
                     }
                 }
@@ -849,244 +1673,56 @@
         });
     }
 
-    // ==========================================
-    // RENDERIZADO INSTAGRAM
-    // ==========================================
-    function renderizarInstagram() {
-        const datosIG = datosGlobales.instagram || [];
-        const ctxEvol = document.getElementById('chart-ig-evolucion');
-        const ctxForm = document.getElementById('chart-ig-formatos');
+    // GRÁFICO 2: PROYECCIÓN DE PRESUPUESTO
+    const anioNum = parseInt(anioSel) || new Date().getFullYear();
+    const anioProyectado = anioNum + 1;
 
-        if (ctxEvol) {
-            if (chartIGEvolucion) chartIGEvolucion.destroy();
-            chartIGEvolucion = new Chart(ctxEvol, {
-                type: 'line',
-                data: {
-                    labels: datosIG.map(d => d.mes || 'Mes'),
-                    datasets: [{
-                        label: 'Interacciones',
-                        data: datosIG.map(d => parseNumero(d.interacciones)),
-                        borderColor: '#e1306c',
-                        backgroundColor: 'rgba(225, 48, 108, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+    document.getElementById('titulo-proyeccion-presupuesto').innerText = `Proyección de Presupuesto ${anioProyectado}`;
+
+    let proyeccionPresupuesto = new Array(12).fill(0);
+    const sumaReal = datosEjecutado.reduce((a, b) => a + b, 0);
+    const promedioMensual = sumaReal > 0 ? sumaReal / 12 : 1000;
+
+    for (let i = 0; i < 12; i++) {
+        const baseMes = datosEjecutado[i] > 0 ? datosEjecutado[i] : promedioMensual;
+        proyeccionPresupuesto[i] = parseFloat((baseMes * 1.05).toFixed(2));
+    }
+
+    crearOActualizarChart('chart-presupuesto-proyeccion', 'bar', mesesLabels, [
+        { label: `Proyección Estimada ${anioProyectado} (Ene-Dic)`, data: proyeccionPresupuesto, backgroundColor: '#10b981' }
+    ]);
+}
+
+function escapeHtml(valor) {
+    return (valor || '').toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+/* =============================================================
+   INICIALIZACIÓN
+============================================================= */
+window.addEventListener('DOMContentLoaded', () => {
+    renderizarTabsRedes();
+    cargarDatosSheets();
+});
+</script> 
+   <style>
+        #dashboard-container {
+            display: none !important;
         }
-
-        if (ctxForm) {
-            if (chartIGFormatos) chartIGFormatos.destroy();
-            chartIGFormatos = new Chart(ctxForm, {
-                type: 'bar',
-                data: {
-                    labels: ['Reels', 'Carruseles', 'Imagen Única', 'Historias'],
-                    datasets: [{
-                        label: 'Alcance Promedio',
-                        data: [15000, 12000, 8000, 5000],
-                        backgroundColor: ['#c13584', '#fd1d1d', '#f56040', '#ffdc80']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+        body.authenticated #dashboard-container {
+            display: flex !important;
         }
-    }
+        body.authenticated #login-screen {
+            display: none !important;
+        }
+    </style> 
 
-    // ==========================================
-    // RENDERIZADO TIKTOK Y TIKTOK LIVE
-    // ==========================================
-    function renderizarTikTok() {
-        const ctx = document.getElementById('chart-tt-vistas');
-        if (!ctx) return;
-        if (chartTTVistas) chartTTVistas.destroy();
+<!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        const datosTT = datosGlobales.tiktok || [];
-        chartTTVistas = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: datosTT.map(d => d.mes || 'Mes'),
-                datasets: [{
-                    label: 'Visualizaciones',
-                    data: datosTT.map(d => parseNumero(d.vistas || d.reproducciones)),
-                    backgroundColor: '#00f2fe'
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    }
-
-    function renderizarTikTokLive() {
-        const ctx = document.getElementById('chart-tt-espectadores');
-        if (!ctx) return;
-        if (chartTTLEspectadores) chartTTLEspectadores.destroy();
-
-        const datosLive = datosGlobales.tiktokLive || [];
-        chartTTLEspectadores = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: datosLive.map(d => d.fecha || d.mes || 'Evento'),
-                datasets: [{
-                    label: 'Espectadores Pico',
-                    data: datosLive.map(d => parseNumero(d.espectadoresPico || d.pico)),
-                    borderColor: '#ff0050',
-                    tension: 0.2
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    }
-
-    // ==========================================
-    // RENDERIZADO YOUTUBE
-    // ==========================================
-    function renderizarYouTube() {
-        const ctx = document.getElementById('chart-yt-rendimiento');
-        if (!ctx) return;
-        if (chartYTRendimiento) chartYTRendimiento.destroy();
-
-        const datosYT = datosGlobales.youtube || [];
-        chartYTRendimiento = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: datosYT.map(d => d.mes || 'Mes'),
-                datasets: [
-                    {
-                        label: 'Vistas',
-                        data: datosYT.map(d => parseNumero(d.vistas)),
-                        borderColor: '#ff0000',
-                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                        fill: true
-                    },
-                    {
-                        label: 'Horas de Reproducción',
-                        data: datosYT.map(d => parseNumero(d.horas)),
-                        borderColor: '#282828'
-                    }
-                ]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    }
-
-    // ==========================================
-    // RESUMEN GENERAL & OTROS MÓDULOS
-    // ==========================================
-    function renderizarResumenGeneral() {
-        const ctx = document.getElementById('chart-resumen-alcance');
-        if (!ctx) return;
-        if (chartResumenAlcance) chartResumenAlcance.destroy();
-
-        chartResumenAlcance = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['Facebook', 'Instagram', 'TikTok', 'YouTube'],
-                datasets: [{
-                    label: 'Distribución de Audiencia',
-                    data: [45, 30, 15, 10],
-                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                    borderColor: '#2563eb',
-                    pointBackgroundColor: '#2563eb'
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    }
-
-    function renderizarModuloImpulsados() {
-        const tbody = document.getElementById('tabla-impulsados-body');
-        if (!tbody) return;
-
-        const datos = datosGlobales.postImpulsados || [];
-        tbody.innerHTML = datos.length ? datos.map(row => `
-            <tr class="hover:bg-slate-50 border-b border-slate-100 text-sm text-gray-700">
-                <td class="p-3 font-medium">${row.post || 'Post'}</td>
-                <td class="p-3">${row.plataforma || 'N/A'}</td>
-                <td class="p-3">${formatearMoneda(parseNumero(row.inversion))}</td>
-                <td class="p-3">${formatearNumero(parseNumero(row.alcance))}</td>
-                <td class="p-3">${formatearNumero(parseNumero(row.clics))}</td>
-                <td class="p-3 font-semibold text-blue-600">${formatearMoneda(parseNumero(row.cpc))}</td>
-            </tr>
-        `).join('') : `<tr><td colspan="6" class="p-4 text-center text-gray-400">Sin registros de post impulsados.</td></tr>`;
-    }
-
-    function renderizarModuloCampanas() {
-        const tbody = document.getElementById('tabla-campanas-body');
-        if (!tbody) return;
-
-        const datos = datosGlobales.campanas || [];
-        tbody.innerHTML = datos.length ? datos.map(row => `
-            <tr class="hover:bg-slate-50 border-b border-slate-100 text-sm text-gray-700">
-                <td class="p-3 font-semibold text-gray-800">${row.nombre || 'Campaña'}</td>
-                <td class="p-3"><span class="px-2 py-1 rounded-full text-xs font-semibold ${row.estado === 'Activa' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}">${row.estado || 'Finalizada'}</span></td>
-                <td class="p-3">${formatearMoneda(parseNumero(row.presupuesto))}</td>
-                <td class="p-3">${formatearMoneda(parseNumero(row.gastado))}</td>
-                <td class="p-3">${formatearNumero(parseNumero(row.conversiones))}</td>
-                <td class="p-3 font-bold text-slate-800">${parseNumero(row.roas).toFixed(2)}x</td>
-            </tr>
-        `).join('') : `<tr><td colspan="6" class="p-4 text-center text-gray-400">Sin campañas registradas.</td></tr>`;
-    }
-
-    function renderizarModuloPresupuesto() {
-        const ctx = document.getElementById('chart-presupuesto-ejecucion');
-        if (!ctx) return;
-        if (chartPresupuestoEjecucion) chartPresupuestoEjecucion.destroy();
-
-        const datosPres = datosGlobales.presupuesto || [];
-        chartPresupuestoEjecucion = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: datosPres.map(d => d.canal || 'Canal'),
-                datasets: [
-                    {
-                        label: 'Asignado',
-                        data: datosPres.map(d => parseNumero(d.asignado)),
-                        backgroundColor: '#cbd5e1'
-                    },
-                    {
-                        label: 'Ejecutado',
-                        data: datosPres.map(d => parseNumero(d.ejecutado)),
-                        backgroundColor: '#2563eb'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'top' } }
-            }
-        });
-    }
-
-    // ==========================================
-    // GESTIÓN DE MODALES
-    // ==========================================
-    function abrirModalCampaña() {
-        const modal = document.getElementById('modal-campana');
-        if (modal) modal.classList.remove('hidden');
-    }
-
-    function cerrarModalCampaña() {
-        const modal = document.getElementById('modal-campana');
-        if (modal) modal.classList.add('hidden');
-    }
-
-    function guardarCampaña(e) {
-        e.preventDefault();
-        const nuevaCampana = {
-            nombre: document.getElementById('input-campana-nombre').value,
-            estado: document.getElementById('input-campana-estado').value,
-            presupuesto: parseNumero(document.getElementById('input-campana-presupuesto').value),
-            gastado: 0,
-            conversiones: 0,
-            roas: 0
-        };
-
-        datosGlobales.campanas.push(nuevaCampana);
-        renderizarModuloCampanas();
-        cerrarModalCampaña();
-        e.target.reset();
-    }
-</script>
+    <!-- Módulos de Autenticación y Permisos -->
+    <script src="wrap-dashboard.js"></script>
+    <script src="permissions.js"></script> 
+    <script src="supabase-auth.js"></script>
 </body>
-</html> 
+</html>
