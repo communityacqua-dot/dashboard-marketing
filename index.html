@@ -677,7 +677,7 @@ function renderizarModuloRedes() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-           title: {
+          title: {
             display: true,
             text: 'Proyección de usuarios de Facebook',
             font: { size: 14, weight: 'bold' }
@@ -685,11 +685,9 @@ function renderizarModuloRedes() {
         }
       }
     });
+catch (err) {
+  console.error('Error en proyección Facebook:', err);
 }
-    }
-  } catch (err) {
-    console.error('Error en proyección Facebook:', err);
-  }
 
   if (redActiva === 'Resumen General') {
     if (seccionTikTokTop) seccionTikTokTop.classList.add('hidden');
