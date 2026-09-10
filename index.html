@@ -1759,33 +1759,36 @@ function renderFacebookUserProjection() {
         
         if (!secContainer) return;
 
-        if (!window.datosGlobales || !Array.isArray(window.datosGlobales['Facebook']) || window.datosGlobales['Facebook'].length === 0) {
+        const cuenta = document.getElementById('filtro-cuenta').value;
+        let nombreHoja = '';
+
+        if (cuenta === 'acquaroni') nombreHoja = 'Facebook Repuestos Acquaroni';
+        else if (cuenta === 'aztec') nombreHoja = 'Facebook de AZtec Oils';
+        else if (cuenta === 'ultra') nombreHoja = 'Facebook Ultra Parts';
+
+        const fbRaw = obtenerHojaPrincipalInsensible(nombreHoja);
+
+        if (!fbRaw || fbRaw.length <= 1) {
             secContainer.classList.add('hidden');
             return;
         }
 
-        const fbRaw = window.datosGlobales['Facebook'].filter(d => 
-            !window.cuentaActiva || window.cuentaActiva === 'TODAS' || String(d.Cuenta || '').toUpperCase() === String(window.cuentaActiva).toUpperCase()
-        );
+        const idxAnio = 0;
+        const idxMes = 1;
+        const idxNuevosSeg = obtenerIndiceColumna(fbRaw, ['nuevos seguidores', 'seguidores ganados', 'seguidores']);
+        const idxTotalSeg = obtenerIndiceColumna(fbRaw, ['total seguidores', 'seguidores totales', 'seguidores']);
 
-        if (fbRaw.length === 0) {
-            secContainer.classList.add('hidden');
-            return;
-        }
-
-        secContainer.classList.remove('hidden');
-
-        const copiaDatos = JSON.parse(JSON.stringify(fbRaw));
+        const filasFiltradas = fbRaw.slice(1);
         const historico = [];
 
-        copiaDatos.forEach(item => {
-            const mesStr = item.Mes || item.MES || item.Fecha || item.FECHA || '';
-            const segTotales = parseFloat(item['Seguidores Totales'] || item['Seguidores'] || item['Fans'] || item['Total Seguidores'] || 0);
-            const segNuevos = parseFloat(item['Nuevos Seguidores'] || item['Nuevos seguidores'] || item['Nuevos Fans'] || 0);
+        filasFiltradas.forEach(row => {
+            const mesStr = row[idxMes] ? `${row[idxMes]} ${row[idxAnio] || ''}`.trim() : '';
+            const segTotales = idxTotalSeg !== -1 ? limpiarValorNum(row[idxTotalSeg]) : 0;
+            const segNuevos = idxNuevosSeg !== -1 ? limpiarValorNum(row[idxNuevosSeg]) : 0;
             
-            if (mesStr) {
+            if (mesStr && (segTotales > 0 || segNuevos > 0)) {
                 historico.push({
-                    mes: String(mesStr).trim(),
+                    mes: mesStr,
                     totales: segTotales,
                     nuevos: segNuevos
                 });
@@ -1793,11 +1796,13 @@ function renderFacebookUserProjection() {
         });
 
         if (historico.length < 3) {
+            secContainer.classList.remove('hidden');
             if (msgContainer) msgContainer.classList.remove('hidden');
             if (chartContainer) chartContainer.classList.add('hidden');
             return;
         }
 
+        secContainer.classList.remove('hidden');
         if (msgContainer) msgContainer.classList.add('hidden');
         if (chartContainer) chartContainer.classList.remove('hidden');
 
@@ -1856,13 +1861,35 @@ function renderFacebookUserProjection() {
 
         const canvasEl = document.getElementById('chartFBProjection');
         if (!canvasEl) return;
-        const ctx = canvasEl.getContext('2d');
 
-        if (window.chartsInstancias && window.chartsInstancias['chartFBProjection']) {
-            window.chartsInstancias['chartFBProjection'].destroy();
-        }
+        crearOActualizarChart('chartFBProjection', 'line', labels, [
+            {
+                label: 'Histórico Real',
+                data: dataHistorico,
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3
+            },
+            {
+                label: 'Proyección 2027',
+                data: dataProyeccion,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                borderDash: [5, 5],
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3
+            }
+        ]);
 
-        const newChart = new Chart(ctx, {
+    } catch (err) {
+        console.warn("Error en Proyección Facebook:", err);
+    }
+}
             type: 'line',
             data: {
                 labels: labels,
