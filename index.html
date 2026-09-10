@@ -8,12 +8,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js para Renderizado de Gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+    <style>
+        /* Estilos para el flujo de autenticación */
+        #dashboard-container {
+            display: flex;
+        }
+        body.has-auth #dashboard-container {
+            display: none !important;
+        }
+        body.authenticated #dashboard-container {
+            display: flex !important;
+        }
+        body.authenticated #login-screen {
+            display: none !important;
+        }
+    </style>
 </head> 
 
 <body class="bg-gray-100 font-sans text-gray-800">
 
-<div class="flex h-screen overflow-hidden">
+<div id="dashboard-container" class="flex h-screen overflow-hidden">
 
     <!-- =========================================================
          SIDEBAR
@@ -145,9 +160,8 @@
                         <p id="kpi-tiempo-reproduccion" class="text-xl font-extrabold text-indigo-600 mt-1">0 hrs</p>
                     </div>
 
-                    <!-- NUEVA FICHA YOUTUBE: NUEVOS ESPECTADORES DE CONTENIDO -->
                     <div id="card-kpi-nuevos-espectadores" class="bg-white p-4 rounded-xl border shadow-sm hidden">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Nuevos Espectadores de Contenido</p>
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Nuevos Espectadores</p>
                         <p id="kpi-nuevos-espectadores" class="text-xl font-extrabold text-cyan-600 mt-1">0</p>
                     </div>
 
@@ -162,18 +176,13 @@
                     </div>
                 </div>
 
-                <!-- TIKTOK VIDEO MÁS VISUALIZADO / LISTADO -->
                 <div id="seccion-tiktok-top-videos" class="hidden">
-                    <!-- Ficha para Mes Específico -->
                     <div id="card-tiktok-top-video-mes" class="bg-white p-5 rounded-xl border shadow-sm hidden">
                         <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Video más visualizado del mes</p>
-                        <blockquote id="tiktok-top-titulo" class="text-lg font-bold text-gray-800 italic border-l-4 border-blue-600 pl-3 py-1 mb-2">
-                            -
-                        </blockquote>
+                        <blockquote id="tiktok-top-titulo" class="text-lg font-bold text-gray-800 italic border-l-4 border-blue-600 pl-3 py-1 mb-2">-</blockquote>
                         <p id="tiktok-top-views" class="text-2xl font-black text-blue-600">0 visualizaciones</p>
                     </div>
 
-                    <!-- TABLA TOP 5 VIDEOS MÁS VISTOS -->
                     <div id="card-tiktok-top-videos-tabla" class="bg-white p-5 rounded-xl border shadow-sm hidden">
                         <h4 class="text-sm font-bold text-gray-700 mb-4">TOP 5 VIDEOS MÁS VISTOS DEL MES</h4>
                         <div class="overflow-x-auto">
@@ -191,40 +200,33 @@
                     </div>
                 </div>
 
-                <!-- TIKTOK LIVE KPIS -->
                 <div id="kpis-tiktok-live" class="grid grid-cols-1 md:grid-cols-6 gap-4 hidden">
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Visualizaciones</p>
                         <p id="kpi-live-views" class="text-xl font-extrabold text-blue-600 mt-1">0</p>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Donadores</p>
                         <p id="kpi-live-donadores" class="text-xl font-extrabold text-purple-600 mt-1">0</p>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Diamantes</p>
                         <p id="kpi-live-diamantes" class="text-xl font-extrabold text-yellow-600 mt-1">0</p>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Seguidores Nuevos</p>
                         <p id="kpi-live-seguidores" class="text-xl font-extrabold text-green-600 mt-1">0</p>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Comentarios</p>
                         <p id="kpi-live-comentarios" class="text-xl font-extrabold text-indigo-600 mt-1">0</p>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
                         <p class="text-xs text-gray-500 font-semibold uppercase">Me Gusta</p>
                         <p id="kpi-live-likes" class="text-xl font-extrabold text-pink-600 mt-1">0</p>
                     </div>
                 </div>
 
-                <!-- SECCIÓN DE GRÁFICOS DINÁMICOS REDES SOCIALES POR PLATAFORMA -->
                 <div id="seccion-graficos-redes" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div class="bg-white p-5 rounded-xl border shadow-sm">
                         <h4 id="titulo-grafico-1" class="text-sm font-bold text-gray-700 mb-4">Gráfico 1</h4>
@@ -232,7 +234,6 @@
                             <canvas id="chart-redes-1"></canvas>
                         </div>
                     </div>
-
                     <div class="bg-white p-5 rounded-xl border shadow-sm">
                         <h4 id="titulo-grafico-2" class="text-sm font-bold text-gray-700 mb-4">Gráfico 2</h4>
                         <div class="h-64">
@@ -240,44 +241,8 @@
                         </div>
                     </div>
                 </div>
-<!-- CONTENEDOR DE PROYECCIÓN FACEBOOK (NUEVO) -->
-<div id="seccion-proyeccion-facebook" class="mt-8">
-    <!-- Indicadores de Proyección -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-           
-             <!-- TARJETA: Proyección de Usuarios de Facebook -->
-<div id="seccion-proyeccion-facebook" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-            <h3 class="text-lg font-bold text-gray-800">Proyección de usuarios de Facebook</h3>
-            <p class="text-xs text-gray-500">Estimación Ene 2027 – Dic 2027 basada en el comportamiento e histórico real</p>
-        </div>
-        <div class="flex items-center gap-6 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
-            <div>
-                <span class="text-xs font-semibold text-gray-500 block uppercase tracking-wider">Total Est. Dic 2027</span>
-                <span id="kpi-fb-proj-total" class="text-lg font-black text-blue-600">--</span>
-            </div>
-            <div class="w-px h-8 bg-blue-200"></div>
-            <div>
-                <span class="text-xs font-semibold text-gray-500 block uppercase tracking-wider">Crecimiento Est.</span>
-                <span id="kpi-fb-proj-growth" class="text-lg font-black text-emerald-600">--</span>
-            </div>
-        </div>
-    </div>
 
-    <div id="fb-projection-msg" class="hidden p-4 bg-amber-50 rounded-xl text-amber-700 text-sm">
-        Se requieren datos históricos para generar la proyección.
-    </div>
-
-    <div id="fb-projection-chart-container" class="relative w-full h-72">
-        <canvas id="chartFBProjection"></canvas>
-    </div>
-</div>   
-                <!-- SECCIÓN: RESUMEN GENERAL (CONSOLIDADO Y PROYECCIÓN) -->
                 <div id="seccion-resumen-general" class="space-y-8 hidden">
-                    
-                    <!-- KPIS GLOBALES -->
                     <div>
                         <h3 class="text-lg font-bold text-gray-800 mb-1">Desempeño Global y Alcance Total</h3>
                         <p class="text-xs text-gray-500 mb-4">Consolidado en tiempo real de Facebook, Instagram, TikTok y YouTube.</p>
@@ -302,17 +267,13 @@
                         </div>
                     </div>
 
-                    <!-- PROYECCIÓN DEL AÑO SIGUIENTE -->
                     <div class="border-t pt-6 space-y-6">
                         <div>
                             <h3 id="titulo-proyeccion-seccion" class="text-lg font-bold text-gray-800 mb-1">Proyección del Año Siguiente</h3>
                             <p class="text-xs text-gray-500">Estimación basada dinámicamente en el ritmo de crecimiento histórico (Run Rate).</p>
                         </div>
 
-                        <!-- TABLA Y GRÁFICOS DE PROYECCIÓN -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            
-                            <!-- TABLA AUDIENCIA PROYECTADA -->
                             <div class="bg-white p-5 rounded-xl border shadow-sm flex flex-col justify-between">
                                 <h4 class="text-sm font-bold text-gray-700 mb-4">Meta de Seguidores / Suscriptores Netos por Red</h4>
                                 <div class="overflow-x-auto">
@@ -330,7 +291,6 @@
                                 </div>
                             </div>
 
-                            <!-- GRÁFICO ALCANCE E IMPRESIONES PROYECTADAS -->
                             <div class="bg-white p-5 rounded-xl border shadow-sm">
                                 <h4 class="text-sm font-bold text-gray-700 mb-4">Alcance e Impresiones Proyectadas (Mensual)</h4>
                                 <div class="h-60">
@@ -338,17 +298,14 @@
                                 </div>
                             </div>
 
-                            <!-- ENGAGEMENT ESPERADO Y TIKTOK LIVE -->
                             <div class="bg-white p-5 rounded-xl border shadow-sm md:col-span-2">
                                 <h4 class="text-sm font-bold text-gray-700 mb-4">Volumen de Interacciones Esperadas por Trimestre</h4>
                                 <div class="h-64">
                                     <canvas id="chart-resumen-proyeccion-engagement"></canvas>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </section>
 
@@ -357,7 +314,6 @@
             ================================================== -->
             <section id="mod-posts" class="modulo-seccion hidden space-y-6">
                 <h3 class="text-lg font-bold">Publicaciones Promocionadas</h3>
-
                 <div class="bg-white rounded-xl border shadow-sm p-4 overflow-x-auto">
                     <table class="w-full text-sm text-left border-collapse">
                         <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
@@ -386,7 +342,6 @@
                     <h3 class="text-lg font-bold">Gestión de Campañas</h3>
                     <p class="text-sm text-gray-500 mt-1">Selecciona una campaña para ver sus posts, artes y métricas.</p>
                 </div>
-
                 <div id="contenedor-campanas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </section>
 
@@ -409,39 +364,32 @@
                         <p class="text-xs text-gray-500 font-bold uppercase">Asignado Total</p>
                         <p id="pres-asignado" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-green-500">
                         <p class="text-xs text-gray-500 font-bold uppercase">Ejecutado Total</p>
                         <p id="pres-ejecutado" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-purple-500">
                         <p class="text-xs text-gray-500 font-bold uppercase">Redes Sociales</p>
                         <p id="pres-redes-soc" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-red-500">
                         <p class="text-xs text-gray-500 font-bold uppercase">Repuestos Acquaroni</p>
                         <p id="pres-acquaroni" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-yellow-500">
                         <p class="text-xs text-gray-500 font-bold uppercase">AZtec Oils</p>
                         <p id="pres-aztec" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-orange-500">
                         <p class="text-xs text-gray-500 font-bold uppercase">Mercadeo</p>
                         <p id="pres-mercadeo" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-indigo-500">
                         <p class="text-xs text-gray-500 font-bold uppercase">Plataformas Ext.</p>
                         <p id="pres-plataformas-m4" class="text-xl font-extrabold text-gray-800 mt-2">Q 0.00</p>
                     </div>
                 </div>
 
-                <!-- GRÁFICO DE PRESUPUESTO CON PROYECCIÓN Y PORCENTAJES -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div class="bg-white p-5 rounded-xl border shadow-sm">
                         <h4 class="text-sm font-bold text-gray-700 mb-4">Seguimiento del Gasto vs. Meta</h4>
@@ -449,7 +397,6 @@
                             <canvas id="chart-presupuesto-mensual"></canvas>
                         </div>
                     </div>
-
                     <div class="bg-white p-5 rounded-xl border shadow-sm">
                         <h4 class="text-sm font-bold text-gray-700 mb-4 flex justify-between items-center">
                             <span id="titulo-proyeccion-presupuesto">Proyección de Presupuesto Año Próximo</span>
@@ -467,7 +414,7 @@
 </div>
 
 <!-- =============================================================
-     MODAL VISOR DE IMÁGENES A PANTALLA COMPLETA
+     MODALES
 ============================================================== -->
 <div id="modal-visor-imagen" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4 cursor-pointer" onclick="cerrarVisorImagen()">
     <div class="relative max-w-4xl max-h-[90vh]">
@@ -478,9 +425,6 @@
     </div>
 </div>
 
-<!-- =============================================================
-     MODAL CAMPAÑA
-============================================================== -->
 <div id="modal-campana" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-6xl w-full max-h-[92vh] overflow-y-auto shadow-2xl">
         <div class="sticky top-0 z-20 bg-white border-b px-6 py-5">
@@ -499,10 +443,9 @@
 </div>
 
 <!-- =============================================================
-     SCRIPT PRINCIPAL CON ÚNICA FUENTE DE DATOS (EXCEL 1)
+     SCRIPT PRINCIPAL
 ============================================================== -->
 <script>
-// FUENTE ÚNICA — DATOS DEL DASHBOARD (EXCEL 1)
 const URL_FUENTE_PRINCIPAL = 'https://script.google.com/macros/s/AKfycbzaYdXgo9yvjXzajv9vVb2tYml8TphKv_B2VRi_N_aBxWhmIVu4jeY4OszRgGS0Mbz1/exec';
 
 let rawDataPrincipal = {};
@@ -510,9 +453,6 @@ let redActiva = '';
 let chartInstances = {};
 let asignadoTotalManual = localStorage.getItem('presupuesto_asignado_total') || 0;
 
-/* =============================================================
-   CAMBIAR MÓDULO
-============================================================= */
 function cambiarModulo(moduloId) {
     document.querySelectorAll('.modulo-seccion').forEach(sec => sec.classList.add('hidden'));
     document.querySelectorAll('.btn-nav').forEach(btn => {
@@ -535,17 +475,11 @@ function cambiarModulo(moduloId) {
     document.getElementById('titulo-seccion').innerText = titulos[moduloId];
 }
 
-/* =============================================================
-   CAMBIO DE CUENTA
-============================================================= */
 function cambiarCuentaPrincipal() {
     renderizarTabsRedes();
     actualizarTodo();
 }
 
-/* =============================================================
-   TABS REDES
-============================================================= */
 function renderizarTabsRedes() {
     const cuenta = document.getElementById('filtro-cuenta').value;
     const contenedorTabs = document.getElementById('tabs-redes');
@@ -582,9 +516,6 @@ function renderizarTabsRedes() {
     });
 }
 
-/* =============================================================
-   OBTENER HOJA INSENSIBLE A MAYÚSCULAS/ESPACIOS (EXCEL 1)
-============================================================= */
 function obtenerHojaPrincipalInsensible(busqueda) {
     if (!rawDataPrincipal) return [];
     const keyLimpia = busqueda.toLowerCase().replace(/\s+/g, '');
@@ -592,27 +523,21 @@ function obtenerHojaPrincipalInsensible(busqueda) {
     return claveEncontrada ? rawDataPrincipal[claveEncontrada] : [];
 }
 
-/* =============================================================
-   CARGAR DATOS DESDE EXCEL 1
-============================================================= */
 async function cargarDatosSheets() {
     const loader = document.getElementById('loader-status');
-    loader.classList.remove('hidden');
+    if (loader) loader.classList.remove('hidden');
 
     try {
         const response = await fetch(URL_FUENTE_PRINCIPAL);
         rawDataPrincipal = await response.json();
     } catch (err) {
-        console.error('Error al cargar datos del Excel 1:', err);
+        console.error('Error al cargar datos del Excel:', err);
     }
 
-    loader.classList.add('hidden');
+    if (loader) loader.classList.add('hidden');
     actualizarTodo();
 }
 
-/* =============================================================
-   FILTRO GENERAL
-============================================================= */
 function filtrarFilas(filas, indexAnio = 0, indexMes = 1) {
     if (!filas || filas.length <= 1) return [];
 
@@ -626,18 +551,12 @@ function filtrarFilas(filas, indexAnio = 0, indexMes = 1) {
     });
 }
 
-/* =============================================================
-   LIMPIAR NÚMEROS
-============================================================= */
 function limpiarValorNum(val) {
     if (val === null || val === undefined || val === '') return 0;
     const num = parseFloat(val.toString().replace(/[^0-9.-]+/g, ''));
     return isNaN(num) ? 0 : num;
 }
 
-/* =============================================================
-   OBTENER ÍNDICE DE COLUMNA POR NOMBRE (EXACTO / INSENSIBLE)
-============================================================= */
 function obtenerIndiceColumna(filas, nombresPosibles) {
     if (!filas || filas.length === 0) return -1;
     const encabezados = filas[0].map(h => h ? h.toString().toLowerCase().trim().replace(/\s+/g, ' ') : '');
@@ -657,9 +576,6 @@ function obtenerIndiceColumna(filas, nombresPosibles) {
     return -1;
 }
 
-/* =============================================================
-   ACTUALIZAR TODO
-============================================================= */
 function actualizarTodo() {
     renderizarModuloRedes();
     renderizarModuloPosts();
@@ -667,9 +583,6 @@ function actualizarTodo() {
     renderizarModuloPresupuesto();
 }
 
-/* =============================================================
-   REDES SOCIALES (EXCLUSIVAMENTE EXCEL 1)
-============================================================= */
 function renderizarModuloRedes() {
     const cuenta = document.getElementById('filtro-cuenta').value;
     const kpisEstandar = document.getElementById('kpis-estandar');
@@ -752,7 +665,6 @@ function renderizarModuloRedes() {
         const cardInversion = document.getElementById('card-kpi-inversion');
         const lblSeguidores = document.getElementById('lbl-kpi-seguidores');
 
-        // Restablecer visibilidad por defecto de FICHAS
         cardCtr.classList.remove('hidden');
         cardAlcance.classList.remove('hidden');
         cardAlcanceOrg.classList.remove('hidden');
@@ -784,7 +696,6 @@ function renderizarModuloRedes() {
             lblSeguidores.innerText = 'SUSCRIPTORES GANADOS';
         }
 
-        // Mapeo dinámico de Índices por Nombre Exacto para FICHAS EXISTENTES
         const idxInversion = obtenerIndiceColumna(filas, ['inversion', 'inversión']);
         const idxCtr = obtenerIndiceColumna(filas, ['ctr', 'ctr promedio']);
         const idxAlcance = obtenerIndiceColumna(filas, ['alcance', 'alcance total']);
@@ -793,23 +704,15 @@ function renderizarModuloRedes() {
         
         let idxInteracciones = -1;
         if (redActiva === 'Instagram') {
-            if (cuenta === 'acquaroni') idxInteracciones = 3; // Columna D
-            else if (cuenta === 'aztec') idxInteracciones = 6;    // Columna G
+            if (cuenta === 'acquaroni') idxInteracciones = 3;
+            else if (cuenta === 'aztec') idxInteracciones = 6;
             else idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
         } else {
             idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
         }
         
-        const idxTiempoRepro = obtenerIndiceColumna(filas, [
-            'tiempo de reproduccion', 'tiempo de reproducción', 'tiempo de reproduccion (horas)', 
-            'tiempo de reproducción (horas)', 'horas de reproduccion', 'horas de reproducción', 
-            'tiempo de reproduccion (hrs)', 'tiempo de reproducción (hrs)', 'tiempo reproduccion'
-        ]);
-
-        const idxNuevosEspectadores = obtenerIndiceColumna(filas, [
-            'nuevos espectadores de contenido', 'nuevos espectadores', 'espectadores de contenido'
-        ]);
-        
+        const idxTiempoRepro = obtenerIndiceColumna(filas, ['tiempo de reproduccion', 'tiempo de reproducción', 'horas de reproduccion', 'horas de reproducción']);
+        const idxNuevosEspectadores = obtenerIndiceColumna(filas, ['nuevos espectadores de contenido', 'nuevos espectadores', 'espectadores de contenido']);
         const idxNuevosSeguidores = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
 
         let totalInv = 0, totalAlc = 0, totalAlcOrg = 0, totalImp = 0, totalInt = 0, totalTiempoRepro = 0, totalNuevosEsp = 0, totalNuevosSeg = 0;
@@ -819,7 +722,6 @@ function renderizarModuloRedes() {
 
         filasFiltradas.forEach(f => {
             if (idxInversion !== -1) totalInv += limpiarValorNum(f[idxInversion]);
-            
             if (idxCtr !== -1) {
                 const ctrVal = limpiarValorNum(f[idxCtr]);
                 if (ctrVal > 0) {
@@ -827,7 +729,6 @@ function renderizarModuloRedes() {
                     countCtr++;
                 }
             }
-            
             if (idxAlcance !== -1) totalAlc += limpiarValorNum(f[idxAlcance]);
             if (idxAlcanceOrg !== -1) totalAlcOrg += limpiarValorNum(f[idxAlcanceOrg]);
             if (idxImpresiones !== -1) totalImp += limpiarValorNum(f[idxImpresiones]);
@@ -837,7 +738,6 @@ function renderizarModuloRedes() {
             if (idxNuevosSeguidores !== -1) totalNuevosSeg += limpiarValorNum(f[idxNuevosSeguidores]);
         });
 
-        // ASIGNACIÓN A FICHAS
         document.getElementById('kpi-inversion').innerText = `Q ${totalInv.toFixed(2)}`;
         document.getElementById('kpi-ctr').innerText = `${(countCtr ? sumCtr / countCtr : 0).toFixed(2)}%`;
         document.getElementById('kpi-alcance').innerText = totalAlc.toLocaleString();
@@ -861,14 +761,10 @@ function renderizarModuloRedes() {
     }
 }
 
-/* =============================================================
-   REEMPLAZO DE GRÁFICOS SOLICITADOS (FACEBOOK, INSTAGRAM, TIKTOK, YOUTUBE)
-============================================================= */
 function renderNuevosGraficosEspecificos(filasFiltradas, todasLasFilas) {
     const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
     if (redActiva === 'Facebook') {
-        // 1. FACEBOOK
         document.getElementById('titulo-grafico-1').innerText = 'Alcance vs. Impresiones';
         document.getElementById('titulo-grafico-2').innerText = 'Alcance Orgánico vs. Pagado';
 
@@ -892,20 +788,17 @@ function renderNuevosGraficosEspecificos(filasFiltradas, todasLasFilas) {
             }
         });
 
-        // Gráfico 1 - Líneas
         crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
             { label: 'Alcance Total', data: dataAlc, borderColor: '#8b5cf6', fill: false },
             { label: 'Impresiones', data: dataImp, borderColor: '#f97316', fill: false }
         ]);
 
-        // Gráfico 2 - Barras Agrupadas
         crearOActualizarChart('chart-redes-2', 'bar', mesesLabels, [
             { label: 'Alcance Orgánico', data: dataAlcOrg, backgroundColor: '#10b981' },
             { label: 'Alcance Pagado', data: dataAlcPag, backgroundColor: '#3b82f6' }
         ]);
 
     } else if (redActiva === 'Instagram') {
-        // 2. INSTAGRAM
         document.getElementById('titulo-grafico-1').innerText = 'Evolución del Rendimiento';
         document.getElementById('titulo-grafico-2').innerText = 'Rendimiento por Formato';
 
@@ -923,14 +816,12 @@ function renderNuevosGraficosEspecificos(filasFiltradas, todasLasFilas) {
             }
         });
 
-        // Gráfico 1 - Líneas
         crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
             { label: 'Alcance', data: dataAlc, borderColor: '#e1306c', fill: false },
             { label: 'Impresiones', data: dataImp, borderColor: '#f59e0b', fill: false }
         ]);
 
-        // Gráfico 2 - Doughnut (Rendimiento por Formato)
-        const idxFormato = obtenerIndiceColumna(todasLasFilas, ['formato', 'tipo de contenido', 'tipo contenido', 'formato de contenido']);
+        const idxFormato = obtenerIndiceColumna(todasLasFilas, ['formato', 'tipo de contenido', 'tipo contenido']);
         const idxMetricFormato = idxAlc !== -1 ? idxAlc : obtenerIndiceColumna(todasLasFilas, ['engagement', 'interacciones']);
 
         let totalReels = 0, totalCarruseles = 0, totalEstaticas = 0, totalHistorias = 0;
@@ -942,8 +833,8 @@ function renderNuevosGraficosEspecificos(filasFiltradas, todasLasFilas) {
 
                 if (fmt.includes('reel')) totalReels += val;
                 else if (fmt.includes('carrusel') || fmt.includes('carousel')) totalCarruseles += val;
-                else if (fmt.includes('foto') || fmt.includes('estatica') || fmt.includes('estática') || fmt.includes('imagen')) totalEstaticas += val;
-                else if (fmt.includes('historia') || fmt.includes('story') || fmt.includes('stories')) totalHistorias += val;
+                else if (fmt.includes('foto') || fmt.includes('estatica') || fmt.includes('imagen')) totalEstaticas += val;
+                else if (fmt.includes('historia') || fmt.includes('story')) totalHistorias += val;
             });
         }
 
@@ -965,14 +856,13 @@ function renderNuevosGraficosEspecificos(filasFiltradas, todasLasFilas) {
         ]);
 
     } else if (redActiva === 'TikTok') {
-        // 3. TIKTOK
         document.getElementById('titulo-grafico-1').innerText = 'Visualizaciones vs. Alcance';
         document.getElementById('titulo-grafico-2').innerText = 'Retención y Calidad del Contenido';
 
         const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones totales de videos', 'video views', 'visualizaciones', 'vistas']);
         const idxAlc = obtenerIndiceColumna(todasLasFilas, ['alcance', 'alcance total']);
-        const idxWatchTime = obtenerIndiceColumna(todasLasFilas, ['tiempo promedio de reproduccion', 'tiempo promedio de reproducción', 'average watch time']);
-        const idxCompletion = obtenerIndiceColumna(todasLasFilas, ['porcentaje de video visto completo', 'completion rate', '% visto completo']);
+        const idxWatchTime = obtenerIndiceColumna(todasLasFilas, ['tiempo promedio de reproduccion', 'average watch time']);
+        const idxCompletion = obtenerIndiceColumna(todasLasFilas, ['porcentaje de video visto completo', 'completion rate']);
 
         let dataViews = new Array(12).fill(0);
         let dataAlc = new Array(12).fill(0);
@@ -989,26 +879,23 @@ function renderNuevosGraficosEspecificos(filasFiltradas, todasLasFilas) {
             }
         });
 
-        // Gráfico 1 - Líneas
         crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
             { label: 'Visualizaciones Totales', data: dataViews, borderColor: '#000000', fill: false },
             { label: 'Alcance', data: dataAlc, borderColor: '#2563eb', fill: false }
         ]);
 
-        // Gráfico 2 - Barras (Retención y Calidad)
         crearOActualizarChart('chart-redes-2', 'bar', mesesLabels, [
             { label: 'Tiempo Prom. Reproducción (s)', data: dataWatchTime, backgroundColor: '#06b6d4' },
             { label: '% Video Visto Completo', data: dataCompletion, backgroundColor: '#8b5cf6' }
         ]);
 
     } else if (redActiva === 'YouTube') {
-        // 4. YOUTUBE
         document.getElementById('titulo-grafico-1').innerText = 'Visualizaciones vs. Impresiones';
         document.getElementById('titulo-grafico-2').innerText = 'CTR — Eficiencia de Clics';
 
         const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'views', 'vistas']);
         const idxImp = obtenerIndiceColumna(todasLasFilas, ['impresiones']);
-        const idxCtr = obtenerIndiceColumna(todasLasFilas, ['ctr', 'ctr promedio', 'click-through rate']);
+        const idxCtr = obtenerIndiceColumna(todasLasFilas, ['ctr', 'ctr promedio']);
 
         let dataViews = new Array(12).fill(0);
         let dataImp = new Array(12).fill(0);
@@ -1023,22 +910,17 @@ function renderNuevosGraficosEspecificos(filasFiltradas, todasLasFilas) {
             }
         });
 
-        // Gráfico 1 - Líneas
         crearOActualizarChart('chart-redes-1', 'line', mesesLabels, [
             { label: 'Visualizaciones (Views)', data: dataViews, borderColor: '#ff0000', fill: false },
             { label: 'Impresiones', data: dataImp, borderColor: '#f97316', fill: false }
         ]);
 
-        // Gráfico 2 - Barras (CTR)
         crearOActualizarChart('chart-redes-2', 'bar', mesesLabels, [
             { label: 'CTR (%)', data: dataCtr, backgroundColor: '#10b981' }
         ]);
     }
 }
 
-/* =============================================================
-   SECCIÓN: RESUMEN GENERAL (CONSOLIDADO Y PROYECCIÓN DINO)
-============================================================= */
 function renderizarResumenGeneral() {
     const cuenta = document.getElementById('filtro-cuenta').value;
     const anioSel = document.getElementById('filtro-anio').value;
@@ -1091,7 +973,7 @@ function renderizarResumenGeneral() {
             else if (cuenta === 'aztec') idxInt = 6;
             else idxInt = obtenerIndiceColumna(filas, ['interacciones']);
         } else {
-            idxInt = obtenerIndiceColumna(filas, ['interacciones', 'me gusta', 'comentarios', 'compartidos', 'guardados', 'clics']);
+            idxInt = obtenerIndiceColumna(filas, ['interacciones', 'me gusta', 'comentarios']);
         }
 
         let totalSegRed = 0;
@@ -1129,11 +1011,9 @@ function renderizarResumenGeneral() {
     document.getElementById('kpi-resumen-seguidores').innerText = globalSeguidores.toLocaleString();
     document.getElementById('kpi-resumen-interacciones').innerText = globalInteracciones.toLocaleString();
 
-    // PROYECCIÓN DEL AÑO SIGUIENTE (RUN RATE)
     const anioSiguiente = parseInt(anioSel) + 1;
     document.getElementById('titulo-proyeccion-seccion').innerText = `Proyección del Año Siguiente (${anioSiguiente})`;
 
-    // TABLA PROYECCIÓN DE SEGUIDORES
     const tbodySeg = document.getElementById('tabla-proyeccion-seguidores');
     tbodySeg.innerHTML = '';
 
@@ -1152,9 +1032,7 @@ function renderizarResumenGeneral() {
         `;
     });
 
-    // GRÁFICO ALCANCE E IMPRESIONES PROYECTADAS
     const mesesLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    
     let proyAlcance = histAlcanceMensual.map(v => Math.round((v > 0 ? v : globalAlcance / 12) * 1.15));
     let proyImpresiones = histImpresionesMensual.map(v => Math.round((v > 0 ? v : globalImpresiones / 12) * 1.15));
 
@@ -1163,7 +1041,6 @@ function renderizarResumenGeneral() {
         { label: `Impresiones Proyectadas ${anioSiguiente}`, data: proyImpresiones, borderColor: '#f97316', fill: false }
     ]);
 
-    // GRÁFICO VOLUMEN DE INTERACCIONES ESPERADAS POR TRIMESTRE
     let sumQ1 = histInteraccionesMensual.slice(0, 3).reduce((a, b) => a + b, 0);
     let sumQ2 = histInteraccionesMensual.slice(3, 6).reduce((a, b) => a + b, 0);
     let sumQ3 = histInteraccionesMensual.slice(6, 9).reduce((a, b) => a + b, 0);
@@ -1180,14 +1057,11 @@ function renderizarResumenGeneral() {
     ]);
 }
 
-/* =============================================================
-   TIKTOK — TABLA TOP 5 VIDEOS MÁS VISTOS DEL MES / PERÍODO
-============================================================= */
 function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
     const cardMes = document.getElementById('card-tiktok-top-video-mes');
     const cardTabla = document.getElementById('card-tiktok-top-videos-tabla');
 
-    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['video / titular', 'video/titular', 'titulo del video', 'título del video', 'titulo de video', 'título de video', 'titulo', 'título', 'nombre del video', 'publicacion', 'publicación']);
+    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['video / titular', 'video/titular', 'titulo del video', 'título del video', 'titulo', 'título']);
     const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'vistas', 'reproducciones']);
 
     if (idxTitulo === -1 || idxViews === -1) {
@@ -1272,9 +1146,6 @@ function crearOActualizarChart(canvasId, type, labels, datasets) {
     });
 }
 
-/* =============================================================
-   POST IMPULSADOS (EXCLUSIVAMENTE EXCEL 1)
-============================================================= */
 function renderizarModuloPosts() {
     const cuenta = document.getElementById('filtro-cuenta').value;
     const nombreHoja = cuenta === 'acquaroni' ? 'Post impulsados Repuestos Acquaroni' : 'Post impulsados AZtec Oils';
@@ -1338,9 +1209,6 @@ function cerrarVisorImagen() {
     document.getElementById('modal-visor-imagen').classList.remove('flex');
 }
 
-/* =============================================================
-   CAMPAÑAS (EXCLUSIVAMENTE EXCEL 1)
-============================================================= */
 function normalizarCampana(valor) {
     return (valor || '').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
@@ -1491,58 +1359,6 @@ function cerrarModalCampana() {
     document.getElementById('modal-campana').classList.remove('flex');
 }
 
-/* =============================================================
-   TIKTOK TOP VIDEOS COMPLEMENTARIO
-============================================================= */
-function renderTikTokTopVideos(filasFiltradas, todasLasFilas) {
-    const cardMes = document.getElementById('card-tiktok-top-video-mes');
-    const cardTabla = document.getElementById('card-tiktok-top-videos-tabla');
-
-    const idxTitulo = obtenerIndiceColumna(todasLasFilas, ['video / titular', 'video/titular', 'titulo del video', 'título del video', 'titulo de video', 'título de video', 'titulo', 'título', 'nombre del video', 'publicacion', 'publicación']);
-    const idxViews = obtenerIndiceColumna(todasLasFilas, ['visualizaciones', 'vistas', 'reproducciones']);
-
-    if (idxTitulo === -1 || idxViews === -1) {
-        cardMes.classList.add('hidden');
-        cardTabla.classList.add('hidden');
-        return;
-    }
-
-    cardMes.classList.add('hidden');
-    cardTabla.classList.remove('hidden');
-
-    const listaVideos = [];
-    filasFiltradas.forEach(f => {
-        const titulo = f[idxTitulo] ? f[idxTitulo].toString().trim() : '';
-        const views = limpiarValorNum(f[idxViews]);
-        if (titulo !== '') {
-            listaVideos.push({ titulo, views });
-        }
-    });
-
-    listaVideos.sort((a, b) => b.views - a.views);
-
-    const tbody = document.getElementById('tabla-tiktok-top-body');
-    tbody.innerHTML = '';
-
-    if (listaVideos.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-gray-500">No se encontraron videos registrados.</td></tr>`;
-    } else {
-        const top5Videos = listaVideos.slice(0, 5);
-        top5Videos.forEach((v, index) => {
-            tbody.innerHTML += `
-                <tr class="hover:bg-gray-50">
-                    <td class="p-3 font-bold text-gray-400 text-center">${index + 1}</td>
-                    <td class="p-3 font-medium text-gray-800">${escapeHtml(v.titulo)}</td>
-                    <td class="p-3 text-right font-bold text-blue-600">${v.views.toLocaleString()}</td>
-                </tr>
-            `;
-        });
-    }
-}
-
-/* =============================================================
-   MÓDULO PRESUPUESTO & ESTADO DE CUENTA
-============================================================= */
 function solicitarAsignadoTotal() {
     const valor = prompt('Ingresa el monto del Asignado Total (Q):', asignadoTotalManual);
     if (valor !== null) {
@@ -1552,9 +1368,6 @@ function solicitarAsignadoTotal() {
     }
 }
 
-/* =============================================================
-   MÓDULO PRESUPUESTO (EXCLUSIVAMENTE DESDE EXCEL 1)
-============================================================= */
 function renderizarModuloPresupuesto() {
     const filasPresupuesto = obtenerHojaPrincipalInsensible('Presupuesto');
 
@@ -1582,7 +1395,6 @@ function renderizarModuloPresupuesto() {
 
     const filasPlataformas = obtenerHojaPrincipalInsensible('Plataformas Externas');
     const idxMontoEjecutadoPlat = obtenerIndiceColumna(filasPlataformas, ['monto ejecutado']);
-
     const filasFiltradasPlat = filtrarFilas(filasPlataformas, 0, 1);
 
     let totalPlataformasExternas = 0;
@@ -1608,7 +1420,6 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupues
     const anioSel = document.getElementById('filtro-anio').value;
     const mesSel = document.getElementById('filtro-mes').value;
 
-    // Detectar índices dinámicos de Presupuesto Asignado y Ejecutado
     const idxAsignado = obtenerIndiceColumna(filasPresupuesto, ['presupuesto asignado', 'asignado', 'presupuesto']);
     const idxEjecutado = obtenerIndiceColumna(filasPresupuesto, ['ejecutado total', 'presupuesto ejecutado', 'ejecutado', 'gasto']);
 
@@ -1625,14 +1436,7 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupues
                 if (idxMes !== -1) {
                     if (mesSel === 'todos' || rowMes.toLowerCase() === mesSel.toLowerCase()) {
                         let valAsig = idxAsignado !== -1 ? limpiarValorNum(f[idxAsignado]) : 0;
-                        let valEjec = 0;
-
-                        if (idxEjecutado !== -1) {
-                            valEjec = limpiarValorNum(f[idxEjecutado]);
-                        } else {
-                            // Suma de los rubros si no existe una sola columna de ejecutado
-                            valEjec = limpiarValorNum(f[3]) + limpiarValorNum(f[4]) + limpiarValorNum(f[5]) + limpiarValorNum(f[6]);
-                        }
+                        let valEjec = idxEjecutado !== -1 ? limpiarValorNum(f[idxEjecutado]) : (limpiarValorNum(f[3]) + limpiarValorNum(f[4]) + limpiarValorNum(f[5]) + limpiarValorNum(f[6]));
 
                         datosAsignado[idxMes] += valAsig;
                         datosEjecutado[idxMes] += valEjec;
@@ -1642,14 +1446,12 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupues
         });
     }
 
-    // SI NO HAY DATO DE ASIGNADO EN LAS FILAS, SE UTILIZA EL TOTAL MANUAL PRO-RATEADO ENTRE 12
     const totalAsignadoProcesado = datosAsignado.reduce((a, b) => a + b, 0);
     if (totalAsignadoProcesado === 0 && asignadoTotalManual > 0) {
         const asignadoMensualBase = parseFloat((limpiarValorNum(asignadoTotalManual) / 12).toFixed(2));
         datosAsignado = new Array(12).fill(asignadoMensualBase);
     }
 
-    // REEMPLAZO DEL GRÁFICO 1: "Seguimiento del Gasto vs. Meta" (BARRAS AGRUPADAS - DOS SERIES)
     if (chartInstances['chart-presupuesto-mensual']) {
         chartInstances['chart-presupuesto-mensual'].destroy();
     }
@@ -1683,30 +1485,12 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupues
                         display: true,
                         text: 'Seguimiento del Gasto vs. Meta',
                         font: { size: 14, weight: 'bold' }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let val = context.parsed.y || 0;
-                                return `${context.dataset.label}: Q ${val.toLocaleString('es-GT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        ticks: {
-                            callback: function(value) {
-                                return 'Q ' + value.toLocaleString('es-GT');
-                            }
-                        }
                     }
                 }
             }
         });
     }
 
-    // GRÁFICO 2: PROYECCIÓN DE PRESUPUESTO
     const anioNum = parseInt(anioSel) || new Date().getFullYear();
     const anioProyectado = anioNum + 1;
 
@@ -1730,209 +1514,15 @@ function escapeHtml(valor) {
     return (valor || '').toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
-/* =============================================================
-   INICIALIZACIÓN
-============================================================= */
 window.addEventListener('DOMContentLoaded', () => {
     renderizarTabsRedes();
     cargarDatosSheets();
 });
-   // Llamada automática a la proyección
-    if (typeof renderFacebookUserProjection === 'function') {
-        renderFacebookUserProjection();
-    } 
-// ==========================================
-// MÓDULO AISLADO: PROYECCIÓN FACEBOOK 2027
-// ==========================================
-function renderFacebookUserProjection() {
-    try {
-        const secContainer = document.getElementById('seccion-proyeccion-facebook');
-        const msgContainer = document.getElementById('fb-projection-msg');
-        const chartContainer = document.getElementById('fb-projection-chart-container');
-        
-        if (!secContainer) return;
-
-        if (!window.datosGlobales || !Array.isArray(window.datosGlobales['Facebook']) || window.datosGlobales['Facebook'].length === 0) {
-            secContainer.classList.add('hidden');
-            return;
-        }
-
-        const fbRaw = window.datosGlobales['Facebook'].filter(d => 
-            !window.cuentaActiva || window.cuentaActiva === 'TODAS' || String(d.Cuenta || '').toUpperCase() === String(window.cuentaActiva).toUpperCase()
-        );
-
-        if (fbRaw.length === 0) {
-            secContainer.classList.add('hidden');
-            return;
-        }
-
-        secContainer.classList.remove('hidden');
-
-        const copiaDatos = JSON.parse(JSON.stringify(fbRaw));
-        const historico = [];
-
-        copiaDatos.forEach(item => {
-            const mesStr = item.Mes || item.MES || item.Fecha || item.FECHA || '';
-            const segTotales = parseFloat(item['Seguidores Totales'] || item['Seguidores'] || item['Fans'] || item['Total Seguidores'] || 0);
-            const segNuevos = parseFloat(item['Nuevos Seguidores'] || item['Nuevos seguidores'] || item['Nuevos Fans'] || 0);
-            
-            if (mesStr) {
-                historico.push({
-                    mes: String(mesStr).trim(),
-                    totales: segTotales,
-                    nuevos: segNuevos
-                });
-            }
-        });
-
-        if (historico.length < 3) {
-            if (msgContainer) msgContainer.classList.remove('hidden');
-            if (chartContainer) chartContainer.classList.add('hidden');
-            return;
-        }
-
-        if (msgContainer) msgContainer.classList.add('hidden');
-        if (chartContainer) chartContainer.classList.remove('hidden');
-
-        const promedioNuevos = historico.reduce((acc, h) => acc + h.nuevos, 0) / historico.length;
-        let ultimoTotal = historico[historico.length - 1].totales;
-
-        if (ultimoTotal === 0) {
-            ultimoTotal = historico.reduce((acc, h) => acc + h.nuevos, 0);
-        }
-
-        const meses2027 = [
-            { nombre: 'Ene 2027', factor: 0.95 },
-            { nombre: 'Feb 2027', factor: 0.90 },
-            { nombre: 'Mar 2027', factor: 1.05 },
-            { nombre: 'Abr 2027', factor: 1.10 },
-            { nombre: 'May 2027', factor: 1.00 },
-            { nombre: 'Jun 2027', factor: 0.95 },
-            { nombre: 'Jul 2027', factor: 1.05 },
-            { nombre: 'Ago 2027', factor: 1.00 },
-            { nombre: 'Sep 2027', factor: 1.15 },
-            { nombre: 'Oct 2027', factor: 1.05 },
-            { nombre: 'Nov 2027', factor: 1.20 },
-            { nombre: 'Dic 2027', factor: 1.30 }
-        ];
-
-        const labels = historico.map(h => h.mes);
-        const dataHistorico = historico.map(h => h.totales > 0 ? h.totales : null);
-        const dataProyeccion = new Array(historico.length - 1).fill(null);
-        
-        const valorInicialProy = historico[historico.length - 1].totales > 0 
-            ? historico[historico.length - 1].totales 
-            : ultimoTotal;
-            
-        dataProyeccion.push(valorInicialProy);
-
-        let acumuladoProyeccion = valorInicialProy;
-        let incrementoTotal2027 = 0;
-
-        meses2027.forEach(m => {
-            labels.push(m.nombre);
-            dataHistorico.push(null);
-            
-            const nuevosEstimados = Math.round(promedioNuevos * m.factor);
-            acumuladoProyeccion += nuevosEstimados;
-            incrementoTotal2027 += nuevosEstimados;
-            
-            dataProyeccion.push(acumuladoProyeccion);
-        });
-
-        const pctCrecimiento = valorInicialProy > 0 ? ((incrementoTotal2027 / valorInicialProy) * 100).toFixed(1) : 0;
-
-        const kpiTotal = document.getElementById('kpi-fb-proj-total');
-        const kpiGrowth = document.getElementById('kpi-fb-proj-growth');
-        if (kpiTotal) kpiTotal.innerText = acumuladoProyeccion.toLocaleString('es-GT');
-        if (kpiGrowth) kpiGrowth.innerText = `+${incrementoTotal2027.toLocaleString('es-GT')} (+${pctCrecimiento}%)`;
-
-        const canvasEl = document.getElementById('chartFBProjection');
-        if (!canvasEl) return;
-        const ctx = canvasEl.getContext('2d');
-
-        if (window.chartsInstancias && window.chartsInstancias['chartFBProjection']) {
-            window.chartsInstancias['chartFBProjection'].destroy();
-        }
-
-        const newChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Histórico Real',
-                        data: dataHistorico,
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        borderWidth: 2.5,
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 3
-                    },
-                    {
-                        label: 'Proyección 2027',
-                        data: dataProyeccion,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.05)',
-                        borderDash: [5, 5],
-                        borderWidth: 2.5,
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 3
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'top' } },
-                scales: {
-                    y: { beginAtZero: false, grid: { color: '#f3f4f6' } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-// Mostrar la sección en el DOM
-        const seccion = document.getElementById('seccion-proyeccion-facebook');
-        if (seccion) seccion.classList.remove('hidden');
-
-        const chartContainer = document.getElementById('fb-projection-chart-container');
-        if (chartContainer) chartContainer.classList.remove('hidden');
-
-    } catch (err) {
-        console.warn("Error en Proyección Facebook:", err);
-    }
-}
-        } catch (e) {
-            console.warn("Proyección FB silenciada:", e);
-        }
-    }
-
-    // Escuchar la carga y cambios de filtro automáticamente sin tocar las funciones principales
-    document.addEventListener('DOMContentLoaded', () => setTimeout(runFBProjection, 1500));
-    const filtro = document.getElementById('filtro-cuenta');
-    if (filtro) filtro.addEventListener('change', () => setTimeout(runFBProjection, 500));
-})();
 </script> 
-   <style>
-        #dashboard-container {
-            display: none !important;
-        }
-        body.authenticated #dashboard-container {
-            display: flex !important;
-        }
-        body.authenticated #login-screen {
-            display: none !important;
-        }
-    </style> 
 
-<!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Módulos de Autenticación y Permisos -->
-    <script src="wrap-dashboard.js"></script>
-    <script src="permissions.js"></script> 
-    <script src="supabase-auth.js"></script>
+<!-- Módulos de Autenticación y Permisos -->
+<script src="wrap-dashboard.js"></script>
+<script src="permissions.js"></script> 
+<script src="supabase-auth.js"></script>
 </body>
 </html>
