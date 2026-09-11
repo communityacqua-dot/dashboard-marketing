@@ -273,7 +273,7 @@
                                 <p id="kpi-resumen-interacciones" class="text-2xl font-extrabold text-purple-600 mt-1">0</p>
                             </div>
                         </div>
-                    </div>
+                    </div> 
 
                     <div class="border-t pt-6 space-y-6">
                         <div>
@@ -297,7 +297,79 @@
                                         <tbody id="tabla-proyeccion-seguidores" class="divide-y font-medium text-xs"></tbody>
                                     </table>
                                 </div>
-                            </div>
+                            </div> 
+                            <!-- NUEVA SECCIÓN: Metas y seguimiento de seguidores -->
+<div id="seccion-metas-seguidores" class="mt-8 bg-white p-6 rounded-xl shadow-md border border-gray-100">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b border-gray-200">
+        <div>
+            <h3 class="text-lg font-bold text-gray-800">Metas y Seguimiento de Seguidores</h3>
+            <p class="text-sm text-gray-500">Establece metas anuales de nuevos seguidores y compara su rendimiento mensual contra datos reales.</p>
+        </div>
+        <div class="mt-4 md:mt-0 flex flex-wrap gap-3">
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Red Social:</label>
+                <select id="meta-red-social-select" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+                    <!-- Dinámico según la cuenta -->
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Meta Anual:</label>
+                <input type="number" id="input-meta-anual" min="0" placeholder="Ej. 12000" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-36">
+            </div>
+            <div class="flex items-end">
+                <button type="button" onclick="guardarMetaAnualActual()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors shadow-sm">
+                    Guardar Meta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPIs Rápidos de Metas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Meta Anual</span>
+            <p id="kpi-meta-anual" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Seguidores Acumulados</span>
+            <p id="kpi-real-acumulado" class="text-2xl font-bold text-blue-600 mt-1">0</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Cumplimiento Acumulado</span>
+            <p id="kpi-cumplimiento" class="text-2xl font-bold text-indigo-600 mt-1">0.00%</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Proyección de Cierre</span>
+            <p id="kpi-proyeccion-cierre" class="text-2xl font-bold text-green-600 mt-1">0</p>
+        </div>
+    </div>
+
+    <!-- Gráfica de Tendencia -->
+    <div class="mb-8 bg-white p-4 rounded-lg border border-gray-200">
+        <div class="h-72">
+            <canvas id="chart-meta-seguidores"></canvas>
+        </div>
+    </div>
+
+    <!-- Tabla Detallada Mensual -->
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                <tr>
+                    <th scope="col" class="py-3 px-4">Mes</th>
+                    <th scope="col" class="py-3 px-4 text-right">Meta</th>
+                    <th scope="col" class="py-3 px-4 text-right">Nuevos Seguidores</th>
+                    <th scope="col" class="py-3 px-4 text-right">Diferencia</th>
+                    <th scope="col" class="py-3 px-4 text-right">Cumplimiento</th>
+                    <th scope="col" class="py-3 px-4 text-center">Estado</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-metas-detalle">
+                <!-- Inyección dinámica -->
+            </tbody>
+        </table>
+    </div>
+</div>
 
                             <div class="bg-white p-5 rounded-xl border shadow-sm">
                                 <h4 class="text-sm font-bold text-gray-700 mb-4">Alcance e Impresiones Proyectadas (Mensual)</h4>
