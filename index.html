@@ -254,7 +254,7 @@
                     <div>
                         <h3 class="text-lg font-bold text-gray-800 mb-1">Desempeño Global y Alcance Total</h3>
                         <p class="text-xs text-gray-500 mb-4">Consolidado en tiempo real de Facebook, Instagram, TikTok y YouTube.</p>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div class="bg-white p-4 rounded-xl border shadow-sm border-l-4 border-l-blue-600">
                                 <p class="text-xs text-gray-500 font-semibold uppercase">Alcance Total Acumulado</p>
@@ -280,113 +280,125 @@
                             <h3 id="titulo-proyeccion-seccion" class="text-lg font-bold text-gray-800 mb-1">Proyección del Año Siguiente</h3>
                             <p class="text-xs text-gray-500">Estimación basada dinámicamente en el ritmo de crecimiento histórico (Run Rate).</p>
                         </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-    
-    <!-- Módulo de Metas y Seguimiento (Columna Izquierda) -->
-    <div id="seccion-metas-seguidores" class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-        <div class="flex flex-col justify-between mb-4 pb-3 border-b border-gray-200">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                            <div class="bg-white p-5 rounded-xl border shadow-sm flex flex-col justify-between">
+                                <h4 class="text-sm font-bold text-gray-700 mb-4">Meta de Seguidores / Suscriptores Netos por Red</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm text-left border-collapse">
+                                        <thead class="bg-gray-50 text-xs text-gray-500 uppercase border-b">
+                                            <tr>
+                                                <th class="p-2">Red Social</th>
+                                                <th class="p-2 text-right">Ganados Actual</th>
+                                                <th class="p-2 text-right">Est. Crecimiento</th>
+                                                <th class="p-2 text-right">Meta Proyectada</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabla-proyeccion-seguidores" class="divide-y font-medium text-xs"></tbody>
+                                    </table>
+                                </div>
+                            </div> 
+                            <!-- NUEVA SECCIÓN: Metas y seguimiento de seguidores -->
+<div id="seccion-metas-seguidores" class="mt-8 bg-white p-6 rounded-xl shadow-md border border-gray-100">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b border-gray-200">
+        <div>
+            <h3 class="text-lg font-bold text-gray-800">Metas y Seguimiento de Seguidores</h3>
+            <p class="text-sm text-gray-500">Establece metas anuales de nuevos seguidores y compara su rendimiento mensual contra datos reales.</p>
+        </div>
+        <div class="mt-4 md:mt-0 flex flex-wrap gap-3">
             <div>
-                <h3 class="text-base font-bold text-gray-800">Metas y Seguimiento de Seguidores</h3>
-                <p class="text-xs text-gray-500">Establece metas anuales y compara tu rendimiento mensual.</p>
+           <select id="meta-red-social-select" class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 cursor-pointer" onchange="actualizarMetasSeguidores()">
+    <option value="">Todas las redes</option>
+    <option value="Facebook">Facebook</option>
+    <option value="Instagram">Instagram</option>
+    <option value="TikTok">TikTok</option>
+    <option value="Youtube">Youtube</option>
+</select>    
             </div>
-            <div class="mt-3 flex flex-wrap gap-2 items-center">
-                <select id="meta-red-social-select" class="bg-white border border-gray-300 text-gray-900 text-xs rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer" onchange="actualizarMetasSeguidores()">
-                    <option value="">Todas las redes</option>
-                    <option value="Facebook">Facebook</option>
-                    <option value="Instagram">Instagram</option>
-                    <option value="TikTok">TikTok</option>
-                    <option value="Youtube">Youtube</option>
-                </select>
-                <input type="number" id="input-meta-anual" min="0" placeholder="Meta Anual" class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg p-2 w-28">
-                <button type="button" onclick="guardarMetaAnualActual()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-3 py-2 rounded-lg transition-colors shadow-sm">
-                    Guardar
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Meta Anual:</label>
+                <input type="number" id="input-meta-anual" min="0" placeholder="Ej. 12000" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-36">
+            </div>
+            <div class="flex items-end">
+                <button type="button" onclick="guardarMetaAnualActual()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors shadow-sm">
+                    Guardar Meta
                 </button>
             </div>
         </div>
+    </div> 
 
-        <!-- KPIs Rápidos de Metas -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-center">
-                <span class="text-[10px] font-medium text-gray-500 uppercase">Meta Anual</span>
-                <p id="kpi-meta-anual" class="text-base font-bold text-gray-900">0</p>
-            </div>
-            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-center">
-                <span class="text-[10px] font-medium text-gray-500 uppercase">Acumulados</span>
-                <p id="kpi-real-acumulado" class="text-base font-bold text-blue-600">0</p>
-            </div>
-            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-center">
-                <span class="text-[10px] font-medium text-gray-500 uppercase">Cumplimiento</span>
-                <p id="kpi-cumplimiento" class="text-base font-bold text-indigo-600">0.00%</p>
-            </div>
-            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-center">
-                <span class="text-[10px] font-medium text-gray-500 uppercase">Proyección</span>
-                <p id="kpi-proyeccion-cierre" class="text-base font-bold text-green-600">0</p>
-            </div>
+    <!-- KPIs Rápidos de Metas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 mb-8 items-start">
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Meta Anual</span>
+            <p id="kpi-meta-anual" class="text-2xl font-bold text-gray-900 mt-1">0</p>
         </div>
-
-        <!-- Gráfica de Tendencia -->
-        <div class="mb-4 bg-white p-3 rounded-lg border border-gray-200">
-            <div class="h-48">
-                <canvas id="chart-meta-seguidores"></canvas>
-            </div>
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Seguidores Acumulados</span>
+            <p id="kpi-real-acumulado" class="text-2xl font-bold text-blue-600 mt-1">0</p>
         </div>
-
-        <!-- Tabla Detallada Mensual -->
-        <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left text-gray-500">
-                <thead class="text-[10px] text-gray-700 uppercase bg-gray-100">
-                    <tr>
-                        <th scope="col" class="py-2 px-3">Mes</th>
-                        <th scope="col" class="py-2 px-3 text-right">Meta</th>
-                        <th scope="col" class="py-2 px-3 text-right">Nuevos</th>
-                        <th scope="col" class="py-2 px-3 text-right">Dif.</th>
-                        <th scope="col" class="py-2 px-3 text-right">Cumpl.</th>
-                        <th scope="col" class="py-2 px-3 text-center">Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-metas-detalle">
-                    <!-- Inyección dinámica -->
-                </tbody>
-            </table>
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Cumplimiento Acumulado</span>
+            <p id="kpi-cumplimiento" class="text-2xl font-bold text-indigo-600 mt-1">0.00%</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Proyección de Cierre</span>
+            <p id="kpi-proyeccion-cierre" class="text-2xl font-bold text-green-600 mt-1">0</p>
         </div>
     </div>
 
-    <!-- Columna Derecha: Las dos gráficas restantes -->
-    <div class="space-y-6">
-        <div class="bg-white p-5 rounded-xl border shadow-sm">
-            <h4 class="text-sm font-bold text-gray-700 mb-4">Alcance e Impresiones Proyectadas (Mensual)</h4>
-            <div class="h-60">
-                <canvas id="chart-resumen-proyeccion-alcance"></canvas>
-            </div>
-        </div>
-        <div class="bg-white p-5 rounded-xl border shadow-sm">
-            <h4 class="text-sm font-bold text-gray-700 mb-4">Volumen de Interacciones Esperadas por Trimestre</h4>
-            <div class="h-64">
-                <canvas id="chart-resumen-proyeccion-engagement"></canvas>
-            </div>
-        </div>
+ <!-- Gráfica de Tendencia -->
+<div class="mb-8 bg-white p-4 rounded-lg border border-gray-200">
+    <div class="h-72">
+        <canvas id="chart-meta-seguidores"></canvas>
     </div>
-
 </div>
+
+    <!-- Tabla Detallada Mensual -->
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                <tr>
+                    <th scope="col" class="py-3 px-4">Mes</th>
+                    <th scope="col" class="py-3 px-4 text-right">Meta</th>
+                    <th scope="col" class="py-3 px-4 text-right">Nuevos Seguidores</th>
+                    <th scope="col" class="py-3 px-4 text-right">Diferencia</th>
+                    <th scope="col" class="py-3 px-4 text-right">Cumplimiento</th>
+                    <th scope="col" class="py-3 px-4 text-center">Estado</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-metas-detalle">
                 <!-- Inyección dinámica -->
             </tbody>
         </table>
     </div>
 </div> 
- <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-    <div class="bg-white p-5 rounded-xl border shadow-sm">
-        <h4 class="text-sm font-bold text-gray-700 mb-4">Alcance e Impresiones Proyectadas (Mensual)</h4>
-        <div class="h-60">
-            <canvas id="chart-resumen-proyeccion-alcance"></canvas>
-        </div>
-    </div>
-    <div class="bg-white p-5 rounded-xl border shadow-sm">
-        <h4 class="text-sm font-bold text-gray-700 mb-4">Volumen de Interacciones Esperadas por Trimestre</h4>
-        <div class="h-64">
-            <canvas id="chart-resumen-proyeccion-engagement"></canvas>
-        </div>
+                            
+<div class="bg-white p-5 rounded-xl border shadow-sm md:col-start-1 md:row-start-1">
+    <h4 class="text-sm font-bold text-gray-700 mb-4">Alcance e Impresiones Proyectadas (Mensual)</h4>
+    <div class="h-60">
+        <canvas id="chart-resumen-proyeccion-alcance"></canvas>
     </div>
 </div>
+
+                            <div class="bg-white p-5 rounded-xl border shadow-sm">
+                                <h4 class="text-sm font-bold text-gray-700 mb-4">Alcance e Impresiones Proyectadas (Mensual)</h4>
+                                <div class="h-60">
+                                    <canvas id="chart-resumen-proyeccion-alcance"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-5 rounded-xl border shadow-sm md:col-span-2">
+                                <h4 class="text-sm font-bold text-gray-700 mb-4">Volumen de Interacciones Esperadas por Trimestre</h4>
+                                <div class="h-64">
+                                    <canvas id="chart-resumen-proyeccion-engagement"></canvas>
+                                </div>
+                            </div>
+                           <div class="bg-white p-5 rounded-xl border shadow-sm md:col-span-2 md:row-start-2">
+    <h4 class="text-sm font-bold text-gray-700 mb-4">Volumen de Interacciones Esperadas por Trimestre</h4>
+    <div class="h-64">
+        <canvas id="chart-resumen-proyeccion-engagement"></canvas>
+    </div>
 </div>
                         </div>
                     </div>
@@ -645,7 +657,7 @@ function obtenerIndiceColumna(filas, nombresPosibles) {
     if (!filas || filas.length === 0) return -1;
     const encabezados = filas[0].map(h => h ? h.toString().toLowerCase().trim().replace(/\s+/g, ' ') : '');
     const opciones = Array.isArray(nombresPosibles) ? nombresPosibles : [nombresPosibles];
-    
+
     for (const opcion of opciones) {
         const buscado = opcion.toLowerCase().trim().replace(/\s+/g, ' ');
         const idxExacto = encabezados.findIndex(e => e === buscado);
@@ -784,10 +796,10 @@ function renderizarModuloRedes() {
             cardAlcance.classList.add('hidden');
             cardImpresiones.classList.add('hidden');
             cardInteracciones.classList.add('hidden');
-            
+
             if (cardTiempoRepro) cardTiempoRepro.classList.remove('hidden');
             if (cardNuevosEspectadores) cardNuevosEspectadores.classList.remove('hidden');
-            
+
             lblSeguidores.innerText = 'SUSCRIPTORES GANADOS';
         }
 
@@ -796,7 +808,7 @@ function renderizarModuloRedes() {
         const idxAlcance = obtenerIndiceColumna(filas, ['alcance', 'alcance total']);
         const idxAlcanceOrg = obtenerIndiceColumna(filas, ['alcance organico', 'alcance orgánico']);
         const idxImpresiones = obtenerIndiceColumna(filas, ['impresiones']);
-        
+
         let idxInteracciones = -1;
         if (redActiva === 'Instagram') {
             if (cuenta === 'acquaroni') idxInteracciones = 3;
@@ -805,7 +817,7 @@ function renderizarModuloRedes() {
         } else {
             idxInteracciones = obtenerIndiceColumna(filas, ['interacciones']);
         }
-        
+
         const idxTiempoRepro = obtenerIndiceColumna(filas, ['tiempo de reproduccion', 'tiempo de reproducción', 'horas de reproduccion', 'horas de reproducción']);
         const idxNuevosEspectadores = obtenerIndiceColumna(filas, ['nuevos espectadores de contenido', 'nuevos espectadores', 'espectadores de contenido']);
         const idxNuevosSeguidores = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
@@ -839,13 +851,13 @@ function renderizarModuloRedes() {
         document.getElementById('kpi-alcance-organico').innerText = totalAlcOrg.toLocaleString();
         document.getElementById('kpi-impresiones').innerText = totalImp.toLocaleString();
         document.getElementById('kpi-interacciones').innerText = totalInt.toLocaleString();
-        
+
         const elemTiempo = document.getElementById('kpi-tiempo-reproduccion');
         if (elemTiempo) elemTiempo.innerText = `${totalTiempoRepro.toLocaleString()} hrs`;
 
         const elemNuevosEsp = document.getElementById('kpi-nuevos-espectadores');
         if (elemNuevosEsp) elemNuevosEsp.innerText = totalNuevosEsp.toLocaleString();
-        
+
         document.getElementById('kpi-seguidores-exactos').innerText = totalNuevosSeg.toLocaleString();
 
         if (redActiva === 'TikTok') {
@@ -1157,7 +1169,7 @@ function renderizarResumenGeneral() {
     let globalInteracciones = 0;
 
     const desgloseSeguidores = {};
-    
+
     let histAlcanceMensual = new Array(12).fill(0);
     let histImpresionesMensual = new Array(12).fill(0);
     let histInteraccionesMensual = new Array(12).fill(0);
@@ -1169,7 +1181,7 @@ function renderizarResumenGeneral() {
         const idxAlc = obtenerIndiceColumna(filas, ['alcance', 'alcance total']);
         const idxImp = obtenerIndiceColumna(filas, ['impresiones']);
         const idxSeg = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
-        
+
         let idxInt = -1;
         if (item.red === 'Instagram') {
             if (cuenta === 'acquaroni') idxInt = 3;
@@ -1323,7 +1335,7 @@ function renderGraficosTikTokLive(filas) {
     crearOActualizarChart('chart-redes-1', 'bar', mesesLabels, [
         { label: 'Seguidores Nuevos', data: dataSegLive, backgroundColor: '#a855f7' }
     ]);
-    
+
     crearOActualizarChart('chart-redes-2', 'line', mesesLabels, [
         { label: 'Seguidores Nuevos', data: dataSegLive, borderColor: '#ec4899', fill: false }
     ]);
@@ -1729,7 +1741,7 @@ window.addEventListener('DOMContentLoaded', () => {
     cargarDatosSheets();
 });
 </script> 
-    
+
 <!-- Módulos de Autenticación y Permisos -->
 <script src="wrap-dashboard.js"></script>
 <script src="permissions.js"></script> 
