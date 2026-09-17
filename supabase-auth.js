@@ -133,7 +133,7 @@ function getUserRoleByEmail(email = '') {
         'orlando2216146@gmail.com': 'administrador',
         'admin@acquaroni.com': 'administrador',
         'nery@acquaroni.com': 'gerente_mercadeo',
-        'otto@acquaroni.com': 'gerente_mercadeo_corporativo',
+        'Ottomotto272@gmail.com': 'gerente_mercadeo_corporativo',
         'jose@acquaroni.com': 'marketing_digital',
         'marco@acquaroni.com': 'gerente_general'
     };
