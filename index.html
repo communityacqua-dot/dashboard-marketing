@@ -1780,7 +1780,7 @@ function obtenerDatosSeguidoresMes(cuenta, anio, redSocial, mesIndex) {
     const filas = obtenerHojaPrincipalInsensible(nombreHoja);
     if (!filas || filas.length <= 1) return { total: 0, ganados: 0 };
 
-    const idxTotalSeg = obtenerIndiceColumna(filas, ['total seguidores', 'seguidores totales', 'suscriptores totales', 'seguidores', 'suscriptores']);
+    const idxTotalSeg = obtenerIndiceColumna(filas, ['total seguidores', 'seguidores totales', 'suscriptores totales', 'seguidores', 'suscriptores', 'total']);
     const idxNuevosSeg = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados']);
     
     const mesesNombres = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
@@ -1821,20 +1821,19 @@ function actualizarModuloMetasSeguidores() {
     let datosRealesArray = [];
     let datosMetaArray = [];
     let acumuladoGanadosReal = 0;
-    let ultimoTotalSeguidoresRegistrado = 0;
+    let totalSeguidoresActualExcel = 0;
     let mesesConDatosCount = 0;
 
     mesesLabels.forEach((mes, idx) => {
         const datosMes = obtenerDatosSeguidoresMes(cuenta, anio, redSocial, idx);
         
         let ganadosCalculados = datosMes.ganados;
-        // Si el Excel provee el histórico total acumulado por mes, calculamos la diferencia respecto al mes anterior
         if (datosMes.total > 0) {
-            ultimoTotalSeguidoresRegistrado = datosMes.total;
+            totalSeguidoresActualExcel = datosMes.total; // Toma el acumulado total real actual del Excel
             if (idx > 0) {
                 const mesAnteriorDatos = obtenerDatosSeguidoresMes(cuenta, anio, redSocial, idx - 1);
                 if (mesAnteriorDatos.total > 0) {
-                    ganadosCalculados = datosMes.total - mesAnteriorDatos.total;
+                    ganadosCalculados = datosMes.total - mesAnteriorDatos.total; // Diferencia mes a mes
                 }
             }
         }
@@ -1859,8 +1858,8 @@ function actualizarModuloMetasSeguidores() {
     const elKpiProy = document.getElementById('kpi-proyeccion-cierre');
 
     if (elKpiMeta) elKpiMeta.textContent = metaAnual.toLocaleString();
-    // Mostrar el Total Acumulado Real de Seguidores en lugar de la suma simple
-    if (elKpiReal) elKpiReal.textContent = ultimoTotalSeguidoresRegistrado > 0 ? ultimoTotalSeguidoresRegistrado.toLocaleString() : acumuladoGanadosReal.toLocaleString();
+    // Muestra el total acumulado real de la comunidad (ej. 100,000+) extraído del Excel
+    if (elKpiReal) elKpiReal.textContent = totalSeguidoresActualExcel > 0 ? totalSeguidoresActualExcel.toLocaleString() : acumuladoGanadosReal.toLocaleString();
     if (elKpiCump) elKpiCump.textContent = cumplimientoAcumulado.toFixed(2) + '%';
     if (elKpiProy) elKpiProy.textContent = Math.round(proyeccionCierre).toLocaleString();
 
