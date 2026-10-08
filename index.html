@@ -770,7 +770,7 @@ function renderizarModuloRedes() {
 
         if (redActiva === 'Instagram') {
             cardImpresiones.classList.add('hidden');
-            cardCtr.classList.add('hidden'); // Ocultar CTR en Instagram según solicitud
+            cardCtr.classList.add('hidden');
         } else if (redActiva === 'TikTok') {
             cardCtr.classList.add('hidden');
             cardAlcanceOrg.classList.add('hidden');
@@ -1755,8 +1755,8 @@ function guardarMetaAnualActual() {
     }
 }
 
-function obtenerNuevosSeguidoresRealesMes(cuenta, anio, redSocial, mesIndex) {
-    if (typeof rawDataPrincipal === 'undefined' || !rawDataPrincipal) return 0;
+function obtenerDatosSeguidoresMes(cuenta, anio, redSocial, mesIndex) {
+    if (typeof rawDataPrincipal === 'undefined' || !rawDataPrincipal) return { total: 0, ganados: 0 };
     
     let nombreHoja = '';
     const redLower = redSocial.toLowerCase();
@@ -1778,24 +1778,27 @@ function obtenerNuevosSeguidoresRealesMes(cuenta, anio, redSocial, mesIndex) {
     }
 
     const filas = obtenerHojaPrincipalInsensible(nombreHoja);
-    if (!filas || filas.length <= 1) return 0;
+    if (!filas || filas.length <= 1) return { total: 0, ganados: 0 };
 
-    const idxSeg = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
-    if (idxSeg === -1) return 0;
-
+    const idxTotalSeg = obtenerIndiceColumna(filas, ['total seguidores', 'seguidores totales', 'suscriptores totales', 'seguidores', 'suscriptores']);
+    const idxNuevosSeg = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados']);
+    
     const mesesNombres = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     const mesBuscado = mesesNombres[mesIndex];
 
     let totalMes = 0;
+    let ganadosMes = 0;
+
     filas.slice(1).forEach(f => {
         const rowAnio = f[0] ? f[0].toString().trim() : '';
         const rowMes = f[1] ? f[1].toString().trim().toLowerCase() : '';
         if (rowAnio === anio.toString() && rowMes === mesBuscado) {
-            totalMes += limpiarValorNum(f[idxSeg]);
+            if (idxTotalSeg !== -1) totalMes = limpiarValorNum(f[idxTotalSeg]);
+            if (idxNuevosSeg !== -1) ganadosMes += limpiarValorNum(f[idxNuevosSeg]);
         }
     });
 
-    return totalMes;
+    return { total: totalMes, ganados: ganadosMes };
 }
 
 let chartMetaInstance = null;
@@ -1817,23 +1820,37 @@ function actualizarModuloMetasSeguidores() {
     
     let datosRealesArray = [];
     let datosMetaArray = [];
-    let acumuladoReal = 0;
+    let acumuladoGanadosReal = 0;
+    let ultimoTotalSeguidoresRegistrado = 0;
     let mesesConDatosCount = 0;
 
     mesesLabels.forEach((mes, idx) => {
-        const real = obtenerNuevosSeguidoresRealesMes(cuenta, anio, redSocial, idx);
-        datosRealesArray.push(real);
+        const datosMes = obtenerDatosSeguidoresMes(cuenta, anio, redSocial, idx);
+        
+        let ganadosCalculados = datosMes.ganados;
+        // Si el Excel provee el histórico total acumulado por mes, calculamos la diferencia respecto al mes anterior
+        if (datosMes.total > 0) {
+            ultimoTotalSeguidoresRegistrado = datosMes.total;
+            if (idx > 0) {
+                const mesAnteriorDatos = obtenerDatosSeguidoresMes(cuenta, anio, redSocial, idx - 1);
+                if (mesAnteriorDatos.total > 0) {
+                    ganadosCalculados = datosMes.total - mesAnteriorDatos.total;
+                }
+            }
+        }
+
+        datosRealesArray.push(ganadosCalculados);
         datosMetaArray.push(metaMensualBase);
         
-        if (real > 0) {
-            acumuladoReal += real;
+        if (ganadosCalculados > 0 || datosMes.total > 0) {
+            acumuladoGanadosReal += ganadosCalculados;
             mesesConDatosCount++;
         }
     });
 
     const metaAcumulada = metaMensualBase * (mesesConDatosCount > 0 ? mesesConDatosCount : 1);
-    const cumplimientoAcumulado = metaAcumulada > 0 ? (acumuladoReal / metaAcumulada) * 100 : 0;
-    const promedioMensualReal = mesesConDatosCount > 0 ? (acumuladoReal / mesesConDatosCount) : 0;
+    const cumplimientoAcumulado = metaAcumulada > 0 ? (acumuladoGanadosReal / metaAcumulada) * 100 : 0;
+    const promedioMensualReal = mesesConDatosCount > 0 ? (acumuladoGanadosReal / mesesConDatosCount) : 0;
     const proyeccionCierre = promedioMensualReal * 12;
 
     const elKpiMeta = document.getElementById('kpi-meta-anual');
@@ -1842,7 +1859,8 @@ function actualizarModuloMetasSeguidores() {
     const elKpiProy = document.getElementById('kpi-proyeccion-cierre');
 
     if (elKpiMeta) elKpiMeta.textContent = metaAnual.toLocaleString();
-    if (elKpiReal) elKpiReal.textContent = acumuladoReal.toLocaleString();
+    // Mostrar el Total Acumulado Real de Seguidores en lugar de la suma simple
+    if (elKpiReal) elKpiReal.textContent = ultimoTotalSeguidoresRegistrado > 0 ? ultimoTotalSeguidoresRegistrado.toLocaleString() : acumuladoGanadosReal.toLocaleString();
     if (elKpiCump) elKpiCump.textContent = cumplimientoAcumulado.toFixed(2) + '%';
     if (elKpiProy) elKpiProy.textContent = Math.round(proyeccionCierre).toLocaleString();
 
