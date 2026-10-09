@@ -160,9 +160,8 @@ function applyReadOnlyRestrictions(isAdmin) {
 function getUserRoleByEmail(email = '') {
     const map = {
         'community.acqua@gmail.com': 'administrador',
-        'orlando2216146@gmail.com': 'administrador',
+        'orlando2216146@gmail.com':'gerente_mercadeo',
         'admin@acquaroni.com': 'administrador',
-        'nery@acquaroni.com': 'gerente_mercadeo',
         'Ottomotto272@gmail.com': 'gerente_mercadeo_corporativo',
         'mktjefedigital@gmail.com': 'marketing_digital',
         'marco@acquaroni.com': 'gerente_general'
