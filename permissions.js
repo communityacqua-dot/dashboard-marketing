@@ -14,28 +14,41 @@ window.PermissionsEngine = {
     applyPermissions: function(email, role) {
         console.log(`Aplicando permisos para: ${email} | Rol: ${role}`);
 
-        // Ocultar sección de Administración si no es Admin
+        const isAdmin = role === this.roles.ADMIN;
+
+        // Ocultar elementos exclusivos de administración
         const adminElements = document.querySelectorAll('.admin-only, [data-role="administrador"]');
         adminElements.forEach(el => {
-            if (role !== this.roles.ADMIN) {
+            if (!isAdmin) {
                 el.style.display = 'none';
             } else {
                 el.style.display = '';
             }
         });
 
-        // Aplicar modo solo lectura para Don Marco / Gerente General
-        if (role === this.roles.GERENTE_GENERAL || email.includes('marco')) {
+        // Si NO es administrador, aplicar modo solo lectura a toda la interfaz
+        if (!isAdmin) {
             this.setReadOnlyMode();
         }
     },
 
     setReadOnlyMode: function() {
-        // Deshabilitar botones de edición, creación, eliminación y subida
-        const editButtons = document.querySelectorAll('button[id*="edit"], button[id*="delete"], button[id*="save"], button[id*="upload"], input[type="file"]');
+        // Deshabilitar botones de edición, creación, eliminación, guardado y subida
+        const editButtons = document.querySelectorAll('button[id*="edit"], button[id*="delete"], button[id*="save"], button[id*="upload"], input[type="file"], .btn-edit, .btn-save, .btn-delete');
         editButtons.forEach(btn => {
             btn.disabled = true;
-            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            btn.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+        });
+
+        // Bloquear inputs y selects para evitar que editen cantidades o valores en tablas/formularios
+        const inputs = document.querySelectorAll('input:not([type="hidden"]), select, textarea');
+        inputs.forEach(input => {
+            // Ignorar el formulario de login para no bloquear el inicio de sesión
+            if (!input.closest('#login-form')) {
+                input.disabled = true;
+                input.setAttribute('readonly', 'true');
+                input.classList.add('opacity-60', 'cursor-not-allowed');
+            }
         });
     }
 };
