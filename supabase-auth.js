@@ -121,9 +121,39 @@ document.addEventListener('DOMContentLoaded', () => {
 function grantAccess(user) {
     document.body.classList.add('authenticated');
     const userRole = getUserRoleByEmail(user?.email || '');
+    const isAdmin = userRole === 'administrador';
 
+    // Establece el estado de permisos a nivel global para reutilizar en otros scripts
+    window.currentUserPermissions = {
+        canEdit: isAdmin,
+        role: userRole,
+        email: user?.email || ''
+    };
+
+    // Aplica el motor de permisos si está presente
     if (window.PermissionsEngine) {
         window.PermissionsEngine.applyPermissions(user?.email || '', userRole);
+    }
+
+    // Bloquea o deshabilita elementos editables para usuarios no administradores
+    applyReadOnlyRestrictions(isAdmin);
+}
+
+function applyReadOnlyRestrictions(isAdmin) {
+    if (!isAdmin) {
+        // Deshabilita campos de texto/números de edición directa
+        const editableInputs = document.querySelectorAll('input[type="number"], input.editable, .can-edit');
+        editableInputs.forEach(input => {
+            input.setAttribute('disabled', 'true');
+            input.setAttribute('readonly', 'true');
+            input.classList.add('opacity-60', 'cursor-not-allowed');
+        });
+
+        // Oculta o inhabilita botones de guardado/edición de datos
+        const editButtons = document.querySelectorAll('.btn-edit, .btn-save, .admin-only');
+        editButtons.forEach(btn => {
+            btn.style.display = 'none';
+        });
     }
 }
 
@@ -134,8 +164,8 @@ function getUserRoleByEmail(email = '') {
         'admin@acquaroni.com': 'administrador',
         'nery@acquaroni.com': 'gerente_mercadeo',
         'Ottomotto272@gmail.com': 'gerente_mercadeo_corporativo',
-        'jose@acquaroni.com': 'marketing_digital',
+        'mktjefedigital@gmail.com': 'marketing_digital',
         'marco@acquaroni.com': 'gerente_general'
     };
-    return map[email.toLowerCase()] || 'gerente_general';
+    return map[email.toLowerCase()] || 'visor';
 }
