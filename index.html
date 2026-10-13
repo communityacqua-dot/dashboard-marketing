@@ -305,6 +305,9 @@
                                     <div>
                                         <h3 class="text-lg font-bold text-gray-800">Metas y Seguimiento de Seguidores</h3>
                                         <p class="text-sm text-gray-500">Establece metas anuales de nuevos seguidores y compara su rendimiento mensual contra datos reales.</p>
+                                        <p id="aviso-metas-solo-lectura" class="hidden text-xs text-amber-600 font-semibold mt-1">
+                                            <i class="fa-solid fa-lock"></i> Solo el administrador puede editar las metas.
+                                        </p>
                                     </div>
                                     <div class="mt-4 md:mt-0 flex flex-wrap gap-3">
                                         <div>
@@ -317,14 +320,14 @@
                                         </div>
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Meta Anual:</label>
-                                            <input type="number" id="input-meta-anual" min="0" placeholder="Ej. 12000" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-36">
+                                            <input type="number" id="input-meta-anual" min="0" placeholder="Ej. 12000" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-36 disabled:opacity-60 disabled:cursor-not-allowed">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-semibold text-gray-600 mb-1">Seguidores al iniciar el año:</label>
-                                            <input type="number" id="input-seguidores-iniciales" min="0" placeholder="Ej. 97000" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-44">
+                                            <input type="number" id="input-seguidores-iniciales" min="0" placeholder="Ej. 97000" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 w-44 disabled:opacity-60 disabled:cursor-not-allowed">
                                         </div>
                                         <div class="flex items-end">
-                                            <button type="button" onclick="guardarMetaAnualActual()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors shadow-sm">
+                                            <button type="button" id="btn-guardar-meta" onclick="guardarMetaAnualActual()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors shadow-sm">
                                                 Guardar Meta
                                             </button>
                                         </div>
@@ -922,22 +925,21 @@ function renderNuevosGraficosEspecificos(filasFiltradas, todasLasFilas) {
             { label: 'Impresiones', data: dataImp, borderColor: '#f59e0b', fill: false }
         ]);
 
-        const idxFormato = obtenerIndiceColumna(todasLasFilas, ['formato', 'tipo de contenido', 'tipo contenido', 'formato de contenido']);
-        const idxMetricFormato = idxAlc !== -1 ? idxAlc : obtenerIndiceColumna(todasLasFilas, ['engagement', 'interacciones', 'alcance']);
+        // Rendimiento por formato: se toma de las columnas del Excel
+        // "Rendimiento de reels", "Rendimiento de fotos estaticas", "Rendimiento de carruseles", "Rendimiento de historias"
+        const idxReels = obtenerIndiceColumna(todasLasFilas, ['rendimiento de reels', 'rendimiento reels', 'reels']);
+        const idxFotos = obtenerIndiceColumna(todasLasFilas, ['rendimiento de fotos estaticas', 'rendimiento de fotos estáticas', 'rendimiento de fotos', 'fotos estaticas', 'fotos estáticas']);
+        const idxCarruseles = obtenerIndiceColumna(todasLasFilas, ['rendimiento de carruseles', 'rendimiento de carrusel', 'carruseles', 'carrusel']);
+        const idxHistorias = obtenerIndiceColumna(todasLasFilas, ['rendimiento de historias', 'rendimiento de historia', 'historias']);
 
         let totalReels = 0, totalCarruseles = 0, totalEstaticas = 0, totalHistorias = 0;
 
-        if (idxFormato !== -1) {
-            filasFiltradas.forEach(f => {
-                const fmt = (f[idxFormato] || '').toString().toLowerCase().trim();
-                const val = idxMetricFormato !== -1 ? limpiarValorNum(f[idxMetricFormato]) : 1;
-
-                if (fmt.includes('reel')) totalReels += val;
-                else if (fmt.includes('carrusel') || fmt.includes('carousel')) totalCarruseles += val;
-                else if (fmt.includes('foto') || fmt.includes('estatica') || fmt.includes('imagen') || fmt.includes('estática')) totalEstaticas += val;
-                else if (fmt.includes('historia') || fmt.includes('story')) totalHistorias += val;
-            });
-        }
+        filasFiltradas.forEach(f => {
+            if (idxReels !== -1) totalReels += limpiarValorNum(f[idxReels]);
+            if (idxFotos !== -1) totalEstaticas += limpiarValorNum(f[idxFotos]);
+            if (idxCarruseles !== -1) totalCarruseles += limpiarValorNum(f[idxCarruseles]);
+            if (idxHistorias !== -1) totalHistorias += limpiarValorNum(f[idxHistorias]);
+        });
 
         const sumaFormatos = totalReels + totalCarruseles + totalEstaticas + totalHistorias;
         let pctReels = 0, pctCarruseles = 0, pctEstaticas = 0, pctHistorias = 0;
@@ -1721,44 +1723,155 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupues
 
 // ==========================================
 // MÓDULO DE GESTIÓN DE METAS DE SEGUIDORES
+// (compartido vía Supabase, edición solo admin)
 // ==========================================
-const CLAVE_STORAGE_METAS = 'dash_marketing_metas_seguidores_v1';
+const TABLA_METAS_SUPABASE = 'metas_seguidores';
+let metasCompartidas = {};
+let metasEsAdmin = false;
 
-function obtenerMetasAlmacenadas() {
+// Busca el cliente de Supabase que crea supabase-auth.js
+function obtenerClienteSupabase() {
+    const candidatos = [];
+    if (typeof supabaseClient !== 'undefined') candidatos.push(supabaseClient);
+    if (typeof supabaseCliente !== 'undefined') candidatos.push(supabaseCliente);
+    if (typeof _supabase !== 'undefined') candidatos.push(_supabase);
+    if (typeof sb !== 'undefined') candidatos.push(sb);
+    candidatos.push(window.supabaseClient, window.supabaseCliente, window._supabase, window.sb);
+
+    for (const c of candidatos) {
+        if (c && typeof c.from === 'function' && c.auth) return c;
+    }
+    return null;
+}
+
+// Determina si el usuario actual es administrador
+async function verificarAdminMetas() {
+    if (window.esAdmin === true || window.isAdmin === true) return true;
+
+    const rolGlobal = (window.userRole || window.currentUserRole || window.rolUsuario || '').toString().toLowerCase();
+    if (rolGlobal === 'admin' || rolGlobal === 'administrador') return true;
+
+    const cliente = obtenerClienteSupabase();
+    if (!cliente) return false;
+
     try {
-        const data = localStorage.getItem(CLAVE_STORAGE_METAS);
-        return data ? JSON.parse(data) : {};
+        const { data } = await cliente.auth.getUser();
+        const u = data && data.user;
+        const rol = ((u && u.app_metadata && u.app_metadata.role) || (u && u.user_metadata && u.user_metadata.role) || '').toString().toLowerCase();
+        return rol === 'admin' || rol === 'administrador';
     } catch (e) {
-        console.error("Error leyendo metas de localStorage", e);
-        return {};
+        console.error('Error verificando rol de administrador', e);
+        return false;
     }
 }
 
-function guardarMetaAnualActual() {
+// Mantiene la misma forma de datos que antes: metas[anio][cuenta][red] = { metaAnual, seguidoresIniciales }
+function obtenerMetasAlmacenadas() {
+    return metasCompartidas;
+}
+
+async function cargarMetasCompartidas() {
+    const cliente = obtenerClienteSupabase();
+    if (!cliente) return false;
+
+    const { data, error } = await cliente.from(TABLA_METAS_SUPABASE).select('*');
+    if (error) {
+        console.error('Error cargando metas compartidas', error);
+        return false;
+    }
+
+    const nuevo = {};
+    (data || []).forEach(r => {
+        if (!nuevo[r.anio]) nuevo[r.anio] = {};
+        if (!nuevo[r.anio][r.cuenta]) nuevo[r.anio][r.cuenta] = {};
+        nuevo[r.anio][r.cuenta][r.red_social] = {
+            metaAnual: Number(r.meta_anual) || 0,
+            seguidoresIniciales: Number(r.seguidores_iniciales) || 0
+        };
+    });
+    metasCompartidas = nuevo;
+    return true;
+}
+
+async function refrescarMetasCompartidas() {
+    metasEsAdmin = await verificarAdminMetas();
+    await cargarMetasCompartidas();
+    actualizarModuloMetasSeguidores();
+}
+
+function iniciarMetasCompartidas() {
+    let intentos = 0;
+    const intentar = async () => {
+        const cliente = obtenerClienteSupabase();
+        if (!cliente) {
+            if (++intentos < 20) setTimeout(intentar, 1000);
+            return;
+        }
+        await refrescarMetasCompartidas();
+
+        // Recargar cuando cambie la sesión (login / logout)
+        cliente.auth.onAuthStateChange(() => {
+            setTimeout(refrescarMetasCompartidas, 0);
+        });
+
+        // Refresco periódico para que todos vean los cambios del administrador
+        setInterval(refrescarMetasCompartidas, 60000);
+    };
+    intentar();
+}
+
+// Habilita o bloquea la edición según el rol
+function aplicarPermisosMetas() {
+    const inputMeta = document.getElementById('input-meta-anual');
+    const inputIniciales = document.getElementById('input-seguidores-iniciales');
+    const btnGuardar = document.getElementById('btn-guardar-meta');
+    const aviso = document.getElementById('aviso-metas-solo-lectura');
+
+    if (inputMeta) inputMeta.disabled = !metasEsAdmin;
+    if (inputIniciales) inputIniciales.disabled = !metasEsAdmin;
+    if (btnGuardar) btnGuardar.classList.toggle('hidden', !metasEsAdmin);
+    if (aviso) aviso.classList.toggle('hidden', metasEsAdmin);
+}
+
+async function guardarMetaAnualActual() {
+    // Verificación en el momento de guardar (la seguridad real la aplica Supabase con RLS)
+    metasEsAdmin = await verificarAdminMetas();
+    if (!metasEsAdmin) {
+        alert("Solo el administrador puede editar las metas.");
+        aplicarPermisosMetas();
+        return;
+    }
+
+    const cliente = obtenerClienteSupabase();
+    if (!cliente) {
+        alert("No hay conexión con Supabase. Intenta de nuevo.");
+        return;
+    }
+
     const cuenta = document.getElementById('filtro-cuenta')?.value || 'acquaroni';
     const anio = document.getElementById('filtro-anio')?.value || new Date().getFullYear().toString();
     const redSocial = document.getElementById('meta-red-social-select')?.value || 'Facebook';
     const valorMeta = parseFloat(document.getElementById('input-meta-anual')?.value) || 0;
     const valorInicial = parseFloat(document.getElementById('input-seguidores-iniciales')?.value) || 0;
 
-    let metas = obtenerMetasAlmacenadas();
-    if (!metas[anio]) metas[anio] = {};
-    if (!metas[anio][cuenta]) metas[anio][cuenta] = {};
+    const { error } = await cliente.from(TABLA_METAS_SUPABASE).upsert({
+        anio: anio.toString(),
+        cuenta: cuenta,
+        red_social: redSocial,
+        meta_anual: valorMeta,
+        seguidores_iniciales: valorInicial,
+        actualizado_en: new Date().toISOString()
+    }, { onConflict: 'anio,cuenta,red_social' });
 
-    metas[anio][cuenta][redSocial] = {
-        metaAnual: valorMeta,
-        seguidoresIniciales: valorInicial,
-        fechaActualizacion: new Date().toISOString()
-    };
-
-    try {
-        localStorage.setItem(CLAVE_STORAGE_METAS, JSON.stringify(metas));
-        alert("Meta guardada exitosamente.");
-        actualizarModuloMetasSeguidores();
-    } catch (e) {
-        console.error("Error al guardar la meta", e);
-        alert("No se pudo guardar la meta.");
+    if (error) {
+        console.error("Error al guardar la meta", error);
+        alert("No se pudo guardar la meta. Verifica que tengas permisos de administrador.");
+        return;
     }
+
+    await cargarMetasCompartidas();
+    alert("Meta guardada exitosamente. Ya es visible para todos los usuarios.");
+    actualizarModuloMetasSeguidores();
 }
 
 function obtenerDatosSeguidoresMes(cuenta, anio, redSocial, mesIndex) {
@@ -1812,6 +1925,8 @@ function actualizarModuloMetasSeguidores() {
     const cuenta = document.getElementById('filtro-cuenta')?.value || 'acquaroni';
     const anio = document.getElementById('filtro-anio')?.value || new Date().getFullYear().toString();
     const redSocial = document.getElementById('meta-red-social-select')?.value || 'Facebook';
+
+    aplicarPermisosMetas();
 
     const metas = obtenerMetasAlmacenadas();
     const metaAnual = metas[anio]?.[cuenta]?.[redSocial]?.metaAnual || 0;
@@ -1966,6 +2081,7 @@ function escapeHtml(valor) {
 window.addEventListener('DOMContentLoaded', () => {
     renderizarTabsRedes();
     cargarDatosSheets();
+    iniciarMetasCompartidas();
 });
 </script> 
 
