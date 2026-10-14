@@ -14,7 +14,7 @@ window.PermissionsEngine = {
     applyPermissions: function(email, role) {
         console.log(`Aplicando permisos para: ${email} | Rol: ${role}`);
 
-        const isAdmin = role === this.roles.ADMIN || (email && email.toLowerCase() === 'community.acqua@gmail.com');
+const isAdmin = role === this.roles.ADMIN || (email && email.trim().toLowerCase() === 'community.acqua@gmail.com');
 
         // Ocultar elementos exclusivos de administración
         const adminElements = document.querySelectorAll('.admin-only, [data-role="administrador"]');
