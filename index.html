@@ -73,7 +73,7 @@
             </button>
 
             <div class="text-xs text-gray-500 border-t border-slate-800 pt-4 flex justify-between items-center">
-                <span>Dashboard R.A v3.7</span>
+                <span>Dashboard R.A v3.8</span>
                 <span id="loader-status" class="text-blue-400 text-xs hidden">
                     <i class="fa-solid fa-spinner fa-spin"></i>
                 </span>
@@ -393,7 +393,7 @@
                                 </div>
                             </div>
 
-                            <!-- NUEVO MÓDULO: IA Asistente de Redes Sociales (Reemplaza Volumen de Interacciones Trimestrales) -->
+                            <!-- MÓDULO: IA Asistente de Redes Sociales -->
                             <div class="bg-white p-5 rounded-xl border shadow-sm md:col-span-2 space-y-4">
                                 <div class="flex items-center justify-between border-b pb-3">
                                     <div class="flex items-center gap-2">
@@ -1295,7 +1295,6 @@ function renderizarResumenGeneral() {
     const anioSiguiente = parseInt(anioSel) + 1;
     document.getElementById('titulo-proyeccion-seccion').innerText = `Proyección del Año Siguiente (${anioSiguiente})`;
 
-    // TABLA DE PROYECCIÓN DE SEGUIDORES TOMANDO EN CUENTA TUS DATOS BASE ACTUALES
     const seguidoresBaseActuales = {
         'Facebook': 102000,
         'Instagram': 7690,
@@ -1308,7 +1307,6 @@ function renderizarResumenGeneral() {
         tbodySeg.innerHTML = '';
         mapasHojas.forEach(item => {
             const actualBase = seguidoresBaseActuales[item.red] || 10000;
-            // Crecimiento anual proyectado basado en datos actuales (ej. 15% estimado anual)
             const estCrecimiento = Math.round(actualBase * 0.15);
             const proyeccionAnual = actualBase + estCrecimiento;
 
@@ -1333,16 +1331,12 @@ function renderizarResumenGeneral() {
     ]);
 }
 
-// SIMULADOR DE IA PARA COMPORTAMIENTO DE REDES Y PÚBLICOS
 function actualizarReporteIA() {
     const mesSelect = document.getElementById('select-mes-ia')?.value || 'Octubre';
-    const cuenta = document.getElementById('filtro-cuenta')?.value || 'acquaroni';
-    
     const txtTendencias = document.getElementById('ia-texto-tendencias');
     const txtPublicos = document.getElementById('ia-texto-publicos');
     if (!txtTendencias || !txtPublicos) return;
 
-    // Datos simulados inteligentes basados en analítica y temporada de automoción / repuestos
     const baseDatosIA = {
         'Enero': {
             tendencias: 'Alta búsqueda de mantenimientos preventivos post-vacaciones de fin de año, revisión de aceites y filtros para retorno a actividades.',
@@ -1862,7 +1856,6 @@ function renderGraficosPresupuesto(ejecutado, redes, plataformas, filasPresupues
 
 // ==========================================
 // MÓDULO DE GESTIÓN DE METAS DE SEGUIDORES
-// (Restringido estrictamente a community.acqua@gmail.com)
 // ==========================================
 const TABLA_METAS_SUPABASE = 'metas_seguidores';
 let metasCompartidas = {};
@@ -1890,7 +1883,6 @@ async function verificarAdminMetas() {
         const { data } = await cliente.auth.getUser();
         const u = data && data.user;
         if (!u || !u.email) return false;
-        // Validación estricta para el correo del administrador solicitado
         return u.email.toLowerCase().trim() === 'community.acqua@gmail.com';
     } catch (e) {
         console.error('Error verificando administrador', e);
@@ -1982,6 +1974,8 @@ async function guardarMetaAnualActual() {
     const cuenta = document.getElementById('filtro-cuenta')?.value || 'acquaroni';
     const anio = document.getElementById('filtro-anio')?.value || new Date().getFullYear().toString();
     const redSocial = document.getElementById('meta-red-social-select')?.value || 'Facebook';
+    
+    // Obtener valores limpios de los inputs
     const valorMeta = parseFloat(document.getElementById('input-meta-anual')?.value) || 0;
     const valorInicial = parseFloat(document.getElementById('input-seguidores-iniciales')?.value) || 0;
 
@@ -2001,7 +1995,7 @@ async function guardarMetaAnualActual() {
     }
 
     await cargarMetasCompartidas();
-    alert("Meta guardada exitosamente y sincronizada para todos los usuarios.");
+    alert("Meta guardada exitosamente y sincronizada.");
     actualizarModuloMetasSeguidores();
 }
 
@@ -2063,9 +2057,10 @@ function actualizarModuloMetasSeguidores() {
     const metaAnual = metas[anio]?.[cuenta]?.[redSocial]?.metaAnual || 0;
     const seguidoresIniciales = metas[anio]?.[cuenta]?.[redSocial]?.seguidoresIniciales || 0;
 
+    // CORRECCIÓN: Evitamos sobreescribir el input si el usuario lo está escribiendo activamente
     const inputMeta = document.getElementById('input-meta-anual');
     if (inputMeta && document.activeElement !== inputMeta) {
-        inputMeta.value = metaAnual;
+        inputMeta.value = metaAnual > 0 ? metaAnual : '';
     }
 
     const inputIniciales = document.getElementById('input-seguidores-iniciales');
