@@ -157,9 +157,11 @@ function applyReadOnlyRestrictions(isAdmin) {
     }
 }
 
-function getUserRoleByEmail(email = '') {
+function getUserRoleByEmail(email = '') { 
+    if (email.toLowerCase() === 'community.acqua@gmail.com') {
+        return 'administrador';
+    }
     const map = {
-        'community.acqua@gmail.com': 'administrador',
         'orlando2216146@gmail.com':'gerente_mercadeo',
         'admin@acquaroni.com': 'administrador',
         'Ottomotto272@gmail.com': 'gerente_mercadeo_corporativo',
