@@ -120,9 +120,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function grantAccess(user) {
     document.body.classList.add('authenticated');
-    const emailUser = user?.email || '';
-    const userRole = emailUser.toLowerCase() === 'community.acqua@gmail.com' ? 'administrador' : getUserRoleByEmail(emailUser);
-    const isAdmin = userRole === 'administrador';
+ 
+const emailUser = (user?.email || '').trim().toLowerCase();
+
+const userRole = emailUser === 'community.acqua@gmail.com'
+    ? 'administrador'
+    : getUserRoleByEmail(emailUser);
+
+const isAdmin = String(userRole || '').trim().toLowerCase() === 'administrador';
 
     // Establece el estado de permisos a nivel global para reutilizar en otros scripts
     window.currentUserPermissions = {
