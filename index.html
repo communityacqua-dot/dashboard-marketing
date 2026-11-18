@@ -1954,8 +1954,12 @@ async function cargarMetasCompartidas() {
 
 async function refrescarMetasCompartidas() {
     metasEsAdmin = await verificarAdminMetas();
-    await cargarMetasCompartidas();
+    const metasDesdeSupabase = await cargarMetasCompartidas();
     await cargarImagenesYConfigCompartidas();
+    if (esAdminActual()) {
+        if (!metasDesdeSupabase) await migrarMetasLocales();
+        await migrarAsignadoLocal();
+    }
     actualizarModuloMetasSeguidores();
     renderizarModuloPosts();
     renderizarModuloCampanas();
@@ -2025,9 +2029,10 @@ async function guardarMetaAnualActual() {
 
     // Intentar sincronizar con Supabase en segundo plano
     const cliente = obtenerClienteSupabase();
+    let errorSupabase = null;
     if (cliente) {
         try {
-            await cliente.from(TABLA_METAS_SUPABASE).upsert({
+            const { error } = await cliente.from(TABLA_METAS_SUPABASE).upsert({
                 anio: anio.toString(),
                 cuenta: cuenta,
                 red_social: redSocial,
@@ -2035,12 +2040,18 @@ async function guardarMetaAnualActual() {
                 seguidores_iniciales: valorInicial,
                 actualizado_en: new Date().toISOString()
             }, { onConflict: 'anio,cuenta,red_social' });
+            if (error) errorSupabase = error;
         } catch (e) {
-            console.error("Error al sincronizar con Supabase:", e);
+            errorSupabase = e;
         }
     }
 
-    alert("¡Meta guardada exitosamente y asegurada!");
+    if (errorSupabase) {
+        console.error("Error al sincronizar con Supabase:", errorSupabase);
+        alert("La meta se guardó solo en este navegador. Los demás usuarios no la verán hasta que se corrija este error de Supabase: " + (errorSupabase.message || errorSupabase));
+    } else {
+        alert("¡Meta guardada exitosamente y asegurada!");
+    }
     actualizarModuloMetasSeguidores();
 }
 
@@ -2250,6 +2261,7 @@ const CLAVE_ASIGNADO_TOTAL = 'presupuesto_asignado_total';
 
 let imagenesCompartidas = {};
 let migrandoImagenes = false;
+let asignadoRemotoExiste = false;
 
 function esAdminActual() {
     const email = (window.currentUserPermissions?.email || '').trim().toLowerCase();
@@ -2285,6 +2297,7 @@ async function cargarImagenesYConfigCompartidas() {
             console.warn('No se pudo leer el asignado total compartido:', errCfg.message);
         } else if (cfg && cfg.length) {
             asignadoTotalManual = limpiarValorNum(cfg[0].valor);
+            asignadoRemotoExiste = true;
         }
     } catch (e) {
         console.warn('Error cargando datos compartidos:', e);
@@ -2326,6 +2339,43 @@ async function guardarAsignadoCompartido(valor) {
     if (error) {
         console.error('Error guardando asignado total compartido:', error);
         alert('No se pudo compartir el asignado total con los demás usuarios: ' + error.message);
+    }
+}
+
+// Sube a Supabase las metas que el administrador tenía guardadas solo en su navegador
+async function migrarMetasLocales() {
+    const cliente = obtenerClienteSupabase();
+    if (!cliente) return;
+
+    const filas = [];
+    Object.keys(metasCompartidas).forEach(anio => {
+        Object.keys(metasCompartidas[anio] || {}).forEach(cuenta => {
+            Object.keys(metasCompartidas[anio][cuenta] || {}).forEach(red => {
+                const m = metasCompartidas[anio][cuenta][red] || {};
+                filas.push({
+                    anio: anio.toString(),
+                    cuenta: cuenta,
+                    red_social: red,
+                    meta_anual: Number(m.metaAnual) || 0,
+                    seguidores_iniciales: Number(m.seguidoresIniciales) || 0,
+                    actualizado_en: new Date().toISOString()
+                });
+            });
+        });
+    });
+    if (!filas.length) return;
+
+    const { error } = await cliente.from(TABLA_METAS_SUPABASE).upsert(filas, { onConflict: 'anio,cuenta,red_social' });
+    if (error) console.warn('No se pudieron subir las metas locales a Supabase:', error.message);
+}
+
+// Sube a Supabase el asignado total que el administrador tenía guardado solo en su navegador
+async function migrarAsignadoLocal() {
+    if (asignadoRemotoExiste) return;
+    const local = limpiarValorNum(localStorage.getItem('presupuesto_asignado_total'));
+    if (local > 0) {
+        asignadoTotalManual = local;
+        await guardarAsignadoCompartido(local);
     }
 }
 
