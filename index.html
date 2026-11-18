@@ -318,7 +318,7 @@
                                     </div>
                                     <div class="mt-4 md:mt-0 flex flex-wrap gap-3">
                                         <div>
-                                            <select id="meta-red-social-select" class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 cursor-pointer" onchange="actualizarModuloMetasSeguidores()">
+                                            <select id="meta-red-social-select" data-allow-readonly class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 cursor-pointer" onchange="actualizarModuloMetasSeguidores()">
                                                 <option value="Facebook">Facebook</option>
                                                 <option value="Instagram">Instagram</option>
                                                 <option value="TikTok">TikTok</option>
@@ -481,7 +481,7 @@
                         <h3 class="text-lg font-bold">Consolidado de Presupuesto y Estados de Cuenta</h3>
                         <p class="text-xs text-gray-500 mt-1">Alimentado directamente desde las pestañas oficiales de Presupuesto.</p>
                     </div>
-                    <button onclick="solicitarAsignadoTotal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow">
+                    <button onclick="solicitarAsignadoTotal()" id="btn-asignado-total" class="admin-only bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow">
                         <i class="fa-solid fa-pen-to-square mr-1"></i> Ingresar Asignado Total
                     </button>
                 </div>
@@ -1493,17 +1493,20 @@ function renderizarModuloPosts() {
     if (!tbody) return;
     tbody.innerHTML = '';
 
+    const puedeEditar = esAdminActual();
+
     filasFiltradas.forEach((f, idx) => {
         const postId = `post-img-${cuenta}-${idx}`;
-        const savedImage = localStorage.getItem(postId);
+        const savedImage = obtenerImagenGuardada(postId);
 
         tbody.innerHTML += `
             <tr>
                 <td class="p-3">
+                    ${puedeEditar ? `
                     <label class="cursor-pointer text-blue-500 hover:text-blue-700 font-semibold text-xs flex items-center gap-1">
                         <i class="fa-solid fa-image"></i> Cargar Imagen
                         <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postId}', 'img-post-${idx}')">
-                    </label>
+                    </label>` : (savedImage ? '' : '<span class="text-xs text-gray-400">Sin imagen</span>')}
                     <img id="img-post-${idx}" src="${savedImage || ''}" 
                         class="w-12 h-12 object-cover rounded shadow-sm ${savedImage ? '' : 'hidden'} mt-1 cursor-pointer"
                         onclick="abrirVisorImagen(this.src)">
@@ -1521,20 +1524,25 @@ function renderizarModuloPosts() {
     });
 }
 
-function guardarYMostrarImagenPost(e, storageKey, imgElementId) {
+async function guardarYMostrarImagenPost(e, storageKey, imgElementId) {
     const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            const base64Img = evt.target.result;
-            localStorage.setItem(storageKey, base64Img);
-            const img = document.getElementById(imgElementId);
-            if (img) {
-                img.src = base64Img;
-                img.classList.remove('hidden');
-            }
-        };
-        reader.readAsDataURL(file);
+    if (!file) return;
+
+    if (!esAdminActual()) {
+        alert('Acción no permitida. Solo el administrador puede subir imágenes.');
+        return;
+    }
+
+    try {
+        const url = await subirImagenCompartida(file, storageKey);
+        const img = document.getElementById(imgElementId);
+        if (img) {
+            img.src = url;
+            img.classList.remove('hidden');
+        }
+    } catch (err) {
+        console.error('Error subiendo imagen', err);
+        alert('No se pudo subir la imagen: ' + (err.message || 'intenta de nuevo.'));
     }
 }
 
@@ -1606,20 +1614,23 @@ function renderizarModuloCampanas() {
         campanas[clave].posts.push(fila);
     });
 
+    const puedeEditar = esAdminActual();
+
     Object.keys(campanas).forEach((clave, index) => {
         const campana = campanas[clave];
         const presupuestoTotal = campana.posts.reduce((t, f) => t + limpiarValorNum(f[7]), 0);
         const portadaKey = `portada-campana-${cuenta}-${clave}`;
-        const savedPortada = localStorage.getItem(portadaKey);
+        const savedPortada = obtenerImagenGuardada(portadaKey);
 
         container.innerHTML += `
             <div class="bg-white rounded-xl border shadow-sm hover:shadow-lg transition overflow-hidden">
                 <div class="h-40 bg-gray-200 relative flex items-center justify-center overflow-hidden">
                     <img id="cover-${index}" src="${savedPortada || ''}" class="absolute inset-0 w-full h-full object-cover ${savedPortada ? '' : 'hidden'}">
+                    ${puedeEditar ? `
                     <label class="absolute bottom-3 right-3 cursor-pointer bg-white/95 text-gray-700 px-3 py-2 rounded-lg text-xs font-bold shadow">
                         Subir Portada
                         <input type="file" class="hidden" accept="image/*" onchange="guardarPortadaCampana(event, '${portadaKey}', 'cover-${index}')">
-                    </label>
+                    </label>` : ''}
                 </div>
                 <div class="p-5">
                     <h4 class="font-bold text-gray-800 text-base">${escapeHtml(campana.nombre)}</h4>
@@ -1634,19 +1645,25 @@ function renderizarModuloCampanas() {
     });
 }
 
-function guardarPortadaCampana(e, storageKey, imgId) {
+async function guardarPortadaCampana(e, storageKey, imgId) {
     const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            localStorage.setItem(storageKey, evt.target.result);
-            const img = document.getElementById(imgId);
-            if (img) {
-                img.src = evt.target.result;
-                img.classList.remove('hidden');
-            }
-        };
-        reader.readAsDataURL(file);
+    if (!file) return;
+
+    if (!esAdminActual()) {
+        alert('Acción no permitida. Solo el administrador puede subir imágenes.');
+        return;
+    }
+
+    try {
+        const url = await subirImagenCompartida(file, storageKey);
+        const img = document.getElementById(imgId);
+        if (img) {
+            img.src = url;
+            img.classList.remove('hidden');
+        }
+    } catch (err) {
+        console.error('Error subiendo portada', err);
+        alert('No se pudo subir la imagen: ' + (err.message || 'intenta de nuevo.'));
     }
 }
 
@@ -1664,9 +1681,11 @@ function abrirDesgloseCampana(nombreCampana) {
     document.getElementById('modal-campana-titulo').innerText = `Campaña: ${nombreCampana}`;
     document.getElementById('modal-campana-subtitulo').innerText = `${postsCampana.length} Posts registrados`;
 
+    const puedeEditar = esAdminActual();
+
     postsCampana.forEach((f, idxPost) => {
         const postImgKey = `img-ref-post-${cuenta}-${normalizarCampana(nombreCampana)}-${idxPost}`;
-        const savedPostImg = localStorage.getItem(postImgKey);
+        const savedPostImg = obtenerImagenGuardada(postImgKey);
 
         container.innerHTML += `
             <div class="border rounded-xl p-4 bg-gray-50 flex flex-col md:flex-row gap-4 items-start">
@@ -1674,10 +1693,11 @@ function abrirDesgloseCampana(nombreCampana) {
                     <p class="text-xs text-gray-500 font-bold mb-1">Imagen Referencia</p>
                     <div class="relative h-28 bg-gray-200 border rounded-lg flex items-center justify-center overflow-hidden">
                         <img id="img-post-ref-${idxPost}" src="${savedPostImg || ''}" class="${savedPostImg ? '' : 'hidden'} w-full h-full object-cover cursor-pointer" onclick="abrirVisorImagen(this.src)">
+                        ${puedeEditar ? `
                         <label class="absolute inset-0 flex flex-col items-center justify-center bg-black/40 text-white text-xs opacity-0 hover:opacity-100 transition cursor-pointer p-1 text-center">
                             <i class="fa-solid fa-upload text-sm mb-1"></i> Subir
                             <input type="file" class="hidden" accept="image/*" onchange="guardarYMostrarImagenPost(event, '${postImgKey}', 'img-post-ref-${idxPost}')">
-                        </label>
+                        </label>` : ''}
                     </div>
                 </div>
 
@@ -1703,11 +1723,17 @@ function cerrarModalCampana() {
     document.getElementById('modal-campana').classList.remove('flex');
 }
 
-function solicitarAsignadoTotal() {
+async function solicitarAsignadoTotal() {
+    if (!esAdminActual()) {
+        alert('Acción no permitida. Solo el administrador puede modificar el asignado total.');
+        return;
+    }
+
     const valor = prompt('Ingresa el monto del Asignado Total (Q):', asignadoTotalManual);
     if (valor !== null) {
         asignadoTotalManual = limpiarValorNum(valor);
         localStorage.setItem('presupuesto_asignado_total', asignadoTotalManual);
+        await guardarAsignadoCompartido(asignadoTotalManual);
         renderizarModuloPresupuesto();
     }
 }
@@ -1904,6 +1930,7 @@ async function cargarMetasCompartidas() {
     }
 
     const { data, error } = await cliente.from(TABLA_METAS_SUPABASE).select('*');
+    if (error) console.warn('No se pudieron leer las metas desde Supabase:', error.message);
     if (error || !data || data.length === 0) {
         // Cargar desde localStorage si Supabase está vacío o da error
         const local = localStorage.getItem('metas_seguidores_local');
@@ -1928,7 +1955,12 @@ async function cargarMetasCompartidas() {
 async function refrescarMetasCompartidas() {
     metasEsAdmin = await verificarAdminMetas();
     await cargarMetasCompartidas();
+    await cargarImagenesYConfigCompartidas();
     actualizarModuloMetasSeguidores();
+    renderizarModuloPosts();
+    renderizarModuloCampanas();
+    renderizarModuloPresupuesto();
+    migrarImagenesLocales();
 }
 
 function iniciarMetasCompartidas() {
@@ -2203,6 +2235,131 @@ function actualizarModuloMetasSeguidores() {
                 scales: { y: { beginAtZero: true } }
             }
         });
+    }
+}
+
+// ==========================================
+// IMÁGENES Y AJUSTES COMPARTIDOS (Supabase)
+// Todos los usuarios leen; solo el administrador escribe.
+// ==========================================
+const EMAIL_ADMIN = 'community.acqua@gmail.com';
+const TABLA_IMAGENES = 'dashboard_imagenes';
+const TABLA_CONFIG = 'dashboard_config';
+const BUCKET_IMAGENES = 'dashboard-imagenes';
+const CLAVE_ASIGNADO_TOTAL = 'presupuesto_asignado_total';
+
+let imagenesCompartidas = {};
+let migrandoImagenes = false;
+
+function esAdminActual() {
+    const email = (window.currentUserPermissions?.email || '').trim().toLowerCase();
+    return metasEsAdmin || email === EMAIL_ADMIN;
+}
+
+// Imagen compartida (Supabase); el respaldo local solo existe en el navegador del administrador
+function obtenerImagenGuardada(clave) {
+    return imagenesCompartidas[clave] || localStorage.getItem(clave) || '';
+}
+
+function slugClave(clave) {
+    return clave.toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 120);
+}
+
+async function cargarImagenesYConfigCompartidas() {
+    const cliente = obtenerClienteSupabase();
+    if (!cliente) return;
+
+    try {
+        const { data: imgs, error: errImg } = await cliente.from(TABLA_IMAGENES).select('clave,url');
+        if (errImg) {
+            console.warn('No se pudieron leer las imágenes compartidas:', errImg.message);
+        } else {
+            const nuevo = {};
+            (imgs || []).forEach(r => { nuevo[r.clave] = r.url; });
+            imagenesCompartidas = nuevo;
+        }
+
+        const { data: cfg, error: errCfg } = await cliente.from(TABLA_CONFIG).select('clave,valor').eq('clave', CLAVE_ASIGNADO_TOTAL);
+        if (errCfg) {
+            console.warn('No se pudo leer el asignado total compartido:', errCfg.message);
+        } else if (cfg && cfg.length) {
+            asignadoTotalManual = limpiarValorNum(cfg[0].valor);
+        }
+    } catch (e) {
+        console.warn('Error cargando datos compartidos:', e);
+    }
+}
+
+async function subirImagenCompartida(archivo, clave) {
+    const cliente = obtenerClienteSupabase();
+    if (!cliente) throw new Error('Sin conexión con Supabase.');
+
+    const tipo = archivo.type || 'image/jpeg';
+    const ext = (tipo.split('/')[1] || 'jpg').replace('jpeg', 'jpg').replace(/[^a-z0-9]/gi, '') || 'jpg';
+    const ruta = `${slugClave(clave)}-${Date.now()}.${ext}`;
+
+    const { error: errSubida } = await cliente.storage.from(BUCKET_IMAGENES).upload(ruta, archivo, { contentType: tipo, upsert: false });
+    if (errSubida) throw errSubida;
+
+    const { data } = cliente.storage.from(BUCKET_IMAGENES).getPublicUrl(ruta);
+    const url = data.publicUrl;
+
+    const { error: errTabla } = await cliente.from(TABLA_IMAGENES).upsert(
+        { clave: clave, url: url, actualizado_en: new Date().toISOString() },
+        { onConflict: 'clave' }
+    );
+    if (errTabla) throw errTabla;
+
+    imagenesCompartidas[clave] = url;
+    return url;
+}
+
+async function guardarAsignadoCompartido(valor) {
+    const cliente = obtenerClienteSupabase();
+    if (!cliente) return;
+
+    const { error } = await cliente.from(TABLA_CONFIG).upsert(
+        { clave: CLAVE_ASIGNADO_TOTAL, valor: String(valor), actualizado_en: new Date().toISOString() },
+        { onConflict: 'clave' }
+    );
+    if (error) {
+        console.error('Error guardando asignado total compartido:', error);
+        alert('No se pudo compartir el asignado total con los demás usuarios: ' + error.message);
+    }
+}
+
+// Sube a Supabase las imágenes que el administrador ya tenía guardadas solo en su navegador
+async function migrarImagenesLocales() {
+    if (migrandoImagenes || !esAdminActual()) return;
+    migrandoImagenes = true;
+
+    const prefijos = ['post-img-', 'portada-campana-', 'img-ref-post-'];
+    let migradas = 0;
+
+    try {
+        const claves = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && prefijos.some(p => k.startsWith(p)) && !imagenesCompartidas[k]) claves.push(k);
+        }
+
+        for (const clave of claves) {
+            const valor = localStorage.getItem(clave);
+            if (!valor || !valor.startsWith('data:image')) continue;
+            const blob = await (await fetch(valor)).blob();
+            await subirImagenCompartida(blob, clave);
+            migradas++;
+        }
+    } catch (e) {
+        console.warn('No se pudieron migrar las imágenes locales a Supabase:', e);
+    } finally {
+        migrandoImagenes = false;
+    }
+
+    if (migradas > 0) {
+        renderizarModuloPosts();
+        renderizarModuloCampanas();
     }
 }
 
