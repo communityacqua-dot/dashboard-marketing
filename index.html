@@ -1211,6 +1211,60 @@ function renderGraficaProyeccionUsuariosFacebook(filas) {
     ]);
 }
 
+// Calcula seguidores actuales y crecimiento estimado (run rate) de una hoja de red social en el año seleccionado
+function calcularProyeccionSeguidoresHoja(nombreHoja, anioSel) {
+    const filas = obtenerHojaPrincipalInsensible(nombreHoja);
+    if (!filas || filas.length <= 1) return { actual: 0, crecimiento: 0 };
+
+    const idxTotal = obtenerIndiceColumna(filas, ['seguidores acumulados', 'total seguidores', 'seguidores totales', 'suscriptores totales']);
+    const idxNuevos = obtenerIndiceColumna(filas, ['nuevos seguidores', 'suscriptores ganados', 'seguidores ganados', 'seguidores']);
+
+    let totalPorMes = new Array(12).fill(0);
+    let nuevosPorMes = new Array(12).fill(0);
+    let mesTieneDatos = new Array(12).fill(false);
+
+    filas.slice(1).forEach(f => {
+        const rowAnio = f[0] ? f[0].toString().trim() : '';
+        if (rowAnio !== anioSel.toString()) return;
+        const m = obtenerIndiceMes(f[1]);
+        if (m === -1) return;
+
+        if (idxTotal !== -1) {
+            const v = limpiarValorNum(f[idxTotal]);
+            if (v > 0) {
+                totalPorMes[m] = v;
+                mesTieneDatos[m] = true;
+            }
+        }
+        if (idxNuevos !== -1 && idxNuevos !== idxTotal) {
+            const n = limpiarValorNum(f[idxNuevos]);
+            nuevosPorMes[m] += n;
+            if (n !== 0) mesTieneDatos[m] = true;
+        }
+    });
+
+    const sumaNuevos = nuevosPorMes.reduce((a, b) => a + b, 0);
+    const mesesConDatos = mesTieneDatos.filter(Boolean).length;
+
+    let actual = 0;
+    for (let i = 11; i >= 0; i--) {
+        if (totalPorMes[i] > 0) {
+            actual = totalPorMes[i];
+            break;
+        }
+    }
+    if (actual === 0) actual = Math.max(0, sumaNuevos);
+
+    let crecimiento;
+    if (mesesConDatos === 0) {
+        crecimiento = Math.round(actual * 0.15);
+    } else {
+        crecimiento = Math.max(0, Math.round((sumaNuevos / mesesConDatos) * 12));
+    }
+
+    return { actual, crecimiento };
+}
+
 function renderizarResumenGeneral() {
     const cuenta = document.getElementById('filtro-cuenta').value;
     const anioSel = document.getElementById('filtro-anio').value;
@@ -1306,8 +1360,18 @@ function renderizarResumenGeneral() {
     if (tbodySeg) {
         tbodySeg.innerHTML = '';
         mapasHojas.forEach(item => {
-            const actualBase = seguidoresBaseActuales[item.red] || 10000;
-            const estCrecimiento = Math.round(actualBase * 0.15);
+            let actualBase;
+            let estCrecimiento;
+
+            if (cuenta === 'aztec' || cuenta === 'ultra') {
+                const datosCuenta = calcularProyeccionSeguidoresHoja(item.hoja, anioSel);
+                actualBase = datosCuenta.actual;
+                estCrecimiento = datosCuenta.crecimiento;
+            } else {
+                actualBase = seguidoresBaseActuales[item.red] || 10000;
+                estCrecimiento = Math.round(actualBase * 0.15);
+            }
+
             const proyeccionAnual = actualBase + estCrecimiento;
 
             tbodySeg.innerHTML += `
